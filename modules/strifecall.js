@@ -1333,30 +1333,23 @@ bdroll = tierBD[specibus[equip][2]];
 
       //check enemy tags
       let precont;
-        for(precont=(list[target][7].length - 1);precont>=0;precont--){
-          let removed;
+        for(precont=(targUnit[STATUS].length - 1);precont>=0;precont--){
 
           switch(targUnit[STATUS][precont]){
             case "CORRUPT":
-              fav++
-            break;
             case "HAUNT":
             case "HAUNT2":
             case "HAUNT3":
-              fav++
-            break;
             case "GRAPPLE":
+            case "TARGFAV":
               fav++
             break;
+    
             case "ALLUNFAV":
-              fav--;
-              break;
             case "PROTECT":
               fav--;
               break;
-            case "TARGFAV":
-              fav++;
-              break;
+    
             case "AV":
               av++;
               break;
@@ -1373,6 +1366,7 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
 
     let strikeCheck;
     let strikemsg;
+
 //roll to hit, similar to how stamina is handled
     let strikeRoll = [Math.floor((Math.random() * 20) + 1),Math.floor((Math.random() * 20) + 1)];
 
