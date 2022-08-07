@@ -16,7 +16,7 @@ exports.sdexCheck = async function (client, message,page, args, type, sdex, card
 
   let scheme = ["#992445","#0c6137","#992ae1","#484848"];
   let typeList = ["sylladex","strife specibus","container","room inventory"];
-  let cardList = ["captchalogue cards","strife cards","storage space","room space"]
+  let cardList = ["captchalogue cards","strife cards","storage space","room space"];
   let usedCards = sdex.length;
   let maxPage = Math.floor((usedCards-1)/ITEMS_PER_PAGE);
 
