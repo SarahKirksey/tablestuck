@@ -981,6 +981,10 @@ exports.underRally = function(client, local) {
 
 
   function act(client,charid,message,local,action,target){
+    const HEALTH = 3;
+    const STAMIN = 5;
+    const STATUS = 7;
+      
     let strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
     //if strife database does not exist, cancel code
     if(!client.strifeMap.has(strifeLocal)){
@@ -1073,21 +1077,24 @@ bdroll = tierBD[specibus[equip][2]];
 }
 
 
-attName = client.charcall.charData(client,list[init[turn][0]][1],"name");
-targName = client.charcall.charData(client,list[target][1],"name");
+  let attUnit = list[init[turn][0]];
+  let targUnit = list[target];
+  
+  attName = client.charcall.charData(client,attUnit[1],"name");
+  targName = client.charcall.charData(client,targUnit[1],"name");
 
 
     let brroll;
     let av = 0;
 
-    let armor = client.charcall.charData(client,list[target][1],"armor");
+  let armor = client.charcall.charData(client,targUnit[1],"armor");
 
     if(armor.length>0){
       av = tierAv[armor[0][2]];
       brroll = tierBD[armor[0][2]];
     } else {
-      av = client.underlings[client.charcall.charData(client,list[target][1],"type")].av;
-      brroll = client.underlings[client.charcall.charData(client,list[target][1],"type")].bd;
+      av = client.underlings[client.charcall.charData(client,targUnit[1],"type")].av;
+      brroll = client.underlings[client.charcall.charData(client,targUnit[1],"type")].bd;
     }
     let effective = "HIT!"
 
@@ -1138,7 +1145,8 @@ targName = client.charcall.charData(client,list[target][1],"name");
       effective="INEFFECTIVE!"
     }
     }
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"NOIR")[0]){
+    
+    if(client.traitcall.traitCheck(client,attUnit[1],"NOIR")[0]){
       strikeBonus += Math.ceil(Math.random()*4);
     }
 
@@ -1179,21 +1187,21 @@ targName = client.charcall.charData(client,list[target][1],"name");
           break;
         case "STAMADD":
           newStam = Math.ceil(Math.random() * 4);
-          list[init[turn][0]][5]+= newStam;
+          attUnit[STAMIN]+= newStam;
           let p;
           for(p=0;p<active.length;p++){
             if(list[active[p]][0]==true){
-              alert+=`${attName} gains ${newStam} STAMINA, they now have ${list[init[turn][0]][5]} STAMINA!\n`
+              alert+=`${attName} gains ${newStam} STAMINA, they now have ${attUnit[STAMIN]} STAMINA!\n`
             }
           }
           break;
           case "STAMADD+":
           newStam = Math.ceil(Math.random() * 8);
-            list[init[turn][0]][5]+= newStam;
+            attUnit[STAMIN]+= newStam;
             let j;
             for(j=0;j<active.length;j++){
               if(list[active[j]][0]==true){
-                alert+=`${attName} gains ${newStam} STAMINA, they now have ${list[init[turn][0]][5]} STAMINA!\n`
+                alert+=`${attName} gains ${newStam} STAMINA, they now have ${attUnit[STAMIN]} STAMINA!\n`
               }
             }
             break;
@@ -1204,7 +1212,7 @@ targName = client.charcall.charData(client,list[target][1],"name");
           list[init[turn][0]][7].push("STATUSIMMUNE");
           break;
         case "PROTECT":
-          list[target][7].push("PROTECT");
+          targUnit[STATUS].push("PROTECT");
           break;
         case "NEXTBD":
           list[init[turn][0]][7].push("NEXTBD");
@@ -1235,7 +1243,7 @@ targName = client.charcall.charData(client,list[target][1],"name");
           break;
 
         case "DEGRAP":
-          list[init[turn][0]][7].push("DEGRAP");
+          attUnit[STATUS].push(aa[pre]);
           break;
           case "ROLLOUT":
             if(list[init[turn][0]][7].includes("ROLLOUT1")){
@@ -1270,15 +1278,15 @@ targName = client.charcall.charData(client,list[target][1],"name");
     //if action deals damage or imposes effect
 
     let costMsg = `${client.actionList[action].cst}`;
-
-    if(list[init[turn][0]][7].includes("DISCOUNT")){
+     
+    if(attUnit[STATUS].includes("DISCOUNT")){
       if(client.actionList[action].cst>1){
       alert += `ACTIONS DISCOUNTED THIS TURN\n`;
       costMsg +=` - 1`;
        }
      }
    //closing here
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"MIND")[1]){
+    if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
       if(client.actionList[action].cst > 1){
         alert += `**BUTTERFLY EFFECT** - ACTIONS DISCOUNTED\n`;
         costMsg += ` - 1`;
@@ -1286,7 +1294,7 @@ targName = client.charcall.charData(client,list[target][1],"name");
     }
     if(att == true) {
       let precon;
-      for(precon=(list[init[turn][0]][7].length - 1);precon>=0;precon--){
+      for(precon=(attUnit[STATUS].length - 1);precon>=0;precon--){
         let removed;
 
         //check for COMBATATIVE tags
@@ -1328,7 +1336,7 @@ targName = client.charcall.charData(client,list[target][1],"name");
         for(precont=(list[target][7].length - 1);precont>=0;precont--){
           let removed;
 
-          switch(list[target][7][precont]){
+          switch(targUnit[STATUS][precont]){
             case "CORRUPT":
               fav++
             break;
@@ -1355,11 +1363,11 @@ targName = client.charcall.charData(client,list[target][1],"name");
           }
 
 }
-
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BROKEN")[0]){
+    
+if(client.traitcall.traitCheck(client,attUnit[1],"BROKEN")[0]){
   fav--;
 }
-if(client.traitcall.traitCheck(client,list[target][1],"VOID")[1]){
+if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
   fav--;
 }
 
@@ -1368,7 +1376,7 @@ if(client.traitcall.traitCheck(client,list[target][1],"VOID")[1]){
 //roll to hit, similar to how stamina is handled
     let strikeRoll = [Math.floor((Math.random() * 20) + 1),Math.floor((Math.random() * 20) + 1)];
 
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"META")[0]){
+    if(client.traitcall.traitCheck(client,attUnit[1],"META")[0]){
       if(strikeRoll[0]==1||strikeRoll[0]==20||strikeRoll[1]==1||strikeRoll[1]==20){
         alert += `YOUR META GEAR AVOIDED A 1 (OR A 20...)\n`;
         let metaCheck = true;
@@ -1397,7 +1405,7 @@ if(client.traitcall.traitCheck(client,list[target][1],"VOID")[1]){
 
       }
     }
-    if(client.traitcall.traitCheck(client,list[target][1],"WELSH")[1]||client.traitcall.traitCheck(client,list[target][1],"VOID")[0]){
+    if(client.traitcall.traitCheck(client,targUnit[1],"WELSH")[1]||client.traitcall.traitCheck(client,targUnit[1],"VOID")[0]){
       if(strikeRoll[0]==20){
         alert+=`TARGET TURNED A 20 INTO A 1!\n`;
         strikeRoll[0]=1;
@@ -1470,13 +1478,13 @@ if(strikeBonus<0){
 }
 
 
-  if(client.traitcall.traitCheck(client,list[target][1],"FROG")[0]){
+  if(client.traitcall.traitCheck(client,targUnit[1],"FROG")[0]){
     av++;
   }
-  if(client.traitcall.traitCheck(client,list[target][1],"EXQUISITE")[1]){
+  if(client.traitcall.traitCheck(client,targUnit[1],"EXQUISITE")[1]){
     av = av+2;
   }
-  if(client.traitcall.traitCheck(client,list[target][1],"BREATH")[0]){
+  if(client.traitcall.traitCheck(client,targUnit[1],"BREATH")[0]){
     av = av+2;
   }
 
@@ -1494,12 +1502,13 @@ if(strikeBonus<0){
 
     //check traits that inflict status effects on hit
 
-    //if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"CANDY")[1]==true){
+    //if(client.traitcall.traitCheck(client,attUnit[1],"CANDY")[1]==true){
 
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"HOT")[0]){
+    // Burn
+    if(client.traitcall.traitCheck(client,attUnit[1],"HOT")[0]){
     alert+=inflict(client, message, local, list, target, 12, "BURN", init[turn][0]);
     }
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"IRRADIATED")[0]){
+    if(client.traitcall.traitCheck(client,attUnit[1],"IRRADIATED")[0]){
     alert+=inflict(client, message, local, list, target, 12, "BURN", init[turn][0]);
     }
     if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"SHARP")[0]){
@@ -1520,7 +1529,7 @@ if(strikeBonus<0){
 if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"COLD", init[turn][0])[0]){
   alert+=inflict(client, message, local, list, target, 12, "FROSTBITE", init[turn][0]);
 }
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"ELECTRIC")[0]){
+if(client.traitcall.traitCheck(client,attUnit[1],"ELECTRIC")[0]){
    alert+=inflict(client, message, local, list, target, 12, "STUN", init[turn][0]);
 }
 if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[0]){
@@ -1535,7 +1544,7 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[0]){
     alert+=inflict(client, message, local, list, target, dchance, "DAZED", init[turn][0]);
   }
   }
-  if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"SHITTY")[1]){
+  if(client.traitcall.traitCheck(client,attUnit[1],"SHITTY")[1]){
   alert+=inflict(client, message, local, list, target, 12, "CORRUPT", init[turn][0]);
   }
   if(client.traitcall.traitCheck(client,list[target][1],"THORNS")[0]){
@@ -1551,15 +1560,17 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[0]){
     alert+=inflict(client, message, local, list, target, 12, "HAUNT", init[turn][0]);
   }
   }
-if(client.traitcall.traitCheck(client,list[target][1],"CAT")[0]){
+  
+if(client.traitcall.traitCheck(client,targUnit[1],"CAT")[0]){
   br++;
 }
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BROKEN")[1]){
+if(client.traitcall.traitCheck(client,attUnit[1],"BROKEN")[1]){
   if(!Math.floor((Math.random() * 12))){
     bdmax = true;
   }
 }
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"STICKY")[0]){
+  
+  if(client.traitcall.traitCheck(client,attUnit[1],"STICKY")[0]){
   alert+=inflict(client, message, local, list, target, 12, "GRAPPLE", init[turn][0]);
 }
   if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"STICKY")[1] && list[target][7].includes("GRAPPLE")){
@@ -2142,8 +2153,8 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BOUNCY")[0]&&!Math
 
   client.strifeMap.set(strifeLocal,list,"list");
 
-  if(list[target][7].includes("DOUBLEGRIST")&&list[target][3]>0){
-    removed = list[target][7].splice(list[target][7].indexOf("DOUBLEGRIST"));
+  if(targUnit[STATUS].includes("DOUBLEGRIST")&&targUnit[HEALTH]>0){
+    removed = targUnit[STATUS].splice(targUnit[STATUS].indexOf("DOUBLEGRIST"));
   }
 try{
 for(let ik=0;ik<active.length;ik++){
