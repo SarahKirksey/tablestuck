@@ -16,21 +16,25 @@ if(client.configMap.get(message.guild.id).options[0].selection!=1){
   let area = sec[local[1]][local[2]];
   let channelCheck = [];
   let revcheck = false;
+  let dmOverride = false;
 
-  if(client.funcall.dmcheck(client,message)&&client.configMap.get(message.guild.id).options[6].selection==1){
-    if(!args[0]&&!message.mentions.members.first()){
-      message.channel.send(`If you are using this command as a player, do ""${client.auth.prefix}revive override". If you're using this as a Author/DM judging a Godtier's fate, ping them to bring them back. Otherwise, let them lay.`);
+  if(client.funcall.dmcheck(client,message)){
+	let pinged = message.mentions.members.first();
+    if(!args[0]&&!pinged){
+      message.channel.send(`If you are using this command as a player, do "${client.auth.prefix}revive override". If you're using this as a Author/DM judging a Godtier's fate, ping them to bring them back. Otherwise, let them lay.`);
       return;
     }
-    if(message.mentions.members.first()){
-      let targuser = message.guild.id.concat(message.mentions.members.first().id);
+	
+	dmOverride = (args[0].toLowerCase() == "override");
+    if(pinged&&client.configcall.get(client, message, "IMMORTAL")==1){
+      let targuser = message.guild.id.concat(pinged.id);
       let target = client.userMap.get(targuser,"possess");
       console.log(targuser);
       let godtiered = client.charcall.allData(client,targuser,target,"godtier");
       if(godtiered=="NONE"){
         godtiered = false;
       }
-      if(godtiered&&!client.charcall.charData(client,target,"alive")){
+      if((godtiered || dmOverride)&&!client.charcall.charData(client,target,"alive")){
         message.channel.send(`Revived ${client.charcall.charData(client,target,"name")}!`);
         client.charcall.setAnyData(client,targuser,target,true,"alive");
         client.charcall.setAnyData(client,targuser,target,client.charcall.allData(client,targuser,target,"gel")*.5,"vit");
@@ -44,14 +48,11 @@ if(client.configMap.get(message.guild.id).options[0].selection!=1){
     }
   }
 
-  let godtiered = client.charcall.allData(client,userid,charid,"godtier");
-  if(godtiered=="NONE"){
-    godtiered = false;
-  }
-  if(godtiered&&!client.charcall.charData(client,charid,"alive")&&client.configMap.get(message.guild.id).options[6].selection==0){
+  let godtiered = (client.charcall.allData(client,userid,charid,"GODTIER") === true);
+  if(!client.charcall.charData(client,charid,"alive") && (dmOverride || (godtiered && client.configcall.get(client, message, "IMMORTAL")==0))){
       let s = client.charcall.allData(client,userid,charid,"sleepTimer");
       let t = Date.now();
-      if(t-s>300000){
+      if(t-s>300000 || dmOverride){
         client.charcall.setAnyData(client,userid,charid,true,"alive");
         client.charcall.setAnyData(client,userid,charid,client.charcall.allData(client,userid,charid,"gel")*.5,"vit");
         message.channel.send("You get up off the ground, your wounds mostly healed. You can't think of sleeping for a while either...");
