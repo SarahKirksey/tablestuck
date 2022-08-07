@@ -1379,16 +1379,7 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
     if(client.traitcall.traitCheck(client,attUnit[1],"META")[0]){
       if(strikeRoll[0]==1||strikeRoll[0]==20||strikeRoll[1]==1||strikeRoll[1]==20){
         alert += `YOUR META GEAR AVOIDED A 1 (OR A 20...)\n`;
-        let metaCheck = true;
-        while(metaCheck) {
-
-          strikeRoll = [Math.floor((Math.random() * 20) + 1),Math.floor((Math.random() * 20) + 1)];
-          if(strikeRoll[0]!=1&&strikeRoll[0]!=20&&strikeRoll[1]!=1&&strikeRoll[1]!=20){
-            metaCheck=false;
-          }
-
-        }
-
+          strikeRoll = [Math.floor((Math.random() * 18) + 2),Math.floor((Math.random() * 18) + 2)];
       }
     }
 
