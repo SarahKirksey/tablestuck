@@ -33,7 +33,7 @@ for(let j=0;j<configList.options[i].choices.length;j++){
   configPrint = new client.MessageEmbed()
   .setTitle("**GAME CONFIGURATION**")
   .addFields(
-    {name:"**INSTRUCTIONS:**",value:`options preceeded with an arrow are the current selections. \nDo ${client.auth.prefix}config [option name] [new choice] to change any of the settings, like \"${client.auth.prefix}config death 2\".\n\nYou can also do ${client.auth.prefix}config reset to reset your config to default settings.\n\n**options with a \* after them may only have effect before the game begins, so set them before initalizing!**`},
+    {name:"**INSTRUCTIONS:**",value:`Options preceeded with an arrow are the current selections. \nDo ${client.auth.prefix}config [option name] [new choice] to change any of the settings, like \"${client.auth.prefix}config death 2\".\n\nYou can also do ${client.auth.prefix}config reset to reset your config to default settings.\n\n**options with a \* after them may only have effect before the game begins, so set them before initalizing!**`},
     {name:"**OPTIONS:**",value:msg});
   message.channel.send({embeds: [configPrint]});
   return;
@@ -50,7 +50,7 @@ for(let k=0;k<configList.options.length;k++){
   }
 }
 if(selection==-1){
-  message.channel.send(`that's not a valid option! do ${client.auth.prefix}config to see what options there are.`);
+  message.channel.send(`That's not a valid option! do ${client.auth.prefix}config to see what options there are.`);
   return;
 }
 if(!args[1]||isNaN(args[1])){
@@ -59,7 +59,7 @@ if(!args[1]||isNaN(args[1])){
 }
 newOption = parseInt(args[1], 10);
 if(newOption>configList.options[selection].choices.length||newOption<=0){
-  message.channel.send(`that's not a valid option! do ${client.auth.prefix}config to see what options there are.`);
+  message.channel.send(`That's not a valid option! Do ${client.auth.prefix}config to see what options there are.`);
   return;
 }
 configList.options[selection].selection = (newOption-1);
