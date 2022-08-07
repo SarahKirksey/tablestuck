@@ -3,7 +3,7 @@ exports.desc = "Revive a dead player";
 exports.use = `">revive" brings a dead character in the same room as you back to life, if they meet the right conditions.`;
 exports.run = (client, message, args) => {
 
-if(client.configMap.get(message.guild.id).options[0].selection!=1){
+if(client.configcall.get(client, message, "death")==0){
   message.channel.send("current game config doesn't allow for reviving!");
   return;
 }
@@ -38,7 +38,7 @@ if(client.configMap.get(message.guild.id).options[0].selection!=1){
         message.channel.send(`Revived ${client.charcall.charData(client,target,"name")}!`);
         client.charcall.setAnyData(client,targuser,target,true,"alive");
         client.charcall.setAnyData(client,targuser,target,client.charcall.allData(client,targuser,target,"gel")*.5,"vit");
-        client.funcall.chanMsg(client,target,`Your death has been judged to be unremarkable, congradulations, you get to be alive again. You are too spooked to sleep for a while, though.`);
+        client.funcall.chanMsg(client,target,`Your death has been judged to be unremarkable. Congratulations, you get to be alive again. You are too spooked to sleep for a while, though.`);
         client.playerMap.set(target,Date.now(),"sleepTimer");
         return;
       } else {
