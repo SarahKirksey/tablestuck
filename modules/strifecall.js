@@ -1166,25 +1166,16 @@ bdroll = tierBD[specibus[equip][2]];
         case "UNFAV":
           fav--;
           break;
+    
         case "CARRY":
-          list[init[turn][0]][7].push("CARRY");
-          break;
         case "ALLBD":
-          list[init[turn][0]][7].push("ALLBD");
-          break;
         case "ALLFAV":
-          list[init[turn][0]][7].push("ALLFAV");
-          break;
         case "ALLUNFAV":
-          list[init[turn][0]][7].push("ALLUNFAV");
-          break;
         case "NEXTFAV":
-          list[init[turn][0]][7].push("NEXTFAV");
+        case "STAMFAV":
+          attUnit[STATUS].push(aa[pre]);
           break;
 
-        case "STAMFAV":
-          list[init[turn][0]][7].push("STAMFAV");
-          break;
         case "STAMADD":
           newStam = Math.ceil(Math.random() * 4);
           attUnit[STAMIN]+= newStam;
@@ -1205,55 +1196,38 @@ bdroll = tierBD[specibus[equip][2]];
               }
             }
             break;
-        case "DISCOUNT":
-          list[init[turn][0]][7].push("DISCOUNT");
-          break;
-        case "STATUSIMMUNE":
-          list[init[turn][0]][7].push("STATUSIMMUNE");
-          break;
         case "PROTECT":
           targUnit[STATUS].push("PROTECT");
           break;
+        case "DISCOUNT":
+        case "STATUSIMMUNE":
         case "NEXTBD":
-          list[init[turn][0]][7].push("NEXTBD");
-          break;
         case "AV":
-          list[init[turn][0]][7].push("AV");
-          break;
-        case "CLEARSTATUS":
-          list[init[turn][0]][7]=[];
-          break;
-        case "STATUSDROP":
-
-          removed = list[init[turn][0]][7].splice(Math.floor(Math.random()*list[init[turn][0]][7].length),1);
-          alert+=`REMOVED THE ${removed} STATUS EFFECT\n`;
-
-          break;
         case "DEFLECT":
-          list[init[turn][0]][7].push("DEFLECT");
-          break;
         case "DEFROST":
-          list[init[turn][0]][7].push("DEFROST");
-          break;
         case "BLOCK":
-          list[init[turn][0]][7].push("BLOCK");
-          break;
         case "GRISTINVERT":
-          list[init[turn][0]][7].push("GRISTINVERT");
-          break;
-
         case "DEGRAP":
           attUnit[STATUS].push(aa[pre]);
           break;
+        case "CLEARSTATUS":
+          attUnit[STATUS]=[];
+          break;
+        case "STATUSDROP":
+    
+          removed = attUnit[STATUS].splice(Math.floor(Math.random()*attUnit[STATUS].length),1);
+          alert+=`REMOVED THE ${removed} STATUS EFFECT\n`;
+    
+          break;
           case "ROLLOUT":
-            if(list[init[turn][0]][7].includes("ROLLOUT1")){
+            if(attUnit[STATUS].includes("ROLLOUT1")){
               dmgLvl=2;
-              removed = list[init[turn][0]][7].splice(list[init[turn][0]][7].indexOf("ROLLOUT1"),1);
-              list[init[turn][0]][7].push("ROLLOUT2")
-            }else if(list[init[turn][0]][7].includes("ROLLOUT2")){
+              removed = attUnit[STATUS].splice(attUnit[STATUS].indexOf("ROLLOUT1"),1);
+              attUnit[STATUS].push("ROLLOUT2")
+            }else if(attUnit[STATUS].includes("ROLLOUT2")){
               dmgLvl=3;
             }else{
-              list[init[turn][0]][7].push("ROLLOUT1");
+              attUnit[STATUS].push("ROLLOUT1");
             }
             break;
             case "SCALEDMG":
