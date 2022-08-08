@@ -1045,15 +1045,16 @@ exports.underRally = function(client, local) {
 
     if(client.traitcall.traitCheck(client,list[target][1],"BLOOD")[0]){
       if(!Math.floor(Math.random()*12)&&active.length>2){
-          let bloodCheck = false;
-          while(!bloodCheck){
-            let newTarget = active[Math.floor(Math.random()*active.length)];
-            if(newTarget!=target&&newTarget!=init[turn][0]){
-              target = newTarget;
-              bloodCheck=true;
-
-            }
-          }
+		// Subtract two from the length to account for the attacker and the target.
+		// Then, if the number is greater than or equal to either, shift it up.
+		// This way, we effectively ignore the attacker and the original defender, without needing to reroll.
+        let newTarget = active[Math.floor(Math.random()*(active.length-2))];
+        if(newTarget>=target && newTarget>=init[turn][0]){
+          target += 2;
+        }
+		else if (newTarget>=target || newTarget>=init[turn][0]){
+		  target += 1;
+		}
         alert+=`The target was changed!\n`;
       }
     }
