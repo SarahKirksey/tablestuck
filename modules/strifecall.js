@@ -1279,36 +1279,30 @@ else {
         let removed;
 
         //check for COMBATATIVE tags
-        switch(list[init[turn][0]][7][precon]){
-          case "ALLFAV":
-            fav++;
-            break;
+        switch(attUnit[STATUS][precon]){
           case "CORRUPT":
-            fav--;
-            break;
+          case "GRAPPLE":
             case "HAUNT":
             case "HAUNT2":
             case "HAUNT3":
               fav--;
               break;
-          case "NEXTFAV":
-            if(att == true){
+
+            case "NEXTFAV":
+              removed = attUnit[STATUS].splice(precon,1);
+            // fallthrough
+            case "ALLFAV":
               fav++;
-              removed = list[init[turn][0]][7].splice(precon,1);
-            }
-            break;
-            case "ALLBD":
-              bd++
               break;
-              case "NEXTBD":
-                bd++
-                removed = list[init[turn][0]][7].splice(precon,1);
-                break;
-          case "GRAPPLE":
-            fav--;
+
+          case "NEXTBD":
+            removed = attUnit[STATUS].splice(precon,1);
+            // fallthrough
+          case "ALLBD":
+            bd++
             break;
+          }
         }
-      }
 
 
 
