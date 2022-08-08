@@ -20,7 +20,7 @@ if(client.configcall.get(client, message, "death")==0){
 
   if(client.funcall.dmcheck(client,message)){
 	let pinged = message.mentions.members.first();
-    if(!args[0]&&!pinged){
+    if(!args[0]&&!pinged&&client.configcall.get(client, message, "IMMORTAL")!=1){
       message.channel.send(`If you are using this command as a player, do "${client.auth.prefix}revive override". If you're using this as a Author/DM judging a Godtier's fate, ping them to bring them back. Otherwise, let them lay.`);
       return;
     }
