@@ -90,7 +90,6 @@ if(client.charcall.charData(client,charid,"pos")!=init[turn][0]){
 
   let active = client.strifeMap.get(strifeLocal,"active");
 
-
   let msg;
 
    msg = `${client.charcall.charData(client,list[init[turn][0]][1],"name")} passes their turn!`;
@@ -697,7 +696,7 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
 
     } else if(endurance[0]){
 
-      stamroll = [Math.floor((Math.random() * (stamMax-stamMax/4)) + Math.floor(stamMax/4)+1),Math.floor((Math.random() * (stamMax-stamMax/4)) + Math.floor(stamMax/4)+1)];
+      stamroll = [Math.floor((Math.random() * (stamMax-stamMax/4)) + Math.floor(stamMax/4)+1), Math.floor((Math.random() * (stamMax-stamMax/4)) + Math.floor(stamMax/4)+1)];
 
     } else {
 
@@ -999,7 +998,7 @@ exports.underRally = function(client, local) {
     const HEALTH = 3;
     const STAMIN = 5;
     const STATUS = 7;
-      
+
     let strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
     //if strife database does not exist, cancel code
     if(!client.strifeMap.has(strifeLocal)){
@@ -1083,7 +1082,8 @@ grist = client.gristTypes[client.codeCypher[1][client.captchaCode.indexOf(specib
 dmg = tierDmg[specibus[equip][2]];
 bdroll = tierBD[specibus[equip][2]];
 
-} else {
+}
+else {
   let underling = client.charcall.charData(client,list[init[turn][0]][1],"type");
   dmg = client.underlings[underling].d;
   bdroll = client.underlings[underling].bd;
@@ -1094,7 +1094,7 @@ bdroll = tierBD[specibus[equip][2]];
 
   let attUnit = list[init[turn][0]];
   let targUnit = list[target];
-  
+
   attName = client.charcall.charData(client,attUnit[1],"name");
   targName = client.charcall.charData(client,targUnit[1],"name");
 
@@ -1145,7 +1145,7 @@ bdroll = tierBD[specibus[equip][2]];
       br += (attackEfficacy * -1);
       effective="INEFFECTIVE!";
     }
-    
+
     if(client.traitcall.traitCheck(client,attUnit[1],"NOIR")[0]){
       strikeBonus += Math.ceil(Math.random()*4);
     }
@@ -1178,7 +1178,7 @@ bdroll = tierBD[specibus[equip][2]];
         case "UNFAV":
           fav--;
           break;
-    
+
         case "CARRY":
         case "ALLBD":
         case "ALLFAV":
@@ -1226,7 +1226,7 @@ bdroll = tierBD[specibus[equip][2]];
           attUnit[STATUS]=[];
           break;
         case "STATUSDROP":
-    
+
           removed = attUnit[STATUS].splice(Math.floor(Math.random()*attUnit[STATUS].length),1);
           alert+=`REMOVED THE ${removed} STATUS EFFECT\n`;
 
@@ -1254,11 +1254,8 @@ bdroll = tierBD[specibus[equip][2]];
       }
     }
 
-    //
-    //if action deals damage or imposes effect
-
     let costMsg = `${client.actionList[action].cst}`;
-     
+
     if(attUnit[STATUS].includes("DISCOUNT")){
       if(client.actionList[action].cst>1){
       alert += `ACTIONS DISCOUNTED THIS TURN\n`;
@@ -1272,7 +1269,11 @@ bdroll = tierBD[specibus[equip][2]];
         costMsg += ` - 1`;
       }
     }
-    if(att == true) {
+
+
+    //
+    //if action deals damage or imposes effect (on the target)
+  if(att == true) {
       let precon;
       for(precon=(attUnit[STATUS].length - 1);precon>=0;precon--){
         let removed;
@@ -1324,19 +1325,19 @@ bdroll = tierBD[specibus[equip][2]];
             case "TARGFAV":
               fav++
             break;
-    
+
             case "ALLUNFAV":
             case "PROTECT":
               fav--;
               break;
-    
+
             case "AV":
               av++;
               break;
           }
 
 }
-    
+
 if(client.traitcall.traitCheck(client,attUnit[1],"BROKEN")[0]){
   fav--;
 }
@@ -1870,37 +1871,37 @@ if(aa.includes("RANDSTATUS")){
     if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"DOOM")[1]&&strikeCheck==20){
 
 
-        alert+= `**MORTAL DECAY** YOUR DAMAGE SPREADS TO ALL FOES.\n`;
-        for(let id=0;id<active.length;id++){
-          if(active[id]!=init[turn][0]&&active[id]!=target){
-            list[id][3]-= damage;
-            if(list[id][3] < 1 && client.traitcall.traitCheck(client,list[id][1],"CAT")[1] && !list[id][7].includes("NINELIVES")) {
-              list[id][3] = 1;
-              alert += `ONE TARGET USED ITS LAST OF 9 LIVES, SURVIVED AT 1 HP!\n`;
-              list[id][7].push("NINELIVES");
+          alert+= `**MORTAL DECAY** YOUR DAMAGE SPREADS TO ALL FOES.\n`;
+          for(let id=0;id<active.length;id++){
+            if(active[id]!=init[turn][0]&&active[id]!=target){
+              list[id][HEALTH]-= damage;
+              if(list[id][HEALTH] < 1 && client.traitcall.traitCheck(client,list[id][1],"CAT")[1] && !list[id][STATUS].includes("NINELIVES")) {
+                list[id][HEALTH] = 1;
+                alert += `ONE TARGET USED ITS LAST OF 9 LIVES, SURVIVED AT 1 HP!\n`;
+                list[id][STATUS].push("NINELIVES");
+              }
             }
           }
         }
-      }
 
 
-    if(aa.includes("SPLASHBD")){
-      if(active.length>2){
-      let id;
-      let splashbd= Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0]);
-      alert+=`DEALT ${splashbd} DAMAGE TO ALL FOES.\n`
-      for(id=0;id<active.length;id++){
-        if(active[id]!=init[turn][0]&&active[id]!=target){
-          list[id][3]-= splashbd;
-          if(list[id][3] < 1 && client.traitcall.traitCheck(client,list[id][1],"CAT")[1] && !list[id][7].includes("NINELIVES")) {
-            list[id][3] = 1;
-            alert += `ONE TARGET USED ITS LAST OF 9 LIVES, SURVIVED AT 1 HP!\n`;
-            list[id][7].push("NINELIVES");
+        if(aa.includes("SPLASHBD")){
+          if(active.length>2){
+            let id;
+            let splashbd= Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0]);
+            alert+=`DEALT ${splashbd} DAMAGE TO ALL FOES.\n`
+            for(id=0;id<active.length;id++){
+              if(active[id]!=init[turn][0]&&active[id]!=target){
+                list[id][HEALTH]-= splashbd;
+                if(list[id][HEALTH] < 1 && client.traitcall.traitCheck(client,list[id][1],"CAT")[1] && !list[id][STATUS].includes("NINELIVES")) {
+                  list[id][HEALTH] = 1;
+                  alert += `ONE TARGET USED ITS LAST OF 9 LIVES, SURVIVED AT 1 HP!\n`;
+                  list[id][STATUS].push("NINELIVES");
+                }
+              }
+            }
           }
         }
-      }
-    }
-  }
 
     if(list[target][7].includes("BLOCK")){
       alert+= `TARGET BLOCKED ALL DAMAGE!\n`;
@@ -1940,49 +1941,35 @@ if(aa.includes("RANDSTATUS")){
       alert +=`ATTACKER HEALS FOR ${healdif} VITALITY!\n`
     }
 
-
-if(client.traitcall.traitCheck(client,list[target][1],"THORNS")[1]){
-  let thornDmg = Math.floor((Math.random() * (brroll[1] - 1)) + brroll[0]);
-  list[init[turn][0]][3]-= thornDmg;
-  alert += `TOOK ${thornDmg} DAMAGE FROM TARGET THORNS!\n`;
-
-}
-
-
-if(list[target][3] < 1 && client.traitcall.traitCheck(client,list[target][1],"CAT")[1] && !list[target][7].includes("NINELIVES")) {
-  list[target][3] = 1;
-  alert += `THE TARGET USED ITS LAST OF 9 LIVES, SURVIVED AT 1 HP!\n`;
-  list[target][7].push("NINELIVES");
-
-}
-
-let bounceChance=12;
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BOUNCY")[1]){
-  bounceChance=6;
-}
-
-
-
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BOUNCY")[0]&&!Math.floor((Math.random() * bounceChance))){
-  bounceCheck=true;
-  alert+=`BOUNCY!!! IF TARGET IS STILL ALIVE, ATTACKING AGAIN!\n`;
-}
-
-
-
-
-
-    //if(list[target][3] < 1){
-      //kill(client,message,local,target,turn);
-    //}
-
-    client.strifeMap.set(strifeLocal,last,"last");
-
-    if(alert.length==0){
-      alert=`NONE`;
+    if(client.traitcall.traitCheck(client,targUnit[1],"THORNS")[1]){
+      let thornDmg = Math.floor((Math.random() * (brroll[1] - 1)) + brroll[0]);
+      attUnit[HEALTH]-= thornDmg;
+      alert += `TOOK ${thornDmg} DAMAGE FROM TARGET THORNS!\n`;
     }
-    let embed = new client.MessageEmbed()
-    .setTitle(`${attName.toUpperCase()} ${client.actionList[action].name}S ${targName.toUpperCase()}!`)
+
+        if(targUnit[HEALTH] < 1 && client.traitcall.traitCheck(client,targUnit[1],"CAT")[1] && !targUnit[STATUS].includes("NINELIVES")) {
+          targUnit[HEALTH] = 1;
+          alert += `THE TARGET USED ITS LAST OF 9 LIVES, SURVIVED AT 1 HP!\n`;
+          targUnit[STATUS].push("NINELIVES")
+        }
+
+        let bounceChance=12;
+        if(client.traitcall.traitCheck(client,attUnit[1],"BOUNCY")[1]){
+          bounceChance=6;
+        }
+
+        if(client.traitcall.traitCheck(client,attUnit[1],"BOUNCY")[0]&&!Math.floor((Math.random() * bounceChance))){
+          bounceCheck=true;
+          alert+=`BOUNCY!!! IF TARGET IS STILL ALIVE, ATTACKING AGAIN!\n`;
+        }
+
+        client.strifeMap.set(strifeLocal,last,"last");
+
+        if(alert.length==0){
+          alert=`NONE`;
+        }
+        let embed = new client.MessageEmbed()
+        .setTitle(`${attName.toUpperCase()} ${client.actionList[action].name}S ${targName.toUpperCase()}!`)
     .addFields(
       {name:'CST',value:costMsg,inline:true},
       {name:'DMG',value:`${(dmg * dmgLvl)}`,inline:true},
@@ -1993,46 +1980,46 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BOUNCY")[0]&&!Math
       {name:"DAMAGE",value:damagemsg,inline:true},
       {name:"ADDITIONAL ALERTS",value:alert}
     )
-    .setColor(client.actionList[action].col)
-    .setImage(client.actionList[action].img);
+        .setColor(client.actionList[action].col)
+        .setImage(client.actionList[action].img);
 
-    for(i=0;i<active.length;i++){
-      if(client.charcall.controlCheck(client,list[active[i]][0])){
-        client.funcall.chanMsg(client,list[active[i]][1],"NONE",embed);
-      }
-    }
-
-  } else {
-
-    //if attack misses
-
-    if(aa.includes("REFUND")){
-
-      let hopeStam = client.actionList[action].cst;
-      alert+=`ACTION IS FREE!\n`;
-
-      if(list[init[turn][0]][7].includes("DISCOUNT")){
-        if(client.actionList[action].cst>1){
-        hopeStam--;
-         }
-       }
-     //closing here
-      if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"MIND")[1]){
-        if(client.actionList[action].cst > 1){
-          hopeStam--;
+        for(i=0;i<active.length;i++){
+          if(client.charcall.controlCheck(client,list[active[i]][0])){
+            client.funcall.chanMsg(client,list[active[i]][1],"NONE",embed);
+          }
         }
-      }
-
-      list[init[turn][0]][5]+=hopeStam;
 
     }
+    else
+    {
+        //if attack misses
 
-    if(alert.length==0){
-      alert=`NONE`;
-    }
+        if(aa.includes("REFUND")){
 
-    let embed = new client.MessageEmbed()
-    .setTitle(`${attName.toUpperCase()} ${client.actionList[action].name}S ${targName.toUpperCase()}!`)
+          let hopeStam = client.actionList[action].cst;
+          alert+=`ACTION IS FREE!\n`;
+
+          if(attUnit[STATUS].includes("DISCOUNT")){
+            if(client.actionList[action].cst>1){
+              hopeStam--;
+            }
+          }
+          //closing here
+          if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
+            if(client.actionList[action].cst > 1){
+              hopeStam--;
+            }
+          }
+
+          attUnit[STAMIN]+=hopeStam;
+        }
+
+        if(alert.length==0){
+          alert=`NONE`;
+        }
+
+        let embed = new client.MessageEmbed()
+        .setTitle(`${attName.toUpperCase()} ${client.actionList[action].name}S ${targName.toUpperCase()}!`)
     .addFields(
       {name:'CST',value:costMsg,inline:true},
       {name:'DMG',value:`${(dmg * dmgLvl)}`,inline:true},
@@ -2044,12 +2031,14 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BOUNCY")[0]&&!Math
     )
     .setColor(client.actionList[action].col)
     .setImage(client.actionList[action].img);
+
     for(i=0;i<active.length;i++){
         client.funcall.chanMsg(client,list[active[i]][1],"NONE",embed);
     }
   }
 
-} else {
+}
+else {
     //if att is false
 
     if(alert.length==0){
@@ -2079,6 +2068,7 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BOUNCY")[0]&&!Math
   if(targUnit[STATUS].includes("DOUBLEGRIST")&&targUnit[HEALTH]>0){
     removed = targUnit[STATUS].splice(targUnit[STATUS].indexOf("DOUBLEGRIST"));
   }
+
 try{
 for(let ik=0;ik<active.length;ik++){
 if(list[active[ik]][3] < 1){
