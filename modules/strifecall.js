@@ -685,15 +685,15 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
 }
 
     let endurance = client.traitcall.traitCheck(client,list[init[turn][0]][1],"ENDURING");
-	
-	// Stamina value that are currently used are 4, 6, 8, 10, and 12.
-	//        Normal     Enduring[0]     Enduring[1]
-	//  4     1d4        1d3 + 1         1d2 + 2
-	//  6     1d6        1d4.5 + 1       1d3 + 3     // 1d4.5 is basically (1d9)/2, round up.
-	//  8     1d8        1d6 + 2         1d4 + 4
-	//  10    1d10       1d7.5 + 2       1d5 + 5     // 1d7.5 is basically (1d15)/2, round up.
-	//  12    1d12       1d9 + 3         1d6 + 6
-	//
+
+    // Stamina value that are currently used are 4, 6, 8, 10, and 12.
+    //        Normal     Enduring[0]     Enduring[1]
+    //  4     1d4        1d3 + 1         1d2 + 2
+    //  6     1d6        1d4.5 + 1       1d3 + 3     // 1d4.5 is basically (1d9)/2, round up.
+    //  8     1d8        1d6 + 2         1d4 + 4
+    //  10    1d10       1d7.5 + 2       1d5 + 5     // 1d7.5 is basically (1d15)/2, round up.
+    //  12    1d12       1d9 + 3         1d6 + 6
+    //
     if(endurance[1]){
 
       stamroll = [Math.floor((Math.random() * stamMax/2) + Math.floor(stamMax/2)+1),Math.floor((Math.random() * stamMax/2) + Math.floor(stamMax/2)+1)];
@@ -1598,22 +1598,22 @@ if(aa.includes("RANDSTATUS")){
 
 }
 
-    //check for all COMBATATIVE COMBAT TAGS
-    //check target status effects
+        //check for all COMBATATIVE COMBAT TAGS
+        //check target status effects
 
-    let postcon;
-    for(postcon=(targUnit[STATUS].length-1);postcon>=0;postcon--){
+        let postcon;
+        for(postcon=(targUnit[STATUS].length-1);postcon>=0;postcon--){
 
-      switch(targUnit[STATUS][postcon]){
-        case "BURN":
-          bd++;
-          if(client.traitcall.traitCheck(client,attUnit[1],"HOT")[1]){
-            bd++;
+          switch(targUnit[STATUS][postcon]){
+            case "BURN":
+              bd++;
+              if(client.traitcall.traitCheck(client,attUnit[1],"HOT")[1]){
+                bd++;
+              }
+              break;
+            case "BLEED":
+              bd++;
           }
-          break;
-        case "BLEED":
-          bd++;
-      }
 
     }
 
@@ -1655,13 +1655,13 @@ if(aa.includes("RANDSTATUS")){
 
 
 
-      }
-    }
 
-    //if check passed, calculate all bonus damage
+          }
+        }
 
     let bonusDmg = 0;
     let bonusRes = 0;
+        //if check passed, calculate all bonus damage
 
     let k;
     for(k=0;k<attUnit[STATUS].length;k++){
@@ -1721,14 +1721,14 @@ if(aa.includes("RANDSTATUS")){
       }
       bonusDmg += bdadd;
 
-    }
-    if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[1]){
-      alert += `TARGET IS TOO CUTE, THEY TOOK REDUCED BD!\n`
-    }
-    if(client.traitcall.traitCheck(client,targUnit[1],"REFINED")[1]){
-      alert += `TARGET IS REFINED, THEY TOOK REDUCED BD!\n`
-    }
-  }
+          }
+          if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[1]){
+            alert += `TARGET IS TOO CUTE, THEY TOOK REDUCED BD!\n`
+          }
+          if(client.traitcall.traitCheck(client,targUnit[1],"REFINED")[1]){
+            alert += `TARGET IS REFINED, THEY TOOK REDUCED BD!\n`
+          }
+        }
 
     if(br>0){
       equals=true;
@@ -1746,15 +1746,15 @@ if(aa.includes("RANDSTATUS")){
       }
     }
 
-  let damage = ((dmg * dmgLvl) + bonusDmg) - bonusRes;
+        let damage = ((dmg * dmgLvl) + bonusDmg) - bonusRes;
 
-    if(client.traitcall.traitCheck(client,targUnit[1],"SPOOKY")[1]&&(attUnit[STATUS].includes("HAUNT2")||attUnit[STATUS].includes("HAUNT")||attUnit[STATUS].includes("HAUNT3"))){
-      equals=true;
-      damage=Math.floor(damage/2);
-      damagemsg = `(`+damagemsg+`)`;
-      paren = true;
-      damagemsg +=` / 2`;
-    }
+        if(client.traitcall.traitCheck(client,targUnit[1],"SPOOKY")[1]&&(attUnit[STATUS].includes("HAUNT2")||attUnit[STATUS].includes("HAUNT")||attUnit[STATUS].includes("HAUNT3"))){
+          equals=true;
+          damage=Math.floor(damage/2);
+          damagemsg = `(`+damagemsg+`)`;
+          paren = true;
+          damagemsg +=` / 2`;
+        }
 
     if(strikeCheck == 20){
       if(effective=="HIT!"){
@@ -1773,23 +1773,23 @@ if(aa.includes("RANDSTATUS")){
           hopeStam--;
            }
          }
-       //closing here
-        if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
-          if(client.actionList[action].cst > 1){
-            hopeStam--;
+           //closing here
+            if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
+              if(client.actionList[action].cst > 1){
+                hopeStam--;
+              }
+            }
+
+            if(client.traitcall.traitCheck(client,attUnit[1],"HOPE")[1]){
+              alert+=`**BURNING SPIRIT** - GOT ${hopeStam} STAMINA!\n`
+              hopeStam*=2;
+            }
+
+            attUnit[STAMIN]+=hopeStam;
+
           }
-        }
 
-        if(client.traitcall.traitCheck(client,attUnit[1],"HOPE")[1]){
-          alert+=`**BURNING SPIRIT** - GOT ${hopeStam} STAMINA!\n`
-          hopeStam*=2;
-        }
-
-        attUnit[STAMIN]+=hopeStam;
-
-      }
-
-      equals=true;
+          equals=true;
 
       // Noir crit
       if(client.traitcall.traitCheck(client,attUnit[1],"NOIR")[1]){
@@ -1858,7 +1858,7 @@ if(aa.includes("RANDSTATUS")){
 
     }
 
-    if(client.traitcall.traitCheck(client,attUnit[1],"DOOM")[1]&&strikeCheck==20){
+       if(client.traitcall.traitCheck(client,attUnit[1],"DOOM")[1]&&strikeCheck==20){
 
 
           alert+= `**MORTAL DECAY** YOUR DAMAGE SPREADS TO ALL FOES.\n`;
@@ -1893,16 +1893,16 @@ if(aa.includes("RANDSTATUS")){
           }
         }
 
-    if(targUnit[STATUS].includes("BLOCK")){
-      alert+= `TARGET BLOCKED ALL DAMAGE!\n`;
-      damage=0;
-      let dc;
-      for(dc=(targUnit[STATUS].length - 1);dc>=0;dc--){
-        if(targUnit[STATUS][dc]=="BLOCK"){
-          removed = targUnit[STATUS].splice(dc,1);
+        if(targUnit[STATUS].includes("BLOCK")){
+          alert+= `TARGET BLOCKED ALL DAMAGE!\n`;
+          damage=0;
+          let dc;
+          for(dc=(targUnit[STATUS].length - 1);dc>=0;dc--){
+            if(targUnit[STATUS][dc]=="BLOCK"){
+              removed = targUnit[STATUS].splice(dc,1);
+              }
           }
-      }
-    }
+        }
 
     if(targUnit[STATUS].includes("DEFLECT")){
 
