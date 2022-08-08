@@ -1567,10 +1567,11 @@ if(client.traitcall.traitCheck(client,attUnit[1],"BROKEN")[1]){
           }
         }
 
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"CHARLATAN")[1]){
-  let rageList = ["BURN","GRAPPLE","BLEED","FROSTBITE","DAZED","STUN","CORRUPT","HAUNT"];
-  if(list[target][7].includes("HAUNT")||list[target][7].includes("HAUNT2")||list[target][7].includes("HAUNT3")){
-    removed = rageList.splice(rageList.indexOf("HAUNT"),1);
+
+if(client.traitcall.traitCheck(client,attUnit[1],"CHARLATAN")[1]){
+  let rageList = ["HAUNT","BURN","GRAPPLE","BLEED","FROSTBITE","DAZED","STUN","CORRUPT"];
+  if(targUnit[STATUS].includes("HAUNT")||targUnit[STATUS].includes("HAUNT2")||targUnit[STATUS].includes("HAUNT3")){
+    removed = rageList.splice(0,1);
   }
 alert+=inflict(client, message, local, list, target, 6, rageList[Math.floor((Math.random() * rageList.length))], init[turn][0]);
 };
