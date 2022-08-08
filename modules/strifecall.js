@@ -1382,34 +1382,20 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
         }
       }
     }
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"LIGHT")[1]){
-      if(strikeRoll[0]<6){
+
+    if(client.traitcall.traitCheck(client,attUnit[1],"LIGHT")[1]){
+      for(let i=0; i<=1; i++)
+      {
+      if(strikeRoll[i]<6){
         alert+=`**BORN LUCKY** - Rerolled a roll less than 5\n`
-        let lightCheck=true;
-        while (lightCheck){
-          strikeRoll[0] = Math.floor((Math.random() * 20) + 1)
-          if(strikeRoll[0]>5){
-            lightCheck=false;
-          } else if(strikeRoll[0]==1){
-            strikeRoll[0]=20;
-            lightCheck=false;
+          // Roll 1d16+5 instead of 1d20. In the event of a 21, set it to 20 and pretend it was a 1.
+          // This way, no further re-rolls are actually required.
+          strikeRoll[i] = Math.floor((Math.random() * 16) + 6);
+          if(strikeRoll[i]==21){
+            strikeRoll[i]=20;
             alert+=`TURNED A 1 INTO A 20!\n`
           }
-        }
       }
-      if(strikeRoll[1]<6&&fav!=0){
-        alert+=`**BORN LUCKY** - Rerolled a roll less than 5\n`
-        let lightCheck=true;
-        while (lightCheck){
-          strikeRoll[1] = Math.floor((Math.random() * 20) + 1)
-          if(strikeRoll[1]>5){
-            lightCheck=false;
-          } else if(strikeRoll[1]==1){
-            strikeRoll[1]=20;
-            lightCheck=false;
-            alert+=`TURNED A 1 INTO A 20!\n`
-          }
-        }
       }
     }
 
