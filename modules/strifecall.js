@@ -65,7 +65,7 @@ function passTurn(client, charid, message, local) {
   let list = client.strifeMap.get(strifeLocal,"list");
   let init = client.strifeMap.get(strifeLocal,"init");
   //quick catch to ignore any pass if it's not the creature's turn, if it passes other similar checks.
-  console.log(`The passing creature is ${charid}.\n it's ${list[init[turn][0]][1]}'s turn right now.'`)
+  //console.log(`The passing creature is ${charid}.\n it's ${list[init[turn][0]][1]}'s turn right now.'`)
 if(client.charcall.charData(client,charid,"pos")!=init[turn][0]){
     console.log("stopped a pass from a creature out of turn!");
     return;
