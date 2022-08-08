@@ -908,13 +908,13 @@ switch (local[0]){
   underlingChoice = ["basilisk","lich","giclopse"];
   break;
   case "s3d":
-  underlingChoice = ["ogre","basilisk"];
+  underlingChoice = ["basilisk","lich"];
   break;
   case "s4":
   underlingChoice = ["lich","giclopse","titachnid"];
   break;
   case "s4d":
-  underlingChoice = ["ogre","basilisk"];
+  underlingChoice = ["lich"];
   break;
 }
 if(rung < 5){
