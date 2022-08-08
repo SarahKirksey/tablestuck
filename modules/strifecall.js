@@ -1620,28 +1620,20 @@ if(aa.includes("RANDSTATUS")){
           bd++;
           break;
         case "TARGFAV":
-        alert+=inflict(client, message, local, list, target, 1, "TARGFAV", init[turn][0]);
-          break;
         case "GRAPPLE":
-        alert+=inflict(client, message, local, list, target, 1, "GRAPPLE", init[turn][0]);
-          break;
         case "BURN":
-        alert+=inflict(client, message, local, list, target, 1, "BURN", init[turn][0]);
-          break;
         case "FROSTBITE":
-        alert+=inflict(client, message, local, list, target, 1, "FROSTBITE", init[turn][0]);
-          break;
         case "STUN":
-        alert+=inflict(client, message, local, list, target, 1, "STUN", init[turn][0]);
+        alert+=inflict(client, message, local, list, target, 1, aa[post], init[turn][0]);
           break;
         case "STUNCHANCE":
         alert+=inflict(client, message, local, list, target, 4, "STUN", init[turn][0]);
           break;
         case "BDSELFSTATUS":
-          bd+=list[init[turn][0]][7].length;
+          bd+=attUnit[STATUS].length;
           break;
         case "BDTARGSTATUS":
-          bd+=list[target][7].length;
+          bd+=targUnit[STATUS].length;
           break;
         case "DAZED":
         alert+=inflict(client, message, local, list, target, 1, "DAZED", init[turn][0]);
@@ -1650,11 +1642,11 @@ if(aa.includes("RANDSTATUS")){
           absorb = true;
           break;
         case "DOUBLEGRIST":
-          list[target][7].push("DOUBLEGRIST");
+          targUnit[STATUS].push("DOUBLEGRIST");
           break;
 
-          case  "CORRUPTING":
-          list[target][7].push("CORRUPT");
+        case "CORRUPTING":
+          targUnit[STATUS].push("CORRUPT");
           break;
 
 
