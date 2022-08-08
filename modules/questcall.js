@@ -55,6 +55,9 @@ exports.stepQuest = function(client,userid,charid,type){
   }
 client.charcall.setAnyData(client,userid,charid,questProgress,"questProgress");
 }
+
+const underlingTypes = ["imp","ogre","basilisk","lich","giclopse","titachnid"];
+
 exports.createQuest = function(client,name,questid,local,type){
   let questData =
   {
@@ -69,34 +72,33 @@ exports.createQuest = function(client,name,questid,local,type){
 }
   switch (type){
     case "kill":
-    let choice = Math.floor(Math.random()*3);
-    let count = Math.ceil(Math.random()*4)+4;
-    let underData = [
-      ["Imps","little gremlins",10],
-      ["Ogres","huge beasts",50],
-      ["Basilisks","big lizards",100],
-      ["Liches","large skullheads",300],
-      ["Giclopses","ginormous one-eyed things",600],
-      ["Titachnids","terrifying abominations",1500]
-      ]
+      let dataIndex = Math.floor(Math.random()*3);
+      let count = Math.ceil(Math.random()*4)+4;
+      let underData = [
+        ["Imps","little gremlins",10],
+        ["Ogres","huge beasts",50],
+        ["Basilisks","big lizards",100],
+        ["Liches","large skullheads",300],
+        ["Giclopes","ginormous one-eyed things",600],
+        ["Titachnids","terrifying abominations",1500]
+      ];
       switch(local[0]){
-        case "s1":
-        underlingChoice = ["imp","ogre","basilisk"];
-        break;
-        case "s2":
-        underlingChoice = ["ogre","basilisk","lich"];
-        case "s3":
-        underlingChoice = ["basilisk","lich","giclopse"];
-        break;
         case "s4":
-        underlingChoice = ["lich","giclopse","titachnid"];
-        break;
+		  dataIndex+=3;
+		  break;
+        case "s3":
+		  dataIndex += 2;
+		  break;
+		case "s2":
+		  dataIndex++;
+		  break;
+        case "s1":
+		  break;
         default:
-        underlingChoice = ["imp","imp","imp"];
-        break;
+          dataIndex = 0;
+          break;
       }
       let underlingRef = ["imp","ogre","basilisk","lich","giclopse","titachnid"];
-      let dataIndex = underlingRef.indexOf(underlingChoice[choice]);
       questData.title = `Kill ${count} ${underData[dataIndex][0]}`;
       questData.desc =  [
                         `${name} asked you to protect their village from ${underData[dataIndex][0]}.`,
@@ -107,8 +109,8 @@ exports.createQuest = function(client,name,questid,local,type){
                             `Thank you! Have these candies I found!`
                             ];
       questData.goal = count;
-      questData.type=`kill${underlingChoice[choice]}`;
-      questData.boon=Math.floor(underData[dataIndex][2]*count+underData[dataIndex][2]*Math.random().toFixed(2));
+      questData.type=`kill${underlingRef[dataIndex]}`;
+      questData.boon=Math.floor(underData[dataIndex][2]*count + underData[dataIndex][2] * Math.random().toFixed(2));
     break;
   }
 
