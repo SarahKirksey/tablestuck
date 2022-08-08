@@ -337,7 +337,7 @@ exports.run = (client, message, args) => {
         }
 		
 		let amount = sdex[selectDex][3];
-		if(client.configcall.get(client, message, "DOUBLE_RAINBOW") && client.traitcall.traitCheck(client,charid,"META")[1])
+		if((client.configcall.get(client, message, "DOUBLE_RAINBOW") === "true") && client.traitcall.traitCheck(client,charid,"META")[1])
 		{
 			amount *= 2;
 		}
