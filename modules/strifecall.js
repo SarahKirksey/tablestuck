@@ -1615,44 +1615,43 @@ if(aa.includes("RANDSTATUS")){
               bd++;
           }
 
-    }
+        }
 
-    let post;
-    for(post=0;post<aa.length;post++){
-      switch(aa[post]){
-        case "BD":
-          bd++;
-          break;
-        case "TARGFAV":
-        case "GRAPPLE":
-        case "BURN":
-        case "FROSTBITE":
-        case "STUN":
-        alert+=inflict(client, message, local, list, target, 1, aa[post], init[turn][0]);
-          break;
-        case "STUNCHANCE":
-        alert+=inflict(client, message, local, list, target, 4, "STUN", init[turn][0]);
-          break;
-        case "BDSELFSTATUS":
-          bd+=attUnit[STATUS].length;
-          break;
-        case "BDTARGSTATUS":
-          bd+=targUnit[STATUS].length;
-          break;
-        case "DAZED":
-        alert+=inflict(client, message, local, list, target, 1, "DAZED", init[turn][0]);
-          break;
-        case "ABSORB":
-          absorb = true;
-          break;
-        case "DOUBLEGRIST":
-          targUnit[STATUS].push("DOUBLEGRIST");
-          break;
+        let post;
+        for(post=0;post<aa.length;post++){
+          switch(aa[post]){
+            case "BD":
+              bd++;
+              break;
+            case "TARGFAV":
+            case "GRAPPLE":
+            case "BURN":
+            case "FROSTBITE":
+            case "STUN":
+            alert+=inflict(client, message, local, list, target, 1, aa[post], init[turn][0]);
+              break;
+            case "STUNCHANCE":
+            alert+=inflict(client, message, local, list, target, 4, "STUN", init[turn][0]);
+              break;
+            case "BDSELFSTATUS":
+              bd+=attUnit[STATUS].length;
+              break;
+            case "BDTARGSTATUS":
+              bd+=targUnit[STATUS].length;
+              break;
+            case "DAZED":
+            alert+=inflict(client, message, local, list, target, 1, "DAZED", init[turn][0]);
+              break;
+            case "ABSORB":
+              absorb = true;
+              break;
+            case "DOUBLEGRIST":
+              targUnit[STATUS].push("DOUBLEGRIST");
+              break;
 
-        case "CORRUPTING":
-          targUnit[STATUS].push("CORRUPT");
-          break;
-
+            case "CORRUPTING":
+              targUnit[STATUS].push("CORRUPT");
+              break;
 
 
 
