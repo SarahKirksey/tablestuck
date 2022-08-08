@@ -1706,18 +1706,19 @@ if(aa.includes("RANDSTATUS")){
           bddice[1]= Math.floor(bddice[1]/2);
         }
 
-        let bdadd;
-        if(!client.traitcall.traitCheck(client,attUnit[1],"SHARP")[1]){
-          bdadd = bddice[0];
-          damagemsg+= ` + ${bdadd}`;
-        } else {
-          if (bddice[0]>bddice[1]){
-            damagemsg += ` + (~~${bddice[1]}~~ ${bddice[0]})`
-            bdadd = bddice[0];
-          } else{
-            damagemsg += ` + (~~${bddice[0]}~~ ${bddice[1]})`
-            bdadd = bddice[1];
           }
+            let bdadd;
+            if(!client.traitcall.traitCheck(client,attUnit[1],"SHARP")[1]){
+              bdadd = bddice[0];
+              damagemsg+= ` + ${bdadd}`;
+            } else {
+              if (bddice[0]>bddice[1]){
+                damagemsg += ` + (~~${bddice[1]}~~ ${bddice[0]})`
+                bdadd = bddice[0];
+              } else{
+                damagemsg += ` + (~~${bddice[0]}~~ ${bddice[1]})`
+                bdadd = bddice[1];
+              }
             }
             bonusDmg += bdadd;
 
