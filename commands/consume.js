@@ -11,7 +11,7 @@ exports.run = (client,message,args) =>{
 
   let dogCheck = client.traitcall.traitCheck(client,charid,"DOG");
 
-  let strifeCheck = client.charcall.charData(client,charid,"strife");
+  let strifeCheck = (client.charcall.charData(client,charid,"strife") == true);
 
   selectDex = parseInt(args[0], 10) - 1;
   if(isNaN(selectDex)){
@@ -40,13 +40,13 @@ exports.run = (client,message,args) =>{
     return;
   }
   
-  if((strifeCheck == false) && !heals)
+  if(!strifeCheck && !heals)
   {
     message.channel.send("You can't use that item outside of strife!");
     return;
   }
 
-  if(strifeCheck==true){
+  if(strifeCheck){
 
     pos = client.charcall.charData(client,charid,"pos");
     strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
@@ -100,7 +100,7 @@ if(strifeCheck){
     let vit;
     let gel = client.charcall.allData(client,userid,charid,"gel");
 
-    if(strifeCheck==true){
+    if(strifeCheck){
       vit = list[pos][3];
     } else {
       vit = client.charcall.charData(client,charid,"vit");
@@ -108,10 +108,10 @@ if(strifeCheck){
 	
 	if(vit >= gel)
 	{
-	  if(!buffs || (strifeCheck == false))
+	  if(!buffs || !strifeCheck)
 	  {
         message.channel.send("You're already at full health!");
-		if((strifeCheck==true) && list[pos][6].includes("CONSUME2")){
+		if(strifeCheck && list[pos][6].includes("CONSUME2")){
 		  list[pos][6].splice(list[pos][6].indexOf("CONSUME2"), 1);
 		}
         return;
