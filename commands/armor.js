@@ -67,7 +67,7 @@ exports.run = (client, message, args) => {
       .addFields(
         {name:`**ITEM INFORMATION**`,value:msg},
         {name:`**ITEM TRAITS**`,value:msg1},
-        {name:`**PROTECTION**`,value:`**AV -** ${tierAv[armor[0][2]]} **BR -** ${tierBD[armor[0][2]][0]}d${tierBD[armor[0][2]][1]}`}
+        {name:`**PROTECTION**`,value:`**AV -** ${tierAv[armor[0][2]]} **BR -** 1d${tierBD[armor[0][2]][1]} + ${tierBD[armor[0][2]][0] - 1}`}
       );
     }
     client.tutorcall.progressCheck(client,message,24,["embed",inspectItem]);
