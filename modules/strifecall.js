@@ -1415,7 +1415,7 @@ if(strikeBonus>0){
   strikeMsg += ` + ${strikeBonus} = ${strikeCheck+strikeBonus}`;
 }
 if(strikeBonus<0){
-  strikeMsg += ` - ${strikeBonus} = ${strikeCheck+strikeBonus}`;
+  strikeMsg += ` - ${strikeBonus * -1} = ${strikeCheck+strikeBonus}`;
 }
 
 
