@@ -1818,21 +1818,14 @@ if(aa.includes("RANDSTATUS")){
 
 
 
-    if(client.traitcall.traitCheck(client,list[target][1],"HEART")[0]){
+    if(client.traitcall.traitCheck(client,targUnit[1],"HEART")[0]){
       if(!Math.floor(Math.random()*20)){
-        list[target][3]+= damage;
+        targUnit[HEALTH]+= damage;
         alert+=`The pain fuels their soul, damage converted to ${damage} points of healing!\n`;
         damage=0;
-        if(list[target][0]){
-          if(client.charcall.allData(client,"-",list[target][1],"gel")<list[target][3]){
-          list[target][3]=client.charcall.allData(client,"-",list[target][1],"gel");
+        if(targUnitGel<targUnit[HEALTH]){
+          targUnit[HEALTH]=targUnitGel;
         }
-      } else {
-        if(client.underlings[client.charcall.charData(client,list[init[turn][0]][1],"type")].vit<list[target][3]){
-          list[target][3]=client.underlings[client.charcall.charData(client,list[init[turn][0]][1],"type")].vit;
-        }
-      }
-
       }
     }
 
