@@ -1659,8 +1659,6 @@ if(aa.includes("RANDSTATUS")){
           }
         }
 
-    let bonusDmg = 0;
-    let bonusRes = 0;
         //if check passed, calculate all bonus damage
 
     let k;
@@ -1686,6 +1684,8 @@ if(aa.includes("RANDSTATUS")){
     }
   }
 
+        let bonusDmg = 0;
+        let bonusRes = 0;
 
   let damagemsg = `${dmg * dmgLvl}`;
   let equals = false;
