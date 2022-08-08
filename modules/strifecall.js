@@ -2348,7 +2348,16 @@ function getCharHealth(client, userid, charid){
 
     let gelDiff = 0;
 
-    if(gel != "NONE"){
+    if(gel == "NONE"){
+		//try{
+			gel = client.underlings[client.charcall.charData(client,charid,"type")].vit;
+		//}
+		//catch (e){
+			
+		//}
+	}
+	
+    if(gel != undefined){
         let plushness = client.traitcall.traitCheck(client,charid,"PLUSH");
         if(plushness[0] == true){
             let rung = client.charcall.allData(client,userid,charid,"rung");
@@ -2357,6 +2366,11 @@ function getCharHealth(client, userid, charid){
                 vit += gelDiff;
                 gel += gelDiff;
             }
+			else{
+				gelDiff = Math.floor(gel / 4);
+                vit += gelDiff;
+                gel += gelDiff;
+			}
         }
     }
 
