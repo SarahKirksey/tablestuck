@@ -1660,52 +1660,51 @@ if(aa.includes("RANDSTATUS")){
 
         //if check passed, calculate all bonus damage
 
-    let k;
-    for(k=0;k<attUnit[STATUS].length;k++){
-    try{
-      if(`${attUnit[STATUS][k].substring(0,4)}`==`MEAT`){
-        let meat = attUnit[STATUS].splice(k,1);
-        meat = meat[0].substring(4);
-
-        meatVal = parseInt(meat, 10);
-        if(isNaN(meatVal)){
-          console.log(`${meat} looked like a meat status, but it wasn't. Putting it back....`);
-          attUnit[STATUS].splice(k, 0, meat);
-          continue;
-        }
-        else{
-          bd+=meatVal;
-        }
-      }
-
-    } catch(err) {
-      console.log(err);
-    }
-  }
-
         let bonusDmg = 0;
         let bonusRes = 0;
 
-  let damagemsg = `${dmg * dmgLvl}`;
-  let equals = false;
-  let paren = false;
-    if(bd>0){
-      equals=true;
-      if(client.traitcall.traitCheck(client,attUnit[1],"MEAT")[1]){
-        bd++;
-      }
-      let i;
-      for(i=0;i<bd;i++){
-        let bddice =[Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0]),Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0])];
-        if (bdmax){
-          bddice = [bdroll[1],bdroll[1]];
-        }
-        if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[1]||client.traitcall.traitCheck(client,targUnit[1],"REFINED")[1]){
-          bddice[0]= Math.floor(bddice[0]/2);
-          bddice[1]= Math.floor(bddice[1]/2);
+        let k;
+        for(k=0;k<attUnit[STATUS].length;k++){
+          try{
+            if(`${attUnit[STATUS][k].substring(0,4)}`==`MEAT`){
+              let meat = attUnit[STATUS].splice(k,1);
+              meat = meat[0].substring(4);
+
+              meatVal = parseInt(meat, 10);
+              if(isNaN(meatVal)){
+                console.log(`${meat} looked like a meat status, but it wasn't. Putting it back....`);
+                attUnit[STATUS].splice(k, 0, meat);
+                continue;
+              }
+              else{
+                bd+=meatVal;
+              }
+            }
+
+          } catch(err) {
+            console.log(err);
+          }
         }
 
+        let damagemsg = `${dmg * dmgLvl}`;
+        let equals = false;
+        let paren = false;
+        if(bd>0){
+          equals=true;
+          if(client.traitcall.traitCheck(client,attUnit[1],"MEAT")[1]){
+            bd++;
           }
+          let i;
+          for(i=0;i<bd;i++){
+            let bddice =[Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0]), Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0])];
+            if (bdmax){
+              bddice = [bdroll[1],bdroll[1]];
+            }
+            if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[1]||client.traitcall.traitCheck(client,targUnit[1],"REFINED")[1]){
+              bddice[0]= Math.floor(bddice[0]/2);
+              bddice[1]= Math.floor(bddice[1]/2);
+            }
+
             let bdadd;
             if(!client.traitcall.traitCheck(client,attUnit[1],"SHARP")[1]){
               bdadd = bddice[0];
