@@ -1146,6 +1146,453 @@ while(empty.length>0){
 }
 
 
+
+exports.hackyMoonGen = function(client,castleLocal,towerLocal,message) {
+	const PROSPIT = 0;
+	const DERSE = 1;
+	const PLANETS = [PROSPIT, DERSE];
+
+	const PROSPIT_MOON = 2;
+	const DERSE_MOON = 3;
+	const MOONS = [PROSPIT_MOON, DERSE_MOON];
+
+	const DUNGEON_1 = 4;
+	const DUNGEON_2 = 5;
+	const DUNGEON_3 = 6;
+	const DUNGEONS = [DUNGEON_1, DUNGEON_2, DUNGEON_3];
+
+	const SLAB_DUNGEON = DUNGEON_3;
+
+  //generates everything needed for both moons.
+  let section = [[],[],[],[],[],[],[]];
+
+  // The dungeons are completely identical, and can be created in a truly simultaneous manner.
+  for(let i=0; i<PROSPIT_DUNGEONS.length; i++){
+    section.push(section[PROSPIT_DUNGEONS[i]]);
+  }
+
+
+
+  for(i=0;i<11;i++){
+	// While the hackiness of these lines can be applied to rooms within a line,
+	// it cannot be applied to lines within a map.
+	// As a result, we must actually produce each line individually.
+	//  (If we really wanted, we could make an exception for lines 2 and 8, as well as 5 in the dungeons.)
+	//  (But that's more trouble than it's worth.)
+    section[0].push(generateEmptyLineHackily("STREET",10));
+    section[1].push(generateEmptyLineHackily("ALLEYWAY",10));
+    section[2].push(generateEmptyLineHackily("STREET",10));
+    section[3].push(generateEmptyLineHackily("ALLEYWAY",10));
+
+	for(let j=PROSPIT_DUNGEONS[0]; j<PROSPIT_DUNGEONS[PROSPIT_DUNGEONS.length - 1]; j++)
+	{
+		section[j].push(generateEmptyLineHackily("CORRIDOR",10));
+	}
+  }
+
+  let castle = [];
+
+  for(i=0;i<11;i++){
+    castle[j].push(generateEmptyLine("OUT OF BOUNDS",7));
+  }
+
+  let select = [0,1,3,4,6,7,9,10]
+  let empty = [];
+  let empty2 = [];
+  let empty3 = [];
+  let empty4 = [];
+  let empty5 = [];
+
+  for(i=0;i<8;i++){
+    for(j=0;j<8;j++){
+      empty.push([select[i],select[j]]);
+      empty2.push([select[i],select[j]]);
+      empty3.push([select[i],select[j]]);
+      empty4.push([select[i],select[j]]);
+      empty5.push([select[i],select[j]]);
+    }
+  }
+  
+  {
+	let chain = generateBasicTile(13, "CHAIN");
+    section[0][5][5]=chain;
+    section[1][5][5]=chain;
+    section[2][5][5]=chain;
+    section[3][5][5]=chain;
+  }
+
+
+  section[2][towerLocal[0]][towerLocal[1]]=[11,1,[[[],[],"PROSPIT TOWER BASE",true,[],[]]]];
+  section[3][towerLocal[0]][towerLocal[1]]=[11,1,[[[],[],"DERSE TOWER BASE",true,[],[]]]];
+  empty.splice(select.indexOf(towerLocal[0])*8+select.indexOf(towerLocal[1]), 1);
+
+  section[0][castleLocal[0]][castleLocal[1]]=[12,1,[[[],[],"PROSPIT CASTLE",true,[],[]]]];
+  section[1][castleLocal[0]][castleLocal[1]]=[12,1,[[[],[],"DERSE CASTLE",true,[],[]]]];
+  empty2.splice(select.indexOf(castleLocal[0])*8+select.indexOf(castleLocal[1]),1);
+  let transLocal=[5,4];
+  //castle generation
+  castle[5][5]=[12,1,[[[],[],"CASTLE ENTRANCE",true,[],[]]]];
+  castle[4][5]=[10,1,[[[],[],"HALL",true,[],[]]]];
+  castle[3][5]=[8,1,[[[],[],"THRONE ROOM",true,[],[]]]];
+  castle[5][4]=[19,1,[[[],[],"TRANSPORTALIZER HUB",true,[],[]]]];
+
+  // While these are literally the same castle, everything that distinguishes them from each other comes later.
+  // The castles are generated at initialization-time, before transportalizers are added to the hubs.
+  // Likewise, there's no actual logic to the castle entrance, as that's based on the mappings of the castles in the medium.
+  // Thus, the castles are identical in literally every way at this time.
+  // And, more importantly: before ANY changes are made to any part of either castle, these arrays are serialized and stored in the database.
+  // Once there, the castles become distinct from each other.
+  section.push(castle[0]);
+  section.push(castle[0]);
+  section.push(transLocal);
+  //end castle generation
+
+
+//Prospit / Derse Main
+let station = generateBasicTile(14, "POLICE STATION");
+let prison = generateBasicTile(15, "PRISON");
+let court = generateBasicTile(16, "COURT");
+let hospital = generateBasicTile(17, "HOSPITAL");
+let bank=generateBasicTile(18, "BANK");
+let postOffice=generateBasicTile(19, "POST OFFICE");
+let outpost=generateBasicTile(20, "MILITARY OUTPOST");
+let guildHall=generateBasicTile(21, "GUILD HALL");
+let theatre=generateBasicTile(22, "THEATRE");
+
+let museum=generateBasicTile(24, "MUSEUM");
+let library=generateBasicTile(25, "LIBRARY");
+let restaurant=generateBasicTile(26, "RESTAURANT");
+let jeweler=generateBasicTile(32, "JEWELER");
+
+// Yes, even this can get duplicated thanks to hackiness.
+let generalStore = [27,1,[[[],[["CAPTCHALOGUE CARD","11111111",1,4,[]]],"GENERAL STORE",false,[],[]]]];
+
+for(i=0;i<2;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1)[0];
+
+  section[0][temp[0]][temp[1]]=station;
+  section[1][temp[0]][temp[1]]=station;
+}
+for(i=0;i<1;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1)[0];
+
+  section[0][temp[0]][temp[1]]=prison;
+  section[1][temp[0]][temp[1]]=prison;
+}
+for(i=0;i<1;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1)[0];
+
+  section[0][temp[0]][temp[1]]=court;
+  section[1][temp[0]][temp[1]]=court;
+}
+for(i=0;i<1;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1)[0];
+
+  section[0][temp[0]][temp[1]]=hospital;
+  section[1][temp[0]][temp[1]]=hospital;
+}
+for(i=0;i<1;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=bank;
+  section[1][temp[0][0]][temp[0][1]]=bank;
+}
+for(i=0;i<2;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=postOffice;
+  section[1][temp[0][0]][temp[0][1]]=postOffice;
+}
+for(i=0;i<4;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=outpost;
+  section[1][temp[0][0]][temp[0][1]]=outpost;
+}
+for(i=0;i<1;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=guildHall;
+  section[1][temp[0][0]][temp[0][1]]=guildHall;
+}
+for(i=0;i<1;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=theatre;
+  section[1][temp[0][0]][temp[0][1]]=theatre;
+}
+for(i=0;i<1;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=generateBasicTile(23, "BINGO HALL");
+  section[1][temp[0][0]][temp[0][1]]=generateBasicTile(23, "CASINO");
+}
+for(i=0;i<1;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=generateBasicTile(24, "MUSEUM");
+  section[1][temp[0][0]][temp[0][1]]=generateBasicTile(24, "MUSEUM");
+}
+for(i=0;i<1;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=generateBasicTile(25, "LIBRARY");
+  section[1][temp[0][0]][temp[0][1]]=generateBasicTile(25, "LIBRARY");
+}
+for(i=0;i<5;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=generateBasicTile(26, "RESTAURANT");
+  section[1][temp[0][0]][temp[0][1]]=generateBasicTile(26, "RESTAURANT");
+}
+for(i=0;i<5;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1)[0];
+
+  section[0][temp[0]][temp[1]]=generalStore;
+  section[1][temp[0]][temp[1]]=generalStore;
+}
+for(i=0;i<5;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=generateBasicTile(28, "CANDY SHOP");
+  section[1][temp[0][0]][temp[0][1]]=generateBasicTile(29, "BUTCHER");
+}
+for(i=0;i<5;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  section[0][temp[0][0]][temp[0][1]]=generateBasicTile(31, "TAILOR");
+  section[1][temp[0][0]][temp[0][1]]=generateBasicTile(30, "ARMORY");
+}
+
+
+for(i=0;i<5;i++){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1)[0];
+
+  section[0][temp[0]][temp[1]]=jeweler;
+  section[1][temp[0]][temp[1]]=jeweler;
+  
+  // Same thing for the moons.
+  temp = empty.splice(Math.floor(Math.random()*empty2.length)-1,1)[0];
+  section[2][temp[0]][temp[1]]=jeweler;
+  section[3][temp[0]][temp[1]]=jeweler;
+}
+
+
+
+
+
+while(empty2.length>0){
+  let temp=empty2.splice(Math.floor(Math.random()*empty2.length)-1,1);
+
+  let ran = Math.floor(Math.random()*6);
+
+  if(ran == 0){
+    section[0][temp[0][0]][temp[0][1]]=generateBasicTile(0, "PUBLIC PARK");
+    section[1][temp[0][0]][temp[0][1]]=generateBasicTile(0, "ABANDONED BUILDING");
+  } else {
+  section[0][temp[0][0]][temp[0][1]]=generateBasicTile(45, "APPARTMENT");
+  section[1][temp[0][0]][temp[0][1]]=generateBasicTile(45, "SLUMS");
+}
+}
+
+
+for(i=0;i<2;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(14, "POLICE STATION");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(14, "POLICE STATION");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(17, "HOSPITAL");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(17, "HOSPITAL");
+}
+for(i=0;i<2;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(19, "POST OFFICE");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(19, "POST OFFICE");
+}
+for(i=0;i<4;i++){
+  let tempRan = Math.floor(Math.random()*empty.length)-1;
+  let temp=empty.splice(tempRan,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(1, "DUNGEON ENTRANCE");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(1, "DUNGEON ENTRANCE");
+  section[4][temp[0][0]][temp[0][1]]=generateBasicTile(1, "DUNGEON EXIT");
+  section[7][temp[0][0]][temp[0][1]]=generateBasicTile(1, "DUNGEON EXIT");
+
+  empty3.splice(empty3.findIndex(tile => tile[0] == temp[0][0] && tile[1] == temp[0][1]),1)
+}
+for(i=0;i<5;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(26, "RESTAURANT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(26, "RESTAURANT");
+}
+for(i=0;i<5;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(27, "GENERAL STORE");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(27, "GENERAL STORE");
+}
+for(i=0;i<5;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(32, "JEWELER");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(32, "JEWELER");
+}
+
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(33, "TIME MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(33, "TIME MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(34, "SPACE MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(34, "SPACE MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(35, "LIGHT MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(35, "LIGHT MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(36, "VOID MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(36, "VOID MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(37, "LIFE MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(37, "LIFE MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(38, "DOOM MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(38, "DOOM MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(39, "BREATH MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(39, "BREATH MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(40, "BLOOD MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(40, "BLOOD MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(41, "HOPE MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(41, "HOPE MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(42, "RAGE MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(42, "RAGE MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(43, "MIND MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(43, "MIND MONUMENT");
+}
+for(i=0;i<1;i++){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(44, "HEART MONUMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(44, "HEART MONUMENT");
+}
+
+while(empty.length>0){
+  let temp=empty.splice(Math.floor(Math.random()*empty.length)-1,1);
+
+  let ran = Math.floor(Math.random()*6);
+
+  if(ran == 0){
+    section[2][temp[0][0]][temp[0][1]]=generateBasicTile(0, "PUBLIC PARK");
+    section[3][temp[0][0]][temp[0][1]]=generateBasicTile(0, "ABANDONED BUILDING");
+  } else {
+  section[2][temp[0][0]][temp[0][1]]=generateBasicTile(45, "APPARTMENT");
+  section[3][temp[0][0]][temp[0][1]]=generateBasicTile(45, "SLUMS");
+}
+}
+
+  for(i=0;i<3;i++){
+    let tempRan = Math.floor(Math.random()*empty3.length)-1;
+    let temp=empty3.splice(tempRan,1);
+
+    section[4][temp[0][0]][temp[0][1]]=generateBasicTile(46, "DESCENDING STAIRS");
+    section[7][temp[0][0]][temp[0][1]]=generateBasicTile(46, "DESCENDING STAIRS");
+    section[5][temp[0][0]][temp[0][1]]=generateBasicTile(47, "ASCENDING STAIRS");
+    section[8][temp[0][0]][temp[0][1]]=generateBasicTile(47, "ASCENDING STAIRS");
+
+    empty4.splice(empty4.findIndex(tile => tile[0] == temp[0][0] && tile[1] == temp[0][1]),1)
+  }
+
+  for(i=0;i<2;i++){
+    let tempRan = Math.floor(Math.random()*empty4.length)-1;
+    let temp=empty4.splice(tempRan,1);
+
+    section[5][temp[0][0]][temp[0][1]]=generateBasicTile(46, "DOWNSTAIRS ENTRANCE");
+    section[8][temp[0][0]][temp[0][1]]=generateBasicTile(46, "DOWNSTAIRS ENTRANCE");
+    section[6][temp[0][0]][temp[0][1]]=generateBasicTile(47, "ASCENDING STAIRS");
+    section[9][temp[0][0]][temp[0][1]]=generateBasicTile(47, "ASCENDING STAIRS");
+
+    empty5.splice(empty5.findIndex(tile => tile[0] == temp[0][0] && tile[1] == temp[0][1]),1)
+  }
+
+//tossing in the sac slabs, stealing the light aspect symbol for now.
+  let tempRan = Math.floor(Math.random()*empty4.length)-1;
+  let temp=empty4.splice(tempRan,1);
+  section[6][temp[0][0]][temp[0][1]]=generateBasicTile(35, "SACRIFICIAL SLAB");
+  section[9][temp[0][0]][temp[0][1]]=generateBasicTile(35, "SACRIFICIAL SLAB");
+  empty5.splice(empty5.findIndex(tile => tile[0] == temp[0][0] && tile[1] == temp[0][1]),1)
+
+  while(empty3.length>0){
+    let temp=empty3.splice(Math.floor(Math.random()*empty3.length)-1,1);
+    section[4][temp[0][0]][temp[0][1]]=generateBasicTile(15, "PRISON CELL");
+    section[7][temp[0][0]][temp[0][1]]=generateBasicTile(15, "PRISON CELL");
+  }
+  while(empty4.length>0){
+    let temp=empty4.splice(Math.floor(Math.random()*empty4.length)-1,1);
+    section[5][temp[0][0]][temp[0][1]]=generateBasicTile(15, "PRISON CELL");
+    section[8][temp[0][0]][temp[0][1]]=generateBasicTile(15, "PRISON CELL");
+  }
+  while(empty5.length>0){
+    let temp=empty5.splice(Math.floor(Math.random()*empty5.length)-1,1);
+    section[6][temp[0][0]][temp[0][1]]=generateBasicTile(15, "PRISON CELL");
+    section[9][temp[0][0]][temp[0][1]]=generateBasicTile(15, "PRISON CELL");
+  }
+
+  return section;
+}
+
+
+
+
+function generateEmptyLineHackily(name, tile, length = 11){
+	let retVal = [];
+	let room = generateBasicTile(tile, name);
+	for(let i=0; i<length; i++){
+		retVal.push(room);
+	}
+	return retVal;
+}
+
 function generateEmptyLine(name, tile, length = 11){
 	let retVal = [];
 	for(let i=0; i<length; i++){
