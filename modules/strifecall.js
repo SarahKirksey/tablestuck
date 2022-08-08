@@ -1229,7 +1229,10 @@ bdroll = tierBD[specibus[equip][2]];
     
           removed = attUnit[STATUS].splice(Math.floor(Math.random()*attUnit[STATUS].length),1);
           alert+=`REMOVED THE ${removed} STATUS EFFECT\n`;
-    
+
+          break;
+        
+        // ABJURE
         case "SCALEDMG":
           if(attUnit[HEALTH]<Math.floor(attUnitGel/4)){
             dmgLvl=3;
