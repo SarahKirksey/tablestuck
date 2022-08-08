@@ -1907,6 +1907,9 @@ if(aa.includes("RANDSTATUS")){
       targUnit[HEALTH]+= damage;
       alert+=`HEALED TARGET BY ${damage} POINTS OF HEALING!\n`;
       damage=0;
+      if(targUnitGel<targUnit[HEALTH]){
+        targUnit[HEALTH]=targUnitGel;
+      }
     }
 
     let last = [attUnit[1],targUnit[1],damage];
@@ -2458,41 +2461,37 @@ client.funcall.chanMsg(client,charid,"NONE",embed);
 
 }
 
+// Returns an array containing health, maximum health, and additional HP resulting from the PLUSH trait.
 function getCharHealth(client, userid, charid){
-    let vit = client.charcall.allData(client,userid,charid,"vit");
-    let gel = client.charcall.allData(client,userid,charid,"gel");
+  let vit = client.charcall.allData(client,userid,charid,"vit");
+  let gel = client.charcall.allData(client,userid,charid,"gel");
 
-    let gelDiff = 0;
+  let gelDiff = 0;
 
-    if(gel == "NONE"){
-        //try{
-            gel = client.underlings[client.charcall.charData(client,charid,"type")].vit;
-        //}
-        //catch (e){
-
-        //}
+  if(gel == "NONE"){
+    gel = client.underlings[client.charcall.charData(client,charid,"type")].vit;
+  }
+  
+  if(gel != undefined){
+    let plushness = client.traitcall.traitCheck(client,charid,"PLUSH");
+    if(plushness[0] == true){
+      let rung = client.charcall.allData(client,userid,charid,"rung");
+      if(rung != "NONE"){
+        gelDiff = rungGel[rung+5] - rungGel[rung];
+        vit += gelDiff;
+        gel += gelDiff;
+      }
+      else{
+        gelDiff = Math.floor(gel / 4);
+        vit += gelDiff;
+        gel += gelDiff;
+      }
     }
+  }
 
-    if(gel != undefined){
-        let plushness = client.traitcall.traitCheck(client,charid,"PLUSH");
-        if(plushness[0] == true){
-            let rung = client.charcall.allData(client,userid,charid,"rung");
-            if(rung != "NONE"){
-                gelDiff = rungGel[rung+5] - rungGel[rung];
-                vit += gelDiff;
-                gel += gelDiff;
-            }
-            else{
-                gelDiff = Math.floor(gel / 4);
-                vit += gelDiff;
-                gel += gelDiff;
-            }
-        }
-    }
-
-    return [vit, gel, gelDiff];
+  return [vit, gel, gelDiff];
 }
 
 exports.getCharHealth = function(client, userid, charid){
-    return getCharHealth(client, userid, charid);
+  return getCharHealth(client, userid, charid);
 }
