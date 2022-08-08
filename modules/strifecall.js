@@ -479,7 +479,7 @@ return;
       return;
     }
     //switches the dreaming and waking self, and all those who control them.
-    if(client.configcall.get(client, message, "death")==0){
+    if(client.configcall.get(client, message, "DEATH")==0){
       if(client.charcall.allData(client,userid,charid,"dreamer")){
         target = client.charcall.allData(client,userid,charid,"wakingID");
       } else {
@@ -502,7 +502,7 @@ return;
   let godtier = client.charcall.allData(client,userid,charid,"godtier");
   if(godtier=="NONE") godtier = false;
   if(godtier){
-    if(client.configcall.get(client, message, "immortal")==0){
+    if(client.configcall.get(client, message, "IMMORTAL")==0){
       client.charcall.setAnyData(client,userid,charid,Date.now(),"sleepTimer");
       message.channel.send(`Looks like your conditional immortality saves you from perishing forever, though it'll take some time to get up again. You can ${client.auth.prefix}revive yourself in 5 minutes.`);
       return;
@@ -602,7 +602,7 @@ function startTurn(client, message, local) {
   let stamroll;
   let stamsg;
   let carry = true;
-  if(client.configcall.get(client, message, "retain")==1){
+  if(client.configcall.get(client, message, "RETAIN")==1){
     carry = false;
   }
   let removed;
