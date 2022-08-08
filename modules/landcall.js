@@ -1532,3 +1532,12 @@ coords.push(sburbid);
   client.landMap.set(sessionid+"medium",npcCount,"npcCount");
   return occ;
 }
+
+// TODO: Make these convert arrays to dictionaries, and back again.
+// Also, maybe rename them.
+
+exports.localToTile = function(client,message,local){
+}
+
+exports.tileToLocal = function(client,message,tile){
+}
