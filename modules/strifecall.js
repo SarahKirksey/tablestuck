@@ -1662,14 +1662,19 @@ if(aa.includes("RANDSTATUS")){
     let k;
     for(k=0;k<attUnit[STATUS].length;k++){
     try{
-      if(`${list[init[turn][0]][7][k].charAt(0)}${list[init[turn][0]][7][k].charAt(1)}${list[init[turn][0]][7][k].charAt(2)}${list[init[turn][0]][7][k].charAt(3)}`==`MEAT`){
+      if(`${attUnit[STATUS][k].substring(0,4)}`==`MEAT`){
         let meat = attUnit[STATUS].splice(k,1);
         meat = meat[0].substring(4);
 
         meatVal = parseInt(meat, 10);
-
-        bd+=meatVal;
-
+        if(isNaN(meatVal)){
+          console.log(`${meat} looked like a meat status, but it wasn't. Putting it back....`);
+          attUnit[STATUS].splice(k, 0, meat);
+          continue;
+        }
+        else{
+          bd+=meatVal;
+        }
       }
 
     } catch(err) {
