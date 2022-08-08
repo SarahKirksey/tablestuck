@@ -1115,26 +1115,7 @@ bdroll = tierBD[specibus[equip][2]];
 
   try{
     let attackEfficacy = 0;
-      
-    //check for grist effectivity; if effective, change message accordingly and increase BR or BD accordingly
-/*  if(grist=="artifact"){
-      if(tarGrist!="artifact"&&tarGrist!="diamond"&&tarGrist!="zillium"){
-        br++;
-        effective="INEFFECTIVE!"
-      } else if(tarGrist=="zillium"){
-        bd++;
-        effective="EFFECTIVE!"
-      }
-    } else if(grist=="zillium"){
-      if(tarGrist!="artifact"&&tarGrist!="diamond"&&tarGrist!="zillium"){
-        bd++;
-        effective="EFFECTIVE!"
-      } else if(tarGrist=="artifact"){
-        br++;
-        effective="INEFFECTIVE!"
-      }
-    } else*/
-    
+
     // Establish basic efficacy: effective, ineffective, or neither.
     if(client.grist[tarGrist].ineffective.includes(grist)){
         attackEfficacy = 1;
