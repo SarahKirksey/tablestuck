@@ -667,7 +667,11 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"CHARLATAN")[0]){
 
   if(specibus.length>0){
 
-  let charlaCode = specibus[equip][1].substring(0,4)+client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2];
+  let charlaCode = specibus[equip][1].substring(0,4) +
+    client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+
+    client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+
+    client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+
+    client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2];
 
   specibus[equip][1] = charlaCode;
 
@@ -1796,7 +1800,9 @@ if(aa.includes("RANDSTATUS")){
         }
         damagemsg += ` * 3`;
         alert +=`1000/1000 CLOCKS DESTROYED! TRIPLE DAMAGE!\n`;
-      }else{
+      }
+      // Normal crit
+      else{
         damage *= 2;
         if(!paren){
           damagemsg = `(`+damagemsg+`)`;
