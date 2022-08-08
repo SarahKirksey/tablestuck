@@ -1718,8 +1718,8 @@ if(aa.includes("RANDSTATUS")){
             damagemsg += ` + (~~${bddice[0]}~~ ${bddice[1]})`
             bdadd = bddice[1];
           }
-      }
-      bonusDmg += bdadd;
+            }
+            bonusDmg += bdadd;
 
           }
           if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[1]){
