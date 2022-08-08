@@ -162,17 +162,6 @@ if(client.traitcall.traitCheck(client,charid,"ROCKET")[0]){
       time:Date.now()
     }
 
-    /*if(occ.length > 1){
-      //do a for check on each occupant in the room to see if there are any underlings. If there are, add them to the strife
-    } else if(local[0]=="h"){
-      //generate underlings for the player to fight in their house
-
-      strifecall.underSpawn(client,local,"imp");
-
-
-
-    }*/
-
     client.strifeMap.set(strifeLocal,strifeSet);
     client.charcall.setAnyData(client,userid,charid,0,"pos");
     client.charcall.setAnyData(client,userid,charid,true,"strife");
