@@ -1165,6 +1165,10 @@ else {
   console.log(tarGrist);
 }
 
+    let trinketBonus = getBonusFromTrinket(client.charcall.charData(client,attUnit[1],"trinket")[0]);
+    if(trinketBonus[1] === "accuracy"){
+		strikeBonus += trinketBonus[0];
+	}
 
     let targUnitGel = targUnit[0] ? getCharHealth(client, "-", targUnit[1])[1] : client.underlings[client.charcall.charData(client,targUnit[1],"type")].vit;
     if(!targUnit[0] && client.traitcall.traitCheck(client,targUnit[1],"PLUSH")[0]){
