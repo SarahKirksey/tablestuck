@@ -64,6 +64,7 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
       return;
     }
     item1 = sdex[select1].slice();
+    item1[3] = 1;
     item1[4] = [];
 
 	function checkCode(checkItem){
