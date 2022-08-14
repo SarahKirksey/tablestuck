@@ -1215,15 +1215,8 @@ else {
 		strikeBonus += trinketBonus[0];
 	}
 
-    let targUnitGel = targUnit[0] ? getCharHealth(client, "-", targUnit[1])[1] : client.underlings[client.charcall.charData(client,targUnit[1],"type")].vit;
-    if(!targUnit[0] && client.traitcall.traitCheck(client,targUnit[1],"PLUSH")[0]){
-      targUnitGel = Math.floor(targUnitGel * 1.25);
-    }
-
-    let attUnitGel = attUnit[0] ? getCharHealth(client, "-", attUnit[1])[1] : client.underlings[client.charcall.charData(client,attUnit[1],"type")].vit;
-    if(!attUnit[0] && client.traitcall.traitCheck(client,attUnit[1],"PLUSH")[0]){
-      attUnitGel = Math.floor(attUnitGel * 1.25);
-    }
+    let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
+    let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
 
     //check for each action tag that is NONCOMBATIVE
     //PRE-ROLL ACT
