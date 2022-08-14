@@ -95,7 +95,7 @@ exports.run = (client, message, args) => {
 
   //check if clientid is playerid
   if(args[0]==clientcode&&client.configcall.get(client, message, "SELFCONNECT")==1){
-    message.channel.send(`You cannot be your own server! Send your CLIENT CODE to a friend and have them do the ${client.auth.prefix}connect command with it. Your CLIENT CODE is ${message.author.id}`);
+    message.channel.send(`You cannot be your own server! Send your CLIENT CODE to a friend and have them do the ${client.auth.prefix}connect command with it. Your CLIENT CODE is ${clientcode}`);
     return;
   }
   targId = client.charcall.charGet(client,args[0]);
