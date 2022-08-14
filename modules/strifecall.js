@@ -1149,6 +1149,8 @@ else {
 
   try{
     let attackEfficacy = 0;
+	let targScience = client.traitcall.traitCheck(client,targUnit[1],"SCIENTIFIC");
+	let attScience = client.traitcall.traitCheck(client,attUnit[1],"SCIENTIFIC");
 
     // Establish basic efficacy: effective, ineffective, or neither.
     if(client.grist[tarGrist].ineffective.includes(grist)){
@@ -1163,6 +1165,10 @@ else {
     {
         attackEfficacy *= -1;
     }
+	
+	if(targScience[1] && attackEfficacy < 0){
+        attackEfficacy = 0;
+	}
 
     // Apply bonuses associated with the efficacy of the attack: BD for the attacker, or BR for the defender.
     // This is also a convenient place to include the REFINED trait bonus's logic.
@@ -1179,6 +1185,20 @@ else {
       br += (attackEfficacy * -1);
       effective="INEFFECTIVE!";
     }
+	
+	if(attScience[0]){
+		br *= 2;
+		bd *= 2;
+		attackEfficacy *= 2;
+		strikeBonus *= 2;
+	}
+	
+	if(targScience[0]){
+		br *= 2;
+		bd *= 2;
+		attackEfficacy *= 2;
+		strikeBonus *= 2;
+	}
 
     if(client.traitcall.traitCheck(client,attUnit[1],"NOIR")[0]){
       strikeBonus += Math.ceil(Math.random()*4);
