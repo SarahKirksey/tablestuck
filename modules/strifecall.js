@@ -1392,53 +1392,46 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
 
 //roll to hit, similar to how stamina is handled
     let strikeRoll = [Math.floor((Math.random() * 20) + 1),Math.floor((Math.random() * 20) + 1)];
+    let metaNess = client.traitcall.traitCheck(client,attUnit[1],"META");
+    let lightNess = client.traitcall.traitCheck(client,attUnit[1],"LIGHT");
+    let attWelshNess = client.traitcall.traitCheck(client,attUnit[1],"WELSH");
+    let targWelshNess = client.traitcall.traitCheck(client,targUnit[1],"WELSH");
+    let targVoidNess = client.traitcall.traitCheck(client,targUnit[1],"VOID");
 
-    if(client.traitcall.traitCheck(client,attUnit[1],"META")[0]){
-      if(strikeRoll[0]==1||strikeRoll[0]==20||strikeRoll[1]==1||strikeRoll[1]==20){
-        alert += `YOUR META GEAR AVOIDED A 1 (OR A 20...)\n`;
-          strikeRoll = [Math.floor((Math.random() * 18) + 2),Math.floor((Math.random() * 18) + 2)];
+    for(let i=0; i<=(fav == 0 ? 0 : 1); i++){
+      if(metaNess[0]){
+        if(strikeRoll[i]==1||strikeRoll[i]==20){
+          alert += `YOUR META GEAR AVOIDED A 1 (OR A 20...)\n`;
+          strikeRoll[i] = Math.floor((Math.random() * 18) + 2);
+        }
       }
-    }
 
-    if(client.traitcall.traitCheck(client,attUnit[1],"WELSH")[1]||client.traitcall.traitCheck(client,attUnit[1],"LIGHT")[0]){
-      if(strikeRoll[0]==1){
-        alert+=`TURNED A 1 INTO A 20!\n`;
-        strikeRoll[0]=20;
-      }
-      if(strikeRoll[1]==1){
-        if(fav!=0){
+      if(attWelshNess[1]||client.traitcall.traitCheck(client,attUnit[1],"LIGHT")[0]){
+        if(strikeRoll[i]==1){
           alert+=`TURNED A 1 INTO A 20!\n`;
-          strikeRoll[1]=20;
-        }
-
-      }
-    }
-    if(client.traitcall.traitCheck(client,targUnit[1],"WELSH")[1]||client.traitcall.traitCheck(client,targUnit[1],"VOID")[0]){
-      if(strikeRoll[0]==20){
-        alert+=`TARGET TURNED A 20 INTO A 1!\n`;
-        strikeRoll[0]=1;
-      }
-      if(strikeRoll[1]==20){
-        if(fav!=0){
-        alert+=`TARGET TURNED A 20 INTO A 1!\n`;
-        strikeRoll[1]=1;
+          strikeRoll[i]=20;
         }
       }
-    }
+      if(targWelshNess[1]||targVoidNess[0]){
+        if(strikeRoll[i]==20){
+          alert+=`TARGET TURNED A 20 INTO A 1!\n`;
+          strikeRoll[i]=1;
+        }
+      }
 
-    if(client.traitcall.traitCheck(client,attUnit[1],"LIGHT")[1]){
-      for(let i=0; i<=1; i++)
-      {
-      if(strikeRoll[i]<6){
-        alert+=`**BORN LUCKY** - Rerolled a roll less than 5\n`
+      if(client.traitcall.traitCheck(client,attUnit[1],"LIGHT")[1]){
+        let didReroll = false;
+        let didLight0 = false;
+        if(strikeRoll[i]<6){
+          alert+=`**BORN LUCKY** - Rerolled a roll less than 5\n`;
           // Roll 1d16+5 instead of 1d20. In the event of a 21, set it to 20 and pretend it was a 1.
           // This way, no further re-rolls are actually required.
           strikeRoll[i] = Math.floor((Math.random() * 16) + 6);
           if(strikeRoll[i]==21){
             strikeRoll[i]=20;
-            alert+=`TURNED A 1 INTO A 20!\n`
+            alert += `TURNED A 1 INTO A 20!\n`;
           }
-      }
+        }
       }
     }
 
@@ -1446,17 +1439,17 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
       strikeCheck = strikeRoll[0];
       strikeMsg = `${strikeRoll[0]}`;
     }
-      else
-      {
-        let lowRoll = Math.min(strikeRoll[0], strikeRoll[1]);
-        let highRoll = Math.max(strikeRoll[0], strikeRoll[1]);
+    else
+    {
+      let lowRoll = Math.min(strikeRoll[0], strikeRoll[1]);
+      let highRoll = Math.max(strikeRoll[0], strikeRoll[1]);
 
-        strikeCheck = fav > 0 ? highRoll : lowRoll;
-        let otherRoll = fav > 0 ? lowRoll : highRoll;
+      strikeCheck = fav > 0 ? highRoll : lowRoll;
+      let otherRoll = fav > 0 ? lowRoll : highRoll;
 
-            strikeMsg = `~~${otherRoll}~~ ${strikeCheck}`;
+          strikeMsg = `~~${otherRoll}~~ ${strikeCheck}`;
 
-      }
+    }
 
 if(strikeBonus>0){
   strikeMsg += ` + ${strikeBonus} = ${strikeCheck+strikeBonus}`;
