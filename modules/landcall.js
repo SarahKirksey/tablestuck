@@ -1582,26 +1582,97 @@ while(empty.length>0){
 }
 
 
-
-
-function generateEmptyLineHackily(name, tile, length = 11){
+// A deep copy is a copy that recursively copies its contents, so that nothing in the result is a pointer to something in the original.
+// The goal here is to create a deep-ISH copy, that only goes as deep as it needs to.
+function createDeepishCopy(input, depth=1){
+	// input.slice() returns a new array that is an exact copy of the exising array, but is still distinct from it.
+	// Any pointers IN the array, however, will not be distinct. AKA, a shallow copy.
+	if(depth <= 0){
+		return input.slice();;
+	}
+	
 	let retVal = [];
-	let room = generateBasicTile(tile, name);
+	for(let i=0; i<input.length; i++){
+		retVal.push(createDeepishCopy(input[i], depth-1));
+	}
+	return retVal;
+}
+
+
+
+// Generates a basic "prison block" to be used as the groundwork for all moon dungeons.
+function generatePrisonBlock(){
+	// The x- and y-coordinates reserved for corridors.
+	const corridors = [2, 5, 8];
+	let sec = [];
+	for(let i=0; i<11; i++){
+		if(corridors.indexOf(i) >= 0){
+			sec.push(generateEmptyLine("CORRIDOR", 10));
+			continue;
+		}
+		
+		let row = [];
+		for(let j=0; j<11; j++){
+			if(corridors.indexOf(j) >= 0){
+				row.push(generateBasicTile(10, "CORRIDOR"));
+			}
+			else{
+				row.push(generateBasicTile(15, "PRISON CELL"));
+			}
+		}
+		sec.push(row);
+	}
+	return sec;
+}
+
+// As above, but with pointer magics.
+function generatePrisonBlockHackily(){
+	let sec = [];
+	let corridorLine = generateEmptyLineHackily("CORRIDOR", 10);
+	let corridor = generateBasicTile(10, "CORRIDOR");
+	let cell = generateBasicTile(15, "PRISON CELL");
+	for(let i=0; i<11; i++){
+		if(i % 3 == 2){
+			sec.push(corridorLine);
+			continue;
+		}
+		
+		let row = [,,,,,,,,,,];
+		for(let j=0; j<11; j++){
+			if(j % 3 == 2){
+				row[j]=corridor;
+			}
+			else{
+				row[j]=cell;
+			}
+		}
+		sec.push(row);
+	}
+	return sec;
+}
+
+// Returns a line of tiles where every tile is a reference to the exact same tile.
+// Useful in situations where you plan on every tile being either replaced, or serialized without any further modification.
+function generateEmptyLineHackily(name, tile, explored = false, length = 11){
+	let retVal = [];
+	let room = generateBasicTile(tile, name, explored);
 	for(let i=0; i<length; i++){
 		retVal.push(room);
 	}
 	return retVal;
 }
 
-function generateEmptyLine(name, tile, length = 11){
+// Returns a line of tiles where every tile is a unique reference.
+// Useful if you want to do it the right way, or if you just plan on modifying the contents of those tiles.
+function generateEmptyLine(name, tile, explored = false, length = 11){
 	let retVal = [];
 	for(let i=0; i<length; i++){
-		retVal.push(generateBasicTile(tile, name));
+		retVal.push(generateBasicTile(tile, name, explored));
 	}
 	return retVal;
 }
 
-function generateBasicTile(icon, name){
+function generateBasicTile(icon, name, explored = false){
 	return [
 		icon,	// The image used to represent this tile. Sometimes carries other information, like the fact that a given tile is a wall.
 		1,		// The number of rooms in a tile. This is ALMOST always 1.
@@ -1609,12 +1680,12 @@ function generateBasicTile(icon, name){
 		[
 			// The one (and only) room within this tile
 			[
-				[],		// Shop inventory
-				[],		// ???
-				name,	// The name of this room.
-				false,	// Whether this room has already been explored/visited.
-				[],		// List of all creatures in the room
-				[]		// List of all items in the room
+				[],		    // Shop inventory
+				[],		    // An array of strings that represent functions to be called when certain events occur in or to the room. (Currently unusued.)
+				name,	    // The name of this room.
+				explored,	// Whether this room has already been explored/visited.
+				[],		    // List of all creatures in the room
+				[]		    // List of all items in the room
 			]
 		]
 	];
