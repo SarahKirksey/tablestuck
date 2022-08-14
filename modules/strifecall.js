@@ -1201,7 +1201,7 @@ else {
 	}
 
     if(client.traitcall.traitCheck(client,attUnit[1],"NOIR")[0]){
-      strikeBonus += Math.ceil(Math.random()*4);
+      strikeBonus += Math.floor(Math.random()*4) + 1;
     }
 
 } catch(err) {
