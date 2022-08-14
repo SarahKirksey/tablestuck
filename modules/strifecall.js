@@ -1185,6 +1185,16 @@ else {
     {
       br += (attackEfficacy * -1);
       effective="INEFFECTIVE!";
+    } else if(client.grist[tarGrist].effective.includes(grist)){
+      if(list[target][7].includes("GRISTINVERT")||list[init[turn][0]][7].includes("GRISTINVERT")){
+        bd++
+        effective="EFFECTIVE!"
+        if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"REFINED")[0]){
+          strikeBonus+=2;
+        }
+      } else {
+      br++
+      effective="INEFFECTIVE!"
     }
 
     if(attScience[0]){
