@@ -621,12 +621,6 @@ function startTurn(client, message, local) {
 	  list[init[turn][0]][PROFILE.ACTION].push(`HAT${trinketBonus[0]}`);
   }
 
-  let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
-  // 50% chance for the bonus AV to trigger for the round.
-  if(trinketBonus[1] === "avChance" && Math.random() < 0.5){
-	  list[init[turn][0]][PROFILE.ACTION].push(`HAT${trinketBonus[0]}`);
-  }
-
   let stamina;
   let stamfav = 0;
   let stamroll;
@@ -1129,12 +1123,6 @@ else {
   grist = list[init[turn][0]][2];
 
 }
-
-  let attUnit = list[init[turn][0]];
-  let targUnit = list[target];
-
-  attName = client.charcall.charData(client,attUnit[1],"name");
-  targName = client.charcall.charData(client,targUnit[1],"name");
 
   let attUnit = list[init[turn][0]];
   let targUnit = list[target];
