@@ -1446,9 +1446,7 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
 
       strikeCheck = fav > 0 ? highRoll : lowRoll;
       let otherRoll = fav > 0 ? lowRoll : highRoll;
-
-          strikeMsg = `~~${otherRoll}~~ ${strikeCheck}`;
-
+      strikeMsg = `~~${otherRoll}~~ ${strikeCheck}`;
     }
 
 if(strikeBonus>0){
