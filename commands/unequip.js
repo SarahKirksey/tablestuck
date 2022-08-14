@@ -28,8 +28,8 @@ exports.run = (client, message, args) => {
 			message.channel.send(`Your STRIFE SPECIBUS is not currently allocated to a weaponkind, you must ${client.auth.prefix}allocate it before you can ${client.auth.prefix}equip a weapon, much less unequip one!`);
 			return;
 		};
-		
-		args[0] = "" + curWeapon;
+
+		args[0] = `${curWeapon + 1}`;
 	}
 
 	let mess = `Successfully UNEQUIPPED the `;
@@ -76,20 +76,21 @@ exports.run = (client, message, args) => {
 				return;
 			}
 
-
-			  if(selectIndex >= spec.length){
-
+			if(selectIndex >= spec.length && selectIndex < scards){
 				if(scards <= 1) {
-				  message.channel.send("Cannot unequip your last STRIFE CARD!");
-				  return;
+					message.channel.send("Cannot unequip your last STRIFE CARD!");
+					return;
 				}
-				
+
 				//decrease card count, specify a normal strife card as the returned item
 				scards-=1;
 				unequipItem=["STRIFE CARD","////////",1,1,[]];
-			  } else {
+			} else {
 				unequipItem=spec.splice(selectIndex,1)[0];
-			  }
+				if(selectIndex < curWeapon || (selectIndex > 0 && selectIndex == curWeapon && curWeapon + 1 >= spec.length)){
+					curWeapon -= 1;
+				}
+			}
 			mess += `${unequipItem[0]} from your STRIFE SPECIBUS`;
 		}
 		break;
@@ -112,7 +113,8 @@ exports.run = (client, message, args) => {
 		sec[local[1]][local[2]][2][local[3]] = room;
 		client.landMap.set(land,sec,local[0]);
 	}
-	
+
+	client.charcall.setAnyData(client,userid,charid,curWeapon,"equip");
 	client.charcall.setAnyData(client,userid,charid,scards,"scards");
 	client.charcall.setAnyData(client,userid,charid,spec,"spec");
 	client.charcall.setAnyData(client,userid,charid,trinket,"trinket");
