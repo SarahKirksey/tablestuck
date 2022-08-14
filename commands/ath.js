@@ -18,47 +18,45 @@ exports.run = (client, message, args) => {
   var charid = client.userMap.get(userid,"possess");
 
 
-    var local = client.charcall.charData(client,charid,"local");
-    let land = local[4];
-    let sec = client.landMap.get(land,local[0]);
-    let area = sec[local[1]][local[2]];
-    let room = area[2][local[3]];
-    let sdex = client.charcall.charData(client,charid,"sdex");
-    let registry = client.charcall.allData(client,userid,charid,"registry");
+  var local = client.charcall.charData(client,charid,"local");
+  let land = local[4];
+  let sec = client.landMap.get(land,local[0]);
+  let area = sec[local[1]][local[2]];
+  let room = area[2][local[3]];
+  let sdex = client.charcall.charData(client,charid,"sdex");
+  let registry = client.charcall.allData(client,userid,charid,"registry");
 
-    if(registry=="NONE"){
-      message.channel.send("You don't have a registry to check!");
-      return;
-    }
+  if(registry=="NONE"){
+    message.channel.send("You don't have a registry to check!");
+    return;
+  }
   //define variables for the FOR loop
 
-    let i;
-    let alchemiter = false;
-    let item;
-    let cost1;
-    let cost2;
-    let grist;
-    let quick = false;
+  let i;
+  let alchemiter = false;
+  let item;
+  let cost1;
+  let cost2;
+  let grist;
+  let quick = false;
 
   //Check every item in the room to find alchemiter, if there is check for any cruxite artifact
 
 
-    for(i=0;i<room[5].length;i++){
-      if(room[5][i][1].charAt(0) == "/"&&(room[5][i][0]=="ALCHEMITER"||room[5][i][0]=="INSTANT ALCHEMITER")){
-        alchemiter=true;
-        if(room[5][i][0]=="INSTANT ALCHEMITER"){
-          quick=true;
-        }
+  for(i=0;i<room[5].length;i++){
+    if(room[5][i][1].charAt(0) == "/"&&(room[5][i][0]=="ALCHEMITER"||room[5][i][0]=="INSTANT ALCHEMITER")){
+      alchemiter=true;
+      if(room[5][i][0]=="INSTANT ALCHEMITER"){
+        quick=true;
       }
     }
+  }
 
-  if(client.traitcall.traitCheck(client,charid,"COMPUTER")[1])
-  {
+  if(client.traitcall.traitCheck(client,charid,"COMPUTER")[1]){
     quick = true;
   }
 
   if(alchemiter==true||client.traitcall.compTest(client,message,charid,room)[1]){
-
     if(!args[0] || args[0] == "page"){
       let page = 0;
       if (args[1]&&args[0] == "page") {
@@ -299,7 +297,7 @@ exports.run = (client, message, args) => {
                     j--;
                   }
                 }
-                
+
                 // TODO: Consider adding functionality for different types of NONE being treated as the same.
                 if(client.captchaCode.indexOf(registry[numbers[j]][1].charAt(2)) + client.captchaCode.indexOf(registry[numbers[j]][1].charAt(3)) != client.captchaCode.length - 2)
                 {
@@ -490,10 +488,10 @@ exports.run = (client, message, args) => {
               mess += `\n"${args[i+1]}" is not a recognized action, so that filter condition was ignored.`;
               break;
             }
-            
+
             let moveNumber = client.codeCypher[4][moveIndex];
             let moveCode = client.captchaCode[moveNumber];
-            
+
             for(var j=0; j<numbers.length; j++)
             {
               let flag = false;

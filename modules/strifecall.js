@@ -614,11 +614,11 @@ function startTurn(client, message, local) {
   let i;
 //reset actions taken this turn
   list[init[turn][0]][6]=[];
-  
+
   let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
   // 50% chance for the bonus AV to trigger for the round.
   if(trinketBonus[1] === "avChance" && Math.random() < 0.5){
-	  list[init[turn][0]][PROFILE.ACTION].push(`HAT${trinketBonus[0]}`);
+      list[init[turn][0]][PROFILE.ACTION].push(`HAT${trinketBonus[0]}`);
   }
 
   let stamina;
@@ -986,14 +986,14 @@ exports.underRally = function(client, message, local) {
       let list = client.strifeMap.get(strifeLocal,"list");
       let init = client.strifeMap.get(strifeLocal,"init");
       let active = client.strifeMap.get(strifeLocal,"active");
-	  let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
+      let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
 
       var pos = list.length;
       client.charcall.setAnyData(client,'-',occList[i][1],pos,"pos");
       let initRoll = [pos, Math.floor((Math.random() * 20) + 1)];
-	  if(trinketBonus[1] === "initiative"){
-		initRoll += trinketBonus[0];
-	  }
+      if(trinketBonus[1] === "initiative"){
+        initRoll += trinketBonus[0];
+      }
 
       list.push(profile);
       active.push(pos);
@@ -1146,8 +1146,8 @@ else {
 
   try{
     let attackEfficacy = 0;
-	let targScience = client.traitcall.traitCheck(client,targUnit[1],"SCIENTIFIC");
-	let attScience = client.traitcall.traitCheck(client,attUnit[1],"SCIENTIFIC");
+    let targScience = client.traitcall.traitCheck(client,targUnit[1],"SCIENTIFIC");
+    let attScience = client.traitcall.traitCheck(client,attUnit[1],"SCIENTIFIC");
 
     // Establish basic efficacy: effective, ineffective, or neither.
     if(client.grist[tarGrist].ineffective.includes(grist)){
@@ -1162,10 +1162,10 @@ else {
     {
         attackEfficacy *= -1;
     }
-	
-	if(targScience[1] && attackEfficacy < 0){
+
+    if(targScience[1] && attackEfficacy < 0){
         attackEfficacy = 0;
-	}
+    }
 
     // Apply bonuses associated with the efficacy of the attack: BD for the attacker, or BR for the defender.
     // This is also a convenient place to include the REFINED trait bonus's logic.
@@ -1182,20 +1182,20 @@ else {
       br += (attackEfficacy * -1);
       effective="INEFFECTIVE!";
     }
-	
-	if(attScience[0]){
-		br *= 2;
-		bd *= 2;
-		attackEfficacy *= 2;
-		strikeBonus *= 2;
-	}
-	
-	if(targScience[0]){
-		br *= 2;
-		bd *= 2;
-		attackEfficacy *= 2;
-		strikeBonus *= 2;
-	}
+
+    if(attScience[0]){
+        br *= 2;
+        bd *= 2;
+        attackEfficacy *= 2;
+        strikeBonus *= 2;
+    }
+
+    if(targScience[0]){
+        br *= 2;
+        bd *= 2;
+        attackEfficacy *= 2;
+        strikeBonus *= 2;
+    }
 
     if(client.traitcall.traitCheck(client,attUnit[1],"NOIR")[0]){
       strikeBonus += Math.floor(Math.random()*4) + 1;
@@ -1209,8 +1209,8 @@ else {
 
     let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client,attUnit[1],"trinket")[0]);
     if(trinketBonus[1] === "accuracy"){
-		strikeBonus += trinketBonus[0];
-	}
+        strikeBonus += trinketBonus[0];
+    }
 
     let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
     let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
@@ -1468,13 +1468,13 @@ if(strikeBonus<0){
   if(client.traitcall.traitCheck(client,targUnit[1],"BREATH")[0]){
     av = av+2;
   }
-  
+
   if(targUnit[PROFILE.ACTION][0] && targUnit[PROFILE.ACTION][0].substring(0,3) === "HAT"){
-	let hatBonus = parseInt(targUnit[PROFILE.ACTION][0].substring(3), 10);
-	if(!isNaN(hatBonus)){
-	  av += hatBonus;
-	  alert+=`That sure is a nifty piece of headwear!\n`;
-	}
+    let hatBonus = parseInt(targUnit[PROFILE.ACTION][0].substring(3), 10);
+    if(!isNaN(hatBonus)){
+      av += hatBonus;
+      alert+=`That sure is a nifty piece of headwear!\n`;
+    }
   }
 
   if((strikeCheck+strikeBonus)>av && (client.traitcall.traitCheck(client,targUnit[1],"FROG")[1] && !(Math.floor((Math.random() * 12))))){
@@ -2126,31 +2126,31 @@ if(list[active[ik]][3] < 1){
 
 
 function getBonusFromTrinket(client, message, trinket){
-	let trinketSetting = client.configcall.get(client, message, "TRINKETS");
+    let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
-	if(trinketSetting == 0 || trinketSetting == "NONE" || trinket == undefined || trinket[1] == undefined){
-		return [0, "none"];
-	}
-	let tier = trinket[2];
-	let kind = trinket[1][0];
-	let bonus = Math.floor(Math.sqrt(tier));
-	if(trinketSetting == 1){
-		return [bonus, "accuracy"];
-	}
-	else if(trinketSetting == 2){
-		switch(kind){
-			case "t":	return [bonus, "initiative"];
-			case "u":	return [bonus, "avChance"];
-			case "v":	return [bonus, "accuracy"];
-			default:	return [0, "none"];
-		}
-	}
-	return [0, "none"];
+    if(trinketSetting == 0 || trinketSetting == "NONE" || trinket == undefined || trinket[1] == undefined){
+        return [0, "none"];
+    }
+    let tier = trinket[2];
+    let kind = trinket[1][0];
+    let bonus = Math.floor(Math.sqrt(tier));
+    if(trinketSetting == 1){
+        return [bonus, "accuracy"];
+    }
+    else if(trinketSetting == 2){
+        switch(kind){
+            case "t":   return [bonus, "initiative"];
+            case "u":   return [bonus, "avChance"];
+            case "v":   return [bonus, "accuracy"];
+            default:    return [0, "none"];
+        }
+    }
+    return [0, "none"];
 }
-	
+
 
 exports.getBonusFromTrinket = function(client, message, trinket){
-	return getBonusFromTrinket(client, message, trinket);
+    return getBonusFromTrinket(client, message, trinket);
 }
 
 
@@ -2446,13 +2446,13 @@ function getCharHealth(client, userid, charid){
     let gelDiff = 0;
 
     if(gel == "NONE"){
-		//try{
-			gel = client.underlings[client.charcall.charData(client,charid,"type")].vit;
-		//}
-		//catch (e){
+        //try{
+            gel = client.underlings[client.charcall.charData(client,charid,"type")].vit;
+        //}
+        //catch (e){
 
-		//}
-	}
+        //}
+    }
 
     if(gel != undefined){
         let plushness = client.traitcall.traitCheck(client,charid,"PLUSH");
@@ -2463,11 +2463,11 @@ function getCharHealth(client, userid, charid){
                 vit += gelDiff;
                 gel += gelDiff;
             }
-			else{
-				gelDiff = Math.floor(gel / 4);
+            else{
+                gelDiff = Math.floor(gel / 4);
                 vit += gelDiff;
                 gel += gelDiff;
-			}
+            }
         }
     }
 
