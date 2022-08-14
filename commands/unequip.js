@@ -18,7 +18,7 @@ exports.run = (client, message, args) => {
 
 	var trinket = client.charcall.charData(client,charid,"trinket");
 	var armor = client.charcall.charData(client,charid,"armor");
-	
+
 	let curWeapon = client.charcall.charData(client,charid,"equip");
 
 	if(!args[0])
@@ -44,12 +44,13 @@ exports.run = (client, message, args) => {
 				message.channel.send(`You don't have a trinket equipped!`);
 				return;
 			}
+
 			unequipItem = trinket.splice(0,1)[0];
-			
+
 			mess += `${unequipItem[0]} from your TRINKET SLOT`;
 		}
 		break;
-		
+
 		case "ARMOR":
 		case "ARMOUR":
 		{
@@ -58,11 +59,21 @@ exports.run = (client, message, args) => {
 				message.channel.send(`You don't have armor equipped!`);
 				return;
 			}
+
 			unequipItem = armor.splice(0,1)[0];
 			mess += `${unequipItem[0]} from your ARMOR SLOT`;
 		}
 		break;
-		
+
+		case "WEAPON":
+		case "SPECIBUS":
+			if(args[1]){
+				args.splice(0,1);
+			}
+			else{
+				args[0] = `${curWeapon + 1}`;
+			}
+		//fallthrough
 		default:
 		{
 			selectIndex = parseInt(args[0], 10) - 1;
@@ -97,7 +108,7 @@ exports.run = (client, message, args) => {
 	}
 
 	sdex.unshift(unequipItem);
-	
+
 	// If the sylladex is over capacity, pop off a card, like always.
 	if(sdex.length > client.charcall.charData(client,charid,"cards"))
 	{
@@ -107,7 +118,7 @@ exports.run = (client, message, args) => {
 		let sec = client.landMap.get(land,local[0]);
 		let area = sec[local[1]][local[2]];
 		let room = area[2][local[3]];
-		
+
 		room[5].push(dropItem);
 		mess += `\nYour Sylladex is full, ejecting your ${dropItem[0]}!`;
 		sec[local[1]][local[2]][2][local[3]] = room;
