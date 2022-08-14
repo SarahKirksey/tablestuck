@@ -84,7 +84,6 @@ function passTurn(client, charid, message, local) {
   let list = client.strifeMap.get(strifeLocal,"list");
   let init = client.strifeMap.get(strifeLocal,"init");
   //quick catch to ignore any pass if it's not the creature's turn, if it passes other similar checks.
-  //console.log(`The passing creature is ${charid}.\n it's ${list[init[turn][0]][1]}'s turn right now.'`)
 if(client.charcall.charData(client,charid,"pos")!=init[turn][0]){
     console.log("stopped a pass from a creature out of turn!");
     return;
@@ -622,6 +621,12 @@ function startTurn(client, message, local) {
 	  list[init[turn][0]][PROFILE.ACTION].push(`HAT${trinketBonus[0]}`);
   }
 
+  let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
+  // 50% chance for the bonus AV to trigger for the round.
+  if(trinketBonus[1] === "avChance" && Math.random() < 0.5){
+	  list[init[turn][0]][PROFILE.ACTION].push(`HAT${trinketBonus[0]}`);
+  }
+
   let stamina;
   let stamfav = 0;
   let stamroll;
@@ -1125,6 +1130,11 @@ else {
 
 }
 
+  let attUnit = list[init[turn][0]];
+  let targUnit = list[target];
+
+  attName = client.charcall.charData(client,attUnit[1],"name");
+  targName = client.charcall.charData(client,targUnit[1],"name");
 
   let attUnit = list[init[turn][0]];
   let targUnit = list[target];
@@ -1132,9 +1142,8 @@ else {
   attName = client.charcall.charData(client,attUnit[1],"name");
   targName = client.charcall.charData(client,targUnit[1],"name");
 
-
-    let brroll;
-    let av = 0;
+  let brroll;
+  let av = 0;
 
   let armor = client.charcall.charData(client,targUnit[1],"armor");
 
@@ -2137,7 +2146,7 @@ if(list[active[ik]][3] < 1){
 
 function getBonusFromTrinket(client, message, trinket){
 	let trinketSetting = client.configcall.get(client, message, "TRINKETS");
-	
+
 	if(trinketSetting == 0 || trinketSetting == "NONE" || trinket == undefined || trinket[1] == undefined){
 		return [0, "none"];
 	}
@@ -2157,10 +2166,31 @@ function getBonusFromTrinket(client, message, trinket){
 	}
 	return [0, "none"];
 }
+	
 
 exports.getBonusFromTrinket = function(client, message, trinket){
 	return getBonusFromTrinket(client, message, trinket);
 }
+
+
+/*
+            if(list[target][7].includes("BURN")){
+              setTimeout(act,3000,client,message,local,"astound",target);
+              setTimeout(act,6000,client,message,local,"absorb",target);
+              setTimeout(passTurn,9000,client,message,local);
+            } else {
+              setTimeout(act,3000,client,message,local,"arsonate",target);
+              setTimeout(act,6000,client,message,local,"astound",target);
+              setTimeout(passTurn,9000,client,message,local);
+            }
+            break;
+          }
+        break;
+    }
+  } catch(err){
+
+  }
+}*/
 
 
 exports.spawn = function(client,message,underling,pregrist = false){
