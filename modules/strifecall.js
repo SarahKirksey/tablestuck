@@ -1163,7 +1163,7 @@ else {
         attackEfficacy *= -1;
     }
 
-    if(targScience[1] && attackEfficacy < 0){
+    if(targScience[1] && attackEfficacy > 0){
         attackEfficacy = 0;
     }
 
