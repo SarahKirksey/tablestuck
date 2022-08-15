@@ -390,6 +390,10 @@ function giveXp(client,target,xp){
   curXp = client.charcall.allData(client,userid,target,"xp");
   curRung = client.charcall.allData(client,userid,target,"rung");
 
+  if(client.traitcall.traitCheck(client,target,"HEAVY")[1]){
+	xp *= 2;
+  }
+
 //check if XP gained is higher than what is needed to level up
 
   if((curRung==100)||(curXp+xp)<rungReq[(curRung+1)]){
@@ -1387,6 +1391,20 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
   fav--;
 }
 
+  if(client.traitcall.traitCheck(client,attUnit[1],"HEAVY")[0]){
+    fav--;
+  }
+  if(client.traitcall.traitCheck(client,attUnit[1],"LIGHTWEIGHT")[1]){
+    fav += 1;
+  }
+
+  if(client.traitcall.traitCheck(client,targUnit[1],"HEAVY")[0]){
+    fav += 1;
+  }
+  if(client.traitcall.traitCheck(client,targUnit[1],"LIGHTWEIGHT")[1]){
+    fav -= 1;
+  }
+
     let strikeCheck;
     let strikemsg;
 
@@ -1461,6 +1479,9 @@ if(strikeBonus<0){
     av++;
   }
   if(client.traitcall.traitCheck(client,targUnit[1],"EXQUISITE")[1]){
+    av = av+2;
+  }
+  if(client.traitcall.traitCheck(client,targUnit[1],"LIGHTWEIGHT")[1]){
     av = av+2;
   }
   if(client.traitcall.traitCheck(client,targUnit[1],"BREATH")[0]){
