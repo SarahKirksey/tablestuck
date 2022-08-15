@@ -95,10 +95,29 @@ exports.run = (client, message, args) => {
     return;
   }
 
+
+  let type = 3;
+  let item = dex[value];
+
+  while (args[1]) {
+    // Viewing a specific item in a container
+    let subValue = parseInt(args[1], 10) - 1;
+    if(isNaN(subValue) || subValue < 0 || subValue >= dex[value][4].length){
+      message.channel.send("That is not a valid argument!");
+      return;
+    }
+
+    type = 0;
+    dex = dex[value][4];
+    item = dex[subValue];
+    value = subValue;
+    args.splice(0, 1);
+  }
+
   //decypher captcha code and convert into weapon information
 
   async function itemInspect(){
-  const attachment = await client.imgcall.inspect(client,message,args,3,dex[value]);
+  const attachment = await client.imgcall.inspect(client,message,args,type,dex[value]);
 
     client.tutorcall.progressCheck(client,message,4,["img",attachment]);
   }
