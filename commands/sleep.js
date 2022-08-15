@@ -60,11 +60,8 @@ exports.run = function(client, message, args) {
     client.charcall.setAnyData(client,userid,target,targList,"control");
     client.tutorcall.progressCheck(client,message,39,["text","You fall asleep, or are you waking up?"]);
 	
-	/*
 	let msg = "You wake up in a ";
-	//let local = client.charcall.allData(client, userid, charid, "local")
 	let targetLocal = client.charcall.allData(client, userid, target, "local");
-	let mapCheck = (targetLocal[0] == "h");
+	let mapCheck = (targetLocal[0] != "h");
 	client.funcall.move(client, message, target, targetLocal, targetLocal, mapCheck, msg, "waking up in");
-	*/
 }
