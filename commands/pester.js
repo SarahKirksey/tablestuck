@@ -1,13 +1,14 @@
 exports.type = "character";
 exports.desc = "Talk to chums"
 exports.use = `">pester [pestertag] [message]" sends a message to a chum on your chumroll.`
-exports.run = async function(client, message, args){
+exports.run = async function(client, message, args, implicit=false){
 
   var userid = message.guild.id.concat(message.author.id);
   var charid = client.userMap.get(userid,"possess");
   let chumroll = client.charcall.allData(client,userid,charid,"chumroll");
   if(chumroll=="NONE"){
-    message.channel.send("You have no chums to pester!");
+	if(implicit !== true)
+      message.channel.send("You have no chums to pester!");
     return;
   }
   let tagList = [];
@@ -22,7 +23,7 @@ exports.run = async function(client, message, args){
   }
 
   if(!args[0]){
-      client.tutorcall.progressCheck(client,message,11,["text",`check your chumroll and use a chum's tag to message them! For example, ${client.auth.prefix}pester gt Fuck you!`]);
+    client.tutorcall.progressCheck(client,message,11,["text",`check your chumroll and use a chum's tag to message them! For example, ${client.auth.prefix}pester gt Fuck you!`]);
     return;
   }
 
@@ -31,12 +32,14 @@ exports.run = async function(client, message, args){
   if(tagList.includes(args[0].toUpperCase())){
     value=tagList.indexOf(args[0].toUpperCase());
   }else{
-    client.tutorcall.progressCheck(client,message,11,["text",`That isn't a valid tag! Check your ${client.auth.prefix}chumroll and use a chum's tag to message them!`]);
+	if(implicit !== true)
+      client.tutorcall.progressCheck(client,message,11,["text",`That isn't a valid tag! Check your ${client.auth.prefix}chumroll and use a chum's tag to message them!`]);
     return;
   }
 
   if(!args[1]){
-    message.channel.send("You need to type a message to send to your chum!");
+	if(implicit !== true)
+      message.channel.send("You need to type a message to send to your chum!");
     return;
   }
 
@@ -53,7 +56,8 @@ exports.run = async function(client, message, args){
     client.hookcall.pester(client,message,charid,getTag,msg);
     client.tutorcall.progressCheck(client,message,11);
   }catch(err){
-    message.channel.send("Failed to send message!");
+	if(implicit !== true)
+      message.channel.send("Failed to send message!");
   }
 
 }
