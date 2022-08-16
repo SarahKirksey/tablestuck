@@ -108,7 +108,6 @@ if(client.charcall.charData(client,charid,"pos")!=init[turn][0]){
 
   let active = client.strifeMap.get(strifeLocal,"active");
 
-
   let msg;
 
    msg = `${client.charcall.charData(client,list[init[turn][0]][1],"name")} passes their turn!`;
@@ -392,7 +391,7 @@ function giveXp(client,target,xp){
   curRung = client.charcall.allData(client,userid,target,"rung");
 
   if(client.traitcall.traitCheck(client,target,"HEAVY")[1]){
-	xp *= 2;
+    xp *= 2;
   }
 
 //check if XP gained is higher than what is needed to level up
@@ -623,7 +622,7 @@ function startTurn(client, message, local) {
   let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
   // 50% chance for the bonus AV to trigger for the round.
   if(trinketBonus[1] === "avChance" && Math.random() < 0.5){
-	  list[init[turn][0]][PROFILE.ACTION].push(`HAT${trinketBonus[0]}`);
+      list[init[turn][0]][PROFILE.ACTION].push(`HAT${trinketBonus[0]}`);
   }
 
   let stamina;
@@ -696,7 +695,11 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"CHARLATAN")[0]){
 
   if(specibus.length>0){
 
-  let charlaCode = specibus[equip][1].substring(0,4)+client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2];
+  let charlaCode = specibus[equip][1].substring(0,4) +
+    client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+
+    client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+
+    client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2]+
+    client.captchaCode[Math.floor((Math.random() * (client.captchaCode.length-4)))+2];
 
   specibus[equip][1] = charlaCode;
 
@@ -710,7 +713,7 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
 }
 
     let endurance = client.traitcall.traitCheck(client,list[init[turn][0]][1],"ENDURING");
-	
+
     // Stamina value that are currently used are 4, 6, 8, 10, and 12.
     //        Normal     Enduring[0]     Enduring[1]
     //  4     1d4        1d3 + 1         1d2 + 2
@@ -725,7 +728,7 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
 
     } else if(endurance[0]){
 
-      stamroll = [Math.floor((Math.random() * (stamMax-stamMax/4)) + Math.floor(stamMax/4)+1),Math.floor((Math.random() * (stamMax-stamMax/4)) + Math.floor(stamMax/4)+1)];
+      stamroll = [Math.floor((Math.random() * (stamMax-stamMax/4)) + Math.floor(stamMax/4)+1), Math.floor((Math.random() * (stamMax-stamMax/4)) + Math.floor(stamMax/4)+1)];
 
     } else {
 
@@ -987,14 +990,14 @@ exports.underRally = function(client, message, local) {
       let list = client.strifeMap.get(strifeLocal,"list");
       let init = client.strifeMap.get(strifeLocal,"init");
       let active = client.strifeMap.get(strifeLocal,"active");
-	  let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
+      let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
 
       var pos = list.length;
       client.charcall.setAnyData(client,'-',occList[i][1],pos,"pos");
       let initRoll = [pos, Math.floor((Math.random() * 20) + 1)];
-	  if(trinketBonus[1] === "initiative"){
-		initRoll += trinketBonus[0];
-	  }
+      if(trinketBonus[1] === "initiative"){
+        initRoll += trinketBonus[0];
+      }
 
       list.push(profile);
       active.push(pos);
@@ -1116,7 +1119,8 @@ grist = client.gristTypes[client.codeCypher[1][client.captchaCode.indexOf(specib
 dmg = tierDmg[specibus[equip][2]];
 bdroll = tierBD[specibus[equip][2]];
 
-} else {
+}
+else {
   let underling = client.charcall.charData(client,list[init[turn][0]][1],"type");
   dmg = client.underlings[underling].d;
   bdroll = client.underlings[underling].bd;
@@ -1130,8 +1134,8 @@ bdroll = tierBD[specibus[equip][2]];
   attName = client.charcall.charData(client,attUnit[1],"name");
   targName = client.charcall.charData(client,targUnit[1],"name");
 
-    let brroll;
-    let av = 0;
+  let brroll;
+  let av = 0;
 
   let armor = client.charcall.charData(client,targUnit[1],"armor");
 
@@ -1196,6 +1200,7 @@ bdroll = tierBD[specibus[equip][2]];
         attackEfficacy *= 2;
         strikeBonus *= 2;
     }
+
     if(client.traitcall.traitCheck(client,attUnit[1],"NOIR")[0]){
       strikeBonus += Math.floor(Math.random()*4) + 1;
     }
@@ -1208,8 +1213,8 @@ bdroll = tierBD[specibus[equip][2]];
 
     let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client,attUnit[1],"trinket")[0]);
     if(trinketBonus[1] === "accuracy"){
-		strikeBonus += trinketBonus[0];
-	}
+        strikeBonus += trinketBonus[0];
+    }
 
     let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
     let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
@@ -1225,6 +1230,7 @@ bdroll = tierBD[specibus[equip][2]];
         case "UNFAV":
           fav--;
           break;
+
         case "CARRY":
         case "ALLBD":
         case "ALLFAV":
@@ -1233,6 +1239,7 @@ bdroll = tierBD[specibus[equip][2]];
         case "STAMFAV":
           attUnit[STATUS].push(aa[pre]);
           break;
+
         case "STAMADD":
           newStam = Math.ceil(Math.random() * 4);
           attUnit[STAMIN]+= newStam;
@@ -1400,6 +1407,7 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
 
     let strikeCheck;
     let strikemsg;
+
 //roll to hit, similar to how stamina is handled
     let strikeRoll = [Math.floor((Math.random() * 20) + 1),Math.floor((Math.random() * 20) + 1)];
     let metaNess = client.traitcall.traitCheck(client,attUnit[1],"META");
@@ -1467,6 +1475,7 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
         strikeMsg = `~~${strikeRoll[1]}~~ ${strikeRoll[0]}`;
       }
     }
+
 if(strikeBonus>0){
   strikeMsg += ` + ${strikeBonus} = ${strikeCheck+strikeBonus}`;
 }
@@ -1489,11 +1498,11 @@ if(strikeBonus<0){
   }
 
   if(targUnit[PROFILE.ACTION][0] && targUnit[PROFILE.ACTION][0].substring(0,3) === "HAT"){
-	let hatBonus = parseInt(targUnit[PROFILE.ACTION][0].substring(3), 10);
-	if(!isNaN(hatBonus)){
-	  av += hatBonus;
-	  alert+=`That sure is a nifty piece of headwear!\n`;
-	}
+    let hatBonus = parseInt(targUnit[PROFILE.ACTION][0].substring(3), 10);
+    if(!isNaN(hatBonus)){
+      av += hatBonus;
+      alert+=`That sure is a nifty piece of headwear!\n`;
+    }
   }
 
   if((strikeCheck+strikeBonus)>av && (client.traitcall.traitCheck(client,targUnit[1],"FROG")[1] && !(Math.floor((Math.random() * 12))))){
@@ -1653,8 +1662,8 @@ if(aa.includes("RANDSTATUS")){
 
 }
 
-    //check for all COMBATATIVE COMBAT TAGS
-    //check target status effects
+        //check for all COMBATATIVE COMBAT TAGS
+        //check target status effects
 
     let postcon;
     for(postcon=(list[target][7].length-1);postcon>=0;postcon--){
@@ -1804,7 +1813,7 @@ if(aa.includes("RANDSTATUS")){
       }
     }
 
-  let damage = ((dmg * dmgLvl) + bonusDmg) - bonusRes;
+        let damage = ((dmg * dmgLvl) + bonusDmg) - bonusRes;
 
     if(client.traitcall.traitCheck(client,targUnit[1],"SPOOKY")[1]&&(attUnit[STATUS].includes("HAUNT2")||attUnit[STATUS].includes("HAUNT")||attUnit[STATUS].includes("HAUNT3"))){
       equals=true;
@@ -1830,8 +1839,9 @@ if(aa.includes("RANDSTATUS")){
           if(client.actionList[action].cst>1){
           hopeStam--;
            }
-         }
-       //closing here
+        }
+
+        //closing here
         if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
           if(client.actionList[action].cst > 1){
             hopeStam--;
@@ -1845,9 +1855,9 @@ if(aa.includes("RANDSTATUS")){
 
             attUnit[STAMIN]+=hopeStam;
 
-      }
+          }
 
-      equals=true;
+          equals=true;
 
       // Noir crit
       if(client.traitcall.traitCheck(client,attUnit[1],"NOIR")[1]){
@@ -1907,12 +1917,9 @@ if(aa.includes("RANDSTATUS")){
     };
 
 
-    if(equals)
-    damagemsg+= ` = **${damage}**`;
-
-
-
-
+    if(equals){
+      damagemsg+= ` = **${damage}**`;
+    }
 
 
     if(client.traitcall.traitCheck(client,targUnit[1],"HEART")[0]){
@@ -1940,7 +1947,7 @@ if(aa.includes("RANDSTATUS")){
     if(client.traitcall.traitCheck(client,attUnit[1],"VAMPIRIC")[1]&&targUnit[STATUS].includes("BLEED") ){
       attUnit[HEALTH]+= bonusDmg;
       alert+= `VAMPIRICALLY SIPHONED ${bonusDmg} VITALITY!\n`
-  
+
       if(attUnitGel<attUnit[HEALTH]){
         attUnit[HEALTH]=attUnitGel;
       }
@@ -1958,10 +1965,10 @@ if(aa.includes("RANDSTATUS")){
               list[id][3] = 1;
               alert += `ONE TARGET USED ITS LAST OF 9 LIVES, SURVIVED AT 1 HP!\n`;
               list[id][7].push("NINELIVES");
+              }
             }
           }
         }
-      }
 
 
     if(aa.includes("SPLASHBD")){
@@ -1976,11 +1983,11 @@ if(aa.includes("RANDSTATUS")){
             list[id][3] = 1;
             alert += `ONE TARGET USED ITS LAST OF 9 LIVES, SURVIVED AT 1 HP!\n`;
             list[id][7].push("NINELIVES");
+                }
+              }
+            }
           }
         }
-      }
-    }
-  }
 
     if(list[target][7].includes("BLOCK")){
       alert+= `TARGET BLOCKED ALL DAMAGE!\n`;
@@ -2073,38 +2080,36 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BOUNCY")[0]&&!Math
       {name:"DAMAGE",value:damagemsg,inline:true},
       {name:"ADDITIONAL ALERTS",value:alert}
     )
-    .setColor(client.actionList[action].col)
-    .setImage(client.actionList[action].img);
+        .setColor(client.actionList[action].col)
+        .setImage(client.actionList[action].img);
 
-    for(i=0;i<active.length;i++){
-      if(client.charcall.controlCheck(client,list[active[i]][0])){
-        client.funcall.chanMsg(client,list[active[i]][1],"NONE",embed);
-      }
+        for(i=0;i<active.length;i++){
+          if(client.charcall.controlCheck(client,list[active[i]][0])){
+            client.funcall.chanMsg(client,list[active[i]][1],"NONE",embed);
+          }
+        }
+
     }
-
-  } else {
-
-    //if attack misses
-
+  }
+  //if attack misses
+  else {
     if(aa.includes("REFUND")){
-
       let hopeStam = client.actionList[action].cst;
       alert+=`ACTION IS FREE!\n`;
-
-      if(list[init[turn][0]][7].includes("DISCOUNT")){
+      if(attUnit[STATUS].includes("DISCOUNT")){
         if(client.actionList[action].cst>1){
-        hopeStam--;
-         }
-       }
-     //closing here
-      if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"MIND")[1]){
+          hopeStam--;
+        }
+      }
+
+      //closing here
+      if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
         if(client.actionList[action].cst > 1){
           hopeStam--;
         }
       }
 
       list[init[turn][0]][5]+=hopeStam;
-
     }
 
     if(alert.length==0){
@@ -2124,12 +2129,14 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BOUNCY")[0]&&!Math
     )
     .setColor(client.actionList[action].col)
     .setImage(client.actionList[action].img);
+
     for(i=0;i<active.length;i++){
         client.funcall.chanMsg(client,list[active[i]][1],"NONE",embed);
     }
   }
 
-} else {
+}
+else {
     //if att is false
 
     if(alert.length==0){
@@ -2159,6 +2166,7 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BOUNCY")[0]&&!Math
   if(targUnit[STATUS].includes("DOUBLEGRIST")&&targUnit[HEALTH]>0){
     removed = targUnit[STATUS].splice(targUnit[STATUS].indexOf("DOUBLEGRIST"));
   }
+
 try{
 for(let ik=0;ik<active.length;ik++){
 if(list[active[ik]][3] < 1){
@@ -2483,7 +2491,7 @@ function getCharHealth(client, userid, charid){
   if(gel == "NONE"){
     gel = client.underlings[client.charcall.charData(client,charid,"type")].vit;
   }
-  
+
   if(gel != undefined){
     let plushness = client.traitcall.traitCheck(client,charid,"PLUSH");
     if(plushness[0] == true){

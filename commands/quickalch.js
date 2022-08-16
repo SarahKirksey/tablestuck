@@ -67,14 +67,14 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
     item1[3] = 1;
     item1[4] = [];
 
-	function checkCode(checkItem){
-	  return checkItem[1] == item1[1];
-	}
+    function checkCode(checkItem){
+      return checkItem[1] == item1[1];
+    }
 
-	if(registry.findIndex(checkCode)!= -1){
-	  message.channel.send("You've already registered an item with that code!");
-	  return;
-	}
+    if(registry.findIndex(checkCode)!= -1){
+      message.channel.send("You've already registered an item with that code!");
+      return;
+    }
 
     if(item1[1].charAt(0) == "/"||item1[1]=="########"){
       message.channel.send("You can't alchemize that!");
@@ -101,67 +101,67 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
   if((is1Ath ? 1 : 0) + (is2Ath ? 1 : 0) + 3 != argsCount)
   {
     client.tutorcall.progressCheck(client,message,48,["text",`To use the Instant Alchemiter, you need to select an item from your sylladex or atheneum, select an alchemy type (&& or ||), and select a second item from your sylladex or atheneum. For example, ${client.auth.prefix}quickalch 1 && ath 2. If you want to just reproduce a single item, just select the first item.`]);
-	return;
+    return;
   }
 
   if(is1Ath)
   {
-	  select1 = parseInt(args[1], 10) - 1;
-	  if(isNaN(select1))
-	  {
-		message.channel.send("Item 1 is not a valid argument!");
-		return;
-	  }
-	  if(select1 >= registry.length || select1< 0){
-		message.channel.send(`The first selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
-		return;
-	  }
-	  args.splice(0, 1);
+      select1 = parseInt(args[1], 10) - 1;
+      if(isNaN(select1))
+      {
+        message.channel.send("Item 1 is not a valid argument!");
+        return;
+      }
+      if(select1 >= registry.length || select1< 0){
+        message.channel.send(`The first selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
+        return;
+      }
+      args.splice(0, 1);
   }
   else
   {
-	  select1 = parseInt(args[0], 10) - 1;
-	  if(isNaN(select1))
-	  {
-		message.channel.send("Item 1 is not a valid argument!");
-		return;
-	  }
-	  if(select1 >= sdex.length || select1< 0)
-	  {
-		message.channel.send(`The first selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
-		return;
-	  }
+      select1 = parseInt(args[0], 10) - 1;
+      if(isNaN(select1))
+      {
+        message.channel.send("Item 1 is not a valid argument!");
+        return;
+      }
+      if(select1 >= sdex.length || select1< 0)
+      {
+        message.channel.send(`The first selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
+        return;
+      }
   }
 
 
   if(is2Ath)
   {
-	  select2 = parseInt(args[3], 10) - 1;
-	  if(isNaN(select2))
-	  {
-		message.channel.send("Item 2 is not a valid argument!");
-		return;
-	  }
-	  if(select2 >= registry.length || select2< 0)
-	  {
-		message.channel.send(`The second selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
-		return;
-	  }
-	  args.splice(2, 1);
+      select2 = parseInt(args[3], 10) - 1;
+      if(isNaN(select2))
+      {
+        message.channel.send("Item 2 is not a valid argument!");
+        return;
+      }
+      if(select2 >= registry.length || select2< 0)
+      {
+        message.channel.send(`The second selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
+        return;
+      }
+      args.splice(2, 1);
   }
   else
   {
-	  select2 = parseInt(args[2], 10) - 1;
-	  if(isNaN(select2))
-	  {
-		message.channel.send("Item 2 is not a valid argument!");
-		return;
-	  }
-	  if(select2 >= sdex.length || select2< 0)
-	  {
-		message.channel.send(`The second selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
-		return;
-	  }
+      select2 = parseInt(args[2], 10) - 1;
+      if(isNaN(select2))
+      {
+        message.channel.send("Item 2 is not a valid argument!");
+        return;
+      }
+      if(select2 >= sdex.length || select2< 0)
+      {
+        message.channel.send(`The second selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
+        return;
+      }
   }
 
   if(select1==select2){
@@ -175,11 +175,11 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
   let mode = args[1].toLowerCase();
   if(mode=="oror"||mode=="or")
   {
-	  mode = "||";
+      mode = "||";
   }
   else if(mode=="andand"||mode=="and")
   {
-	  mode = "&&";
+      mode = "&&";
   }
 
   if(mode!="||"&&mode!="&&")

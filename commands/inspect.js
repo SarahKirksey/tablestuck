@@ -88,7 +88,7 @@ exports.run = (client, message, args) => {
   if(isNaN(value)){
     message.channel.send("That is not a valid argument!");
     return;
-}
+  }
 
   if(value >= dex.length || value < 0) {
     message.channel.send("That is not a valid argument!")

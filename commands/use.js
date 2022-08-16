@@ -108,7 +108,7 @@ exports.run = (client, message, args) => {
           var firstCardContents = ["PERFECTLY GENERIC OBJECT", "00000000", 1, 1, []];
           var secondCardContents = ["PERFECTLY GENERIC OBJECT", "00000000", 1, 1, []];
           var prepunched = room[5][selectRoom][4][0][4].length == 1;
-          
+
           switch (room[5][selectRoom][4][0][4].length) { // If the first card has two items in it, we need to combine them with alchemy
             case 1:
               firstCardContents = room[5][selectRoom][4][0][4][0];
@@ -455,29 +455,29 @@ exports.run = (client, message, args) => {
         return;
       }
     }
-	  else if(sdex[selectDex][3] > 1) {
-		  if(sdex.length == client.charcall.charData(client,charid,"cards"))
-		  {
-			message.channel.send(`You don't have any available cards, so you can't split that stack!`);
-			return;
-		  }
-		  let newStackSize = Math.floor(sdex[selectDex][3] / 2);
-		  sdex[selectDex][3] -= newStackSize;
-		  
-		  let newItem = [];
-		  for(let i=0;i<sdex[selectDex].length;i++){
-			if(i==3){
-			  newItem.push(newStackSize);
-			}else{
-			  newItem.push(sdex[selectDex][i]);
-			}
-		  }
-		  sdex.unshift(newItem);
-		  client.charcall.setAnyData(client,userid,charid,sdex,"sdex");
-		  message.channel.send(`You have split your **${newItem[0].toUpperCase()}** stack in half!`);
-		  return;
-	  }
-	  else {
+      else if(sdex[selectDex][3] > 1) {
+          if(sdex.length == client.charcall.charData(client,charid,"cards"))
+          {
+            message.channel.send(`You don't have any available cards, so you can't split that stack!`);
+            return;
+          }
+          let newStackSize = Math.floor(sdex[selectDex][3] / 2);
+          sdex[selectDex][3] -= newStackSize;
+
+          let newItem = [];
+          for(let i=0;i<sdex[selectDex].length;i++){
+            if(i==3){
+              newItem.push(newStackSize);
+            }else{
+              newItem.push(sdex[selectDex][i]);
+            }
+          }
+          sdex.unshift(newItem);
+          client.charcall.setAnyData(client,userid,charid,sdex,"sdex");
+          message.channel.send(`You have split your **${newItem[0].toUpperCase()}** stack in half!`);
+          return;
+      }
+      else {
       message.channel.send("You can't use that item!");
       return;
     }

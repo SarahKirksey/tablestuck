@@ -47,18 +47,18 @@ exports.run = (client, message, args) => {
   let curGate = client.landMap.get(targsburb,"gate");
   //convert grist amount to number
   if(!args[0]){
-	let messText = `Your client ${(curGate>0?`has access to gate number ${curGate}`:`hasn't reached a gate yet.`)}.`;
-	let messText2 = `\nYou have expended ${buildSpent} grist on the house`;
-	if(curGate >= MAX_HEIGHT_INDEX + 1)
-	{
+    let messText = `Your client ${(curGate>0?`has access to gate number ${curGate}`:`hasn't reached a gate yet.`)}.`;
+    let messText2 = `\nYou have expended ${buildSpent} grist on the house`;
+    if(curGate >= MAX_HEIGHT_INDEX + 1)
+    {
       messText = `Your client has reached the build limit!`;
-	  messText2 += "."
-	}
-	else
-	{
+      messText2 += "."
+    }
+    else
+    {
       messText2 += ` so far, and need to expend ${gateReq[curGate]-buildSpent} more to reach the ${(curGate < MAX_HEIGHT_INDEX) ? `next gate` : `build limit!`}!`;
-	}
-	messText += messText2;
+    }
+    messText += messText2;
     client.tutorcall.progressCheck(client,message,21,["text", messText]);
     return;
   }
@@ -86,17 +86,17 @@ exports.run = (client, message, args) => {
   if(value + buildSpent > gateReq[MAX_HEIGHT_INDEX])
   {
     let diff = value + buildSpent - gateReq[MAX_HEIGHT_INDEX];
-	value -= diff;
+    value -= diff;
   }
-  
+
   if(value < 1)
   {
     message.channel.send("The Client has already reached the build limit! Their house can't go any higher!");
-	if(curGate <= MAX_HEIGHT_INDEX)
-	{
-		gate = MAX_HEIGHT_INDEX + 1;
-		client.landMap.set(targsburb,gate,"gate");
-	}
+    if(curGate <= MAX_HEIGHT_INDEX)
+    {
+        gate = MAX_HEIGHT_INDEX + 1;
+        client.landMap.set(targsburb,gate,"gate");
+    }
     return;
   }
 

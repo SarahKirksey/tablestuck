@@ -91,8 +91,8 @@ return [nameList[select],code,1,1,[]];
 
 exports.lootGen = function(client,level){
 
-  tierVary = [1,3,6,9,12];
-  quantityMin = [5,25,125,625,3125];
+  tierVary    = [ 1, 3,  6,   9,  12];
+  quantityMin = [ 5,25,125, 625,3125];
   quantityMax = [10,50,250,1250,6250];
 
 let loot;
@@ -257,9 +257,7 @@ switch(name){
 }
 
 exports.lootA = function(client,section){
-
   return ["BOSS CHEST","y!3IXhgi",1,1,[client.lootcall.lootGen(client,section+1),client.lootcall.lootGen(client,section+1),client.lootcall.lootGen(client,section+1)]];
-
 }
 
 exports.lootB = function(client,section){

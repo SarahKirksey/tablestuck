@@ -18,7 +18,7 @@ exports.run = (client, message, args) => {
 
 	var trinket = client.charcall.charData(client,charid,"trinket");
 	var armor = client.charcall.charData(client,charid,"armor");
-	
+
 	let curWeapon = client.charcall.charData(client,charid,"equip");
 
 	if(!args[0])
@@ -44,12 +44,13 @@ exports.run = (client, message, args) => {
 				message.channel.send(`You don't have a trinket equipped!`);
 				return;
 			}
+
 			unequipItem = trinket.splice(0,1)[0];
-			
+
 			mess += `${unequipItem[0]} from your TRINKET SLOT`;
 		}
 		break;
-		
+
 		case "ARMOR":
 		case "ARMOUR":
 		{
@@ -58,6 +59,7 @@ exports.run = (client, message, args) => {
 				message.channel.send(`You don't have armor equipped!`);
 				return;
 			}
+
 			unequipItem = armor.splice(0,1)[0];
 			mess += `${unequipItem[0]} from your ARMOR SLOT`;
 		}
@@ -90,11 +92,12 @@ exports.run = (client, message, args) => {
 					message.channel.send("Cannot unequip your last STRIFE CARD!");
 					return;
 				}
-				
+
 				//decrease card count, specify a normal strife card as the returned item
 				scards-=1;
 				unequipItem=["STRIFE CARD","////////",1,1,[]];
-			  } else {
+			}
+			else {
 				unequipItem=spec.splice(selectIndex,1)[0];
 				if(selectIndex < curWeapon || (selectIndex > 0 && selectIndex == curWeapon && curWeapon + 1 >= spec.length)){
 					curWeapon -= 1;
@@ -106,7 +109,7 @@ exports.run = (client, message, args) => {
 	}
 
 	sdex.unshift(unequipItem);
-	
+
 	// If the sylladex is over capacity, pop off a card, like always.
 	if(sdex.length > client.charcall.charData(client,charid,"cards"))
 	{
@@ -116,7 +119,7 @@ exports.run = (client, message, args) => {
 		let sec = client.landMap.get(land,local[0]);
 		let area = sec[local[1]][local[2]];
 		let room = area[2][local[3]];
-		
+
 		room[5].push(dropItem);
 		mess += `\nYour Sylladex is full, ejecting your ${dropItem[0]}!`;
 		sec[local[1]][local[2]][2][local[3]] = room;
