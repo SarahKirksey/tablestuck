@@ -60,14 +60,14 @@ exports.run = (client, message, args) => {
 
   args[0] = args[0].toLowerCase();
 
-//eject selected item from specibus
-
 if(args[0]=="unequip") {
-	let cmd = client.commands.get("unequip");
-	args.splice(0,1);
-	cmd.run(client,message,args);
-	return;
+  let cmd = client.commands.get("unequip");
+  args.splice(0,1);
+  cmd.run(client,message,args);
+  return;
 }
+
+//eject selected item from specibus
 if(args[0]=="eject") {
 
   if(client.charcall.charData(client,charid,"strife")){
