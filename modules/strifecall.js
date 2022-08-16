@@ -1875,31 +1875,6 @@ if(aa.includes("RANDSTATUS")){
       damagemsg += ` * 2`;
       alert +=`**BLASPHEMOUS WORD** - CRIT DOUBLED!\n`;
     }
-
-//old crit calc
-    /*  if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[1]||client.traitcall.traitCheck(client,list[init[turn][0]][1],"NOIR")[1]){
-        if(!paren){
-          damagemsg = `(`+damagemsg+`)`;
-          paren = true;
-        }
-        if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[1]){
-        damage *= 2;
-        damagemsg += ` * 4`;
-        alert +=`**BLASPHEMOUS WORD** - QUADRUPLE DAMAGE!\n`;
-      }
-      if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"NOIR")[1]) {
-        damage *= 3;
-        damagemsg += ` * 3`;
-        alert +=`1000/1000 CLOCKS DESTROYED! TRIPLE DAMAGE!\n`;
-        }
-      } else {
-      damage *= 2;
-      if(!paren){
-        damagemsg = `(`+damagemsg+`)`;
-        paren = true;
-      }
-      damagemsg += ` * 2`
-    }*/
     };
 
     if(damage < 0 || att == false) {
@@ -2033,11 +2008,6 @@ if(aa.includes("RANDSTATUS")){
           bounceCheck=true;
           alert+=`BOUNCY!!! IF TARGET IS STILL ALIVE, ATTACKING AGAIN!\n`;
         }
-
-
-    //if(list[target][3] < 1){
-      //kill(client,message,local,target,turn);
-    //}
 
     client.strifeMap.set(strifeLocal,last,"last");
 
