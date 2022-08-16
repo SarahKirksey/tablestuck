@@ -176,6 +176,10 @@ exports.run = (client, message, args) => {
               return;
             }
 
+            // We don't actually want to include this data in the atheneum.
+            item[3] = 1;
+            item[4] = [];
+
             registry.unshift(item);
 
             client.charcall.setAnyData(client,userid,charid,registry,"registry");
