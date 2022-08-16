@@ -42,38 +42,38 @@ exports.run = (client, message, args) => {
 
   if(isNaN(value)){
 
-	args[0] = args[0].toLowerCase();
-	
-	let distance = 1;
-	if(args[1] && parseInt(args[1], 10))
-	{
-		distance = parseInt(args[1], 10);
-	}
-	
-	let direction;
-	let xDiff = 0;
-	let yDiff = 0;
+    args[0] = args[0].toLowerCase();
+
+    let distance = 1;
+    if(args[1] && parseInt(args[1], 10))
+    {
+        distance = parseInt(args[1], 10);
+    }
+
+    let direction;
+    let xDiff = 0;
+    let yDiff = 0;
 
     switch(args[0]){
       case "n":
       case "north":
-	    direction = "NORTH";
-		yDiff = -1;
+        direction = "NORTH";
+        yDiff = -1;
       break;
       case "s":
       case "south":
-	    direction = "SOUTH";
-		yDiff = 1;
+        direction = "SOUTH";
+        yDiff = 1;
       break;
       case "e":
       case "east":
-	    direction = "EAST";
-		xDiff = 1;
+        direction = "EAST";
+        xDiff = 1;
       break;
       case "w":
       case "west":
-	    direction = "WEST";
-		xDiff = -1;
+        direction = "WEST";
+        xDiff = -1;
       break;
       default:
 
@@ -122,6 +122,47 @@ exports.run = (client, message, args) => {
 			break;
 		}
 	}
+
+    target[1]=local[1]+distance*yDiff;
+    target[2]=local[2]+distance*xDiff;
+
+
+    msg += `You move ${direction} and enter a `;
+
+    for(let i=1; i<distance; i++)
+    {
+        let blockMovement = false;
+        if(local[1]+yDiff*i>=sec.length || local[2]+xDiff*i>=sec.length || local[1]+yDiff*i<0 || local[2]+xDiff*i<0){
+            blockMovement = true;
+            msg2 = MAP_EDGE_ERROR;
+        }
+        else if(sec[local[1]+yDiff*i][local[2]+xDiff*i][2][0][3] !== true)
+        {
+            if(local[0].length>1&&local[0].charAt(local[0].length-1)=="d"){
+                blockMovement = true;
+                msg2 = UNEXPLORED_ERROR;
+            }
+            else{
+                // Stop the player at this tile, instead of stopping them immediately before it.
+                distance = i;
+                target[1] = local[1] + yDiff * distance;
+                target[2] = local[2] + xDiff * distance;
+                break;
+            }
+        }
+        else if(sec[local[1]+yDiff*i][local[2]+xDiff*i][0]==7) {
+            blockMovement = true;
+            msg2 = HIT_WALL_ERROR;
+        }
+
+        if(blockMovement)
+        {
+            distance = i-1;
+            target[1] = local[1] + yDiff * distance;
+            target[2] = local[2] + xDiff * distance;
+            break;
+        }
+    }
 
   } else {
     if(value >= sec[local[1]][local[2]][2].length || value < 0){
