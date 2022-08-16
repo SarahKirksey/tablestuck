@@ -1029,6 +1029,7 @@ exports.underRally = function(client, message, local) {
 
   function act(client,charid,message,local,action,target){
     const HEALTH = 3;
+    const STAMIN = 5;
     const STATUS = 7;
 
     let strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
@@ -1224,84 +1225,58 @@ targName = client.charcall.charData(client,list[target][1],"name");
           fav--;
           break;
         case "CARRY":
-          list[init[turn][0]][7].push("CARRY");
-          break;
         case "ALLBD":
-          list[init[turn][0]][7].push("ALLBD");
-          break;
         case "ALLFAV":
-          list[init[turn][0]][7].push("ALLFAV");
-          break;
         case "ALLUNFAV":
-          list[init[turn][0]][7].push("ALLUNFAV");
-          break;
         case "NEXTFAV":
-          list[init[turn][0]][7].push("NEXTFAV");
-          break;
-
         case "STAMFAV":
-          list[init[turn][0]][7].push("STAMFAV");
+          attUnit[STATUS].push(aa[pre]);
           break;
         case "STAMADD":
           newStam = Math.ceil(Math.random() * 4);
-          list[init[turn][0]][5]+= newStam;
+          attUnit[STAMIN]+= newStam;
           let p;
           for(p=0;p<active.length;p++){
             if(list[active[p]][0]==true){
-              alert+=`${attName} gains ${newStam} STAMINA, they now have ${list[init[turn][0]][5]} STAMINA!\n`
+              alert+=`${attName} gains ${newStam} STAMINA, they now have ${attUnit[STAMIN]} STAMINA!\n`
             }
           }
           break;
           case "STAMADD+":
           newStam = Math.ceil(Math.random() * 8);
-            list[init[turn][0]][5]+= newStam;
+            attUnit[STAMIN]+= newStam;
             let j;
             for(j=0;j<active.length;j++){
               if(list[active[j]][0]==true){
-                alert+=`${attName} gains ${newStam} STAMINA, they now have ${list[init[turn][0]][5]} STAMINA!\n`
+                alert+=`${attName} gains ${newStam} STAMINA, they now have ${attUnit[STAMIN]} STAMINA!\n`
               }
             }
             break;
-        case "DISCOUNT":
-          list[init[turn][0]][7].push("DISCOUNT");
-          break;
-        case "STATUSIMMUNE":
-          list[init[turn][0]][7].push("STATUSIMMUNE");
-          break;
         case "PROTECT":
-          list[target][7].push("PROTECT");
+          targUnit[STATUS].push("PROTECT");
           break;
+        case "DISCOUNT":
+        case "STATUSIMMUNE":
         case "NEXTBD":
-          list[init[turn][0]][7].push("NEXTBD");
-          break;
         case "AV":
-          list[init[turn][0]][7].push("AV");
+        case "DEFLECT":
+        case "DEFROST":
+        case "BLOCK":
+        case "GRISTINVERT":
+        case "DEGRAP":
+          attUnit[STATUS].push(aa[pre]);
           break;
         case "CLEARSTATUS":
-          list[init[turn][0]][7]=[];
+          attUnit[STATUS]=[];
           break;
         case "STATUSDROP":
 
-          removed = list[init[turn][0]][7].splice(Math.floor(Math.random()*list[init[turn][0]][7].length),1);
+          removed = attUnit[STATUS].splice(Math.floor(Math.random()*attUnit[STATUS].length),1);
           alert+=`REMOVED THE ${removed} STATUS EFFECT\n`;
 
           break;
-        case "DEFLECT":
-          list[init[turn][0]][7].push("DEFLECT");
-          break;
-        case "DEFROST":
-          list[init[turn][0]][7].push("DEFROST");
-          break;
-        case "BLOCK":
-          list[init[turn][0]][7].push("BLOCK");
-          break;
-        case "GRISTINVERT":
-          list[init[turn][0]][7].push("GRISTINVERT");
-          break;
 
-        case "DEGRAP":
-          list[init[turn][0]][7].push("DEGRAP");
-
+        // ABJURE
         case "SCALEDMG":
           if(attUnit[HEALTH]<Math.floor(attUnitGel/4)){
             dmgLvl=3;
@@ -1347,36 +1322,30 @@ targName = client.charcall.charData(client,list[target][1],"name");
         let removed;
 
         //check for COMBATATIVE tags
-        switch(list[init[turn][0]][7][precon]){
-          case "ALLFAV":
-            fav++;
-            break;
+        switch(attUnit[STATUS][precon]){
           case "CORRUPT":
-            fav--;
-            break;
+          case "GRAPPLE":
             case "HAUNT":
             case "HAUNT2":
             case "HAUNT3":
               fav--;
               break;
-          case "NEXTFAV":
-            if(att == true){
+
+            case "NEXTFAV":
+              removed = attUnit[STATUS].splice(precon,1);
+            // fallthrough
+            case "ALLFAV":
               fav++;
-              removed = list[init[turn][0]][7].splice(precon,1);
-            }
-            break;
-            case "ALLBD":
-              bd++
               break;
-              case "NEXTBD":
-                bd++
-                removed = list[init[turn][0]][7].splice(precon,1);
-                break;
-          case "GRAPPLE":
-            fav--;
+
+          case "NEXTBD":
+            removed = attUnit[STATUS].splice(precon,1);
+            // fallthrough
+          case "ALLBD":
+            bd++
             break;
+          }
         }
-      }
 
 
 
@@ -1385,27 +1354,21 @@ targName = client.charcall.charData(client,list[target][1],"name");
         for(precont=(list[target][7].length - 1);precont>=0;precont--){
           let removed;
 
-          switch(list[target][7][precont]){
+          switch(targUnit[STATUS][precont]){
             case "CORRUPT":
-              fav++
-            break;
             case "HAUNT":
             case "HAUNT2":
             case "HAUNT3":
-              fav++
-            break;
             case "GRAPPLE":
+            case "TARGFAV":
               fav++
             break;
+
             case "ALLUNFAV":
-              fav--;
-              break;
             case "PROTECT":
               fav--;
               break;
-            case "TARGFAV":
-              fav++;
-              break;
+
             case "AV":
               av++;
               break;
