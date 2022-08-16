@@ -15,6 +15,7 @@ exports.run = (client, message, args) => {
   let scards = client.charcall.charData(client,charid,"scards");
   let name = client.charcall.charData(client,charid,"name");
   let equip = client.charcall.charData(client,charid,"equip");
+  let port = client.charcall.charData(client,charid,"port");
 
 
   let msg = ``;
@@ -38,12 +39,17 @@ exports.run = (client, message, args) => {
     eq = `**[${equip+1}] EMPTY**\n\n`
   }
 
+  let extraPort = "";
+  if(kinds.length < port){
+    extraPort = ` + ${port - kinds.length}`;
+  }
+
   specibusPrint = new client.MessageEmbed()
   .setTitle(`**${name.toUpperCase()}'S STRIFE SPECIBUS**`)
   .setColor("#00e371")
   .addFields(
     {name:`**STRIFE CARDS**`,value:`**x${scards}**`,inline:true},
-    {name:`**KIND ABSTRATUS**`,value:`**${kinds}**`,inline:true},
+    {name:`**KIND ABSTRATUS**`,value:`**${kinds}**${extraPort}`,inline:true},
     {name:`**CURRENTLY EQUIPPED**`,value:eq},
     {name:"**SPECIBUS**",value:msg});
   client.tutorcall.progressCheck(client,message,22,["embed",specibusPrint]);
