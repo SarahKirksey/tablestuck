@@ -10,7 +10,8 @@ const debugOptions = [
   ["boons","gives a number of BOONDOLLARS equal to the provided amount."],
   ["wallet","captchalogues ANY item."],
   ["void","destroys an item completely."],
-  ["fog","adds or removes fog for the current map."]
+  ["fog","adds or removes fog for the current map."],
+  ["materialize","converts grist from a player's cache directly into RAINBOW GRIST."]
 ];
 
 exports.run = function(client,message,args){
@@ -269,6 +270,39 @@ exports.run = function(client,message,args){
       }
       client.charcall.setAnyData(client,targetID,charid,gristCheck,"grist");
       message.channel.send("Fixed. Probably.");
+      return;
+    }
+    break;
+	
+    case "materialize": {
+      let gristCheck = client.charcall.allData(client,targetID,charid,"grist");
+      let currentInv = client.charcall.allData(client,targetID,charid,"sdex");
+      if(gristCheck == "NONE")
+      {
+        message.channel.send(`${targetID == userid ? "You're" : "They're"} not currently possessing anything that has grist.`);
+        return;
+      }
+
+      const gristTypes = ["build","uranium","amethyst","garnet","iron","marble","chalk","shale","cobalt","ruby","caulk","tar","amber","artifact","zillium","diamond"];
+      let amount = gristCheck[1];
+
+      // First, determine how much rainbow grist the player can produce.
+      for(i=2;i<=12;i++){
+        if(gristCheck[i] < amount)
+          amount = gristCheck[i];
+      }
+
+      // Then, remove that much grist from the player's cache
+	  for(i=1; i<=12; i++){
+		  gristCheck[i] -= amount;
+	  }
+
+      // Lastly, give that grist to the player in item form.
+	  let rainbowItem = ["RAINBOW GRIST", "////////", 1, amount, []];
+	  currentInv.unshift(rainbowItem);
+      client.charcall.setAnyData(client,targetID,charid,currentInv,"sdex");
+      client.charcall.setAnyData(client,targetID,charid,gristCheck,"grist");
+      message.channel.send("Rainbow'd!");
       return;
     }
     break;
