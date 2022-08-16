@@ -28,8 +28,8 @@ exports.run = (client, message, args) => {
 			message.channel.send(`Your STRIFE SPECIBUS is not currently allocated to a weaponkind, you must ${client.auth.prefix}allocate it before you can ${client.auth.prefix}equip a weapon, much less unequip one!`);
 			return;
 		};
-		
-		args[0] = "" + curWeapon;
+
+		args[0] = `${curWeapon + 1}`;
 	}
 
 	let mess = `Successfully UNEQUIPPED the `;
