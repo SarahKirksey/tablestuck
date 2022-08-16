@@ -96,7 +96,8 @@ exports.run = (client, message, args) => {
 				//decrease card count, specify a normal strife card as the returned item
 				scards-=1;
 				unequipItem=["STRIFE CARD","////////",1,1,[]];
-			} else {
+			}
+			else {
 				unequipItem=spec.splice(selectIndex,1)[0];
 				if(selectIndex < curWeapon || (selectIndex > 0 && selectIndex == curWeapon && curWeapon + 1 >= spec.length)){
 					curWeapon -= 1;

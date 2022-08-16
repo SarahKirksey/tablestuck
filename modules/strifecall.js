@@ -391,7 +391,7 @@ function giveXp(client,target,xp){
   curRung = client.charcall.allData(client,userid,target,"rung");
 
   if(client.traitcall.traitCheck(client,target,"HEAVY")[1]){
-	xp *= 2;
+    xp *= 2;
   }
 
 //check if XP gained is higher than what is needed to level up
@@ -1845,7 +1845,7 @@ if(aa.includes("RANDSTATUS")){
           if(client.actionList[action].cst>1){
           hopeStam--;
            }
-         }
+        }
 
         //closing here
         if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
@@ -1859,7 +1859,7 @@ if(aa.includes("RANDSTATUS")){
           hopeStam*=2;
         }
 
-            attUnit[STAMIN]+=hopeStam;
+        attUnit[STAMIN]+=hopeStam;
       }
 
       // Noir crit
@@ -1929,12 +1929,9 @@ if(aa.includes("RANDSTATUS")){
       if(attUnitGel<attUnit[HEALTH]){
         attUnit[HEALTH]=attUnitGel;
       }
-
     }
 
        if(client.traitcall.traitCheck(client,attUnit[1],"DOOM")[1]&&strikeCheck==20){
-
-
           alert+= `**MORTAL DECAY** YOUR DAMAGE SPREADS TO ALL FOES.\n`;
           for(let id=0;id<active.length;id++){
             if(active[id]!=init[turn][0]&&active[id]!=target){
@@ -1948,19 +1945,18 @@ if(aa.includes("RANDSTATUS")){
           }
         }
 
-
-        if(aa.includes("SPLASHBD")){
-          if(active.length>2){
-            let id;
-            let splashbd= Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0]);
-            alert+=`DEALT ${splashbd} DAMAGE TO ALL FOES.\n`
-            for(id=0;id<active.length;id++){
-              if(active[id]!=init[turn][0]&&active[id]!=target){
-                list[id][HEALTH]-= splashbd;
-                if(list[id][HEALTH] < 1 && client.traitcall.traitCheck(client,list[id][1],"CAT")[1] && !list[id][STATUS].includes("NINELIVES")) {
-                  list[id][HEALTH] = 1;
-                  alert += `ONE TARGET USED ITS LAST OF 9 LIVES, SURVIVED AT 1 HP!\n`;
-                  list[id][STATUS].push("NINELIVES");
+    if(aa.includes("SPLASHBD")){
+      if(active.length>2){
+      let id;
+      let splashbd= Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0]);
+      alert+=`DEALT ${splashbd} DAMAGE TO ALL FOES.\n`
+      for(id=0;id<active.length;id++){
+        if(active[id]!=init[turn][0]&&active[id]!=target){
+          list[id][3]-= splashbd;
+          if(list[id][3] < 1 && client.traitcall.traitCheck(client,list[id][1],"CAT")[1] && !list[id][7].includes("NINELIVES")) {
+            list[id][3] = 1;
+            alert += `ONE TARGET USED ITS LAST OF 9 LIVES, SURVIVED AT 1 HP!\n`;
+            list[id][7].push("NINELIVES");
                 }
               }
             }
@@ -2052,12 +2048,10 @@ if(aa.includes("RANDSTATUS")){
             client.funcall.chanMsg(client,list[active[i]][1],"NONE",embed);
           }
         }
-
     }
-    else
-    {
-        //if attack misses
-
+  }
+  //if attack misses
+  else {
         if(aa.includes("REFUND")){
 
           let hopeStam = client.actionList[action].cst;
@@ -2455,7 +2449,7 @@ function getCharHealth(client, userid, charid){
   if(gel == "NONE"){
     gel = client.underlings[client.charcall.charData(client,charid,"type")].vit;
   }
-  
+
   if(gel != undefined){
     let plushness = client.traitcall.traitCheck(client,charid,"PLUSH");
     if(plushness[0] == true){

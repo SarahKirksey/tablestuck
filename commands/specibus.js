@@ -88,7 +88,6 @@ if(args[0]=="eject") {
 
   selectDex = parseInt(args[1], 10) - 1;
   if(isNaN(selectDex)){
-
     message.channel.send("That is not a valid argument!");
     return;
   }
@@ -99,7 +98,6 @@ if(args[0]=="eject") {
   let dropItem;
   //if selection is not an item, drop strife card
   if(selectDex >= spec.length){
-
     if(scards <= 1) {
       message.channel.send("Cannot eject your last STRIFE CARD!");
       return;
@@ -118,19 +116,19 @@ if(args[0]=="eject") {
   client.charcall.setAnyData(client,userid,charid,0,"equip");
   message.channel.send(`Ejected the ${dropItem[0]}!`);
   client.funcall.tick(client,message);
-
-} else {
+}
+else {
 
 if(args[0] == "inspect")
 {
-	if(!args[1])
-	{
-		args[0] = equip + 1;
-	}
-	else
-	{
-		args[0] = args[1];
-	}
+  if(!args[1])
+  {
+    args[0] = equip + 1;
+  }
+  else
+  {
+    args[0] = args[1];
+  }
 }
 
 value = parseInt(args[0], 10) - 1;
