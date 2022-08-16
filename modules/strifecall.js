@@ -1457,30 +1457,21 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
       strikeCheck = strikeRoll[0];
       strikeMsg = `${strikeRoll[0]}`;
     }
-    if(fav>0) {
+    else
+    {
+      let lowRoll = Math.min(strikeRoll[0], strikeRoll[1]);
+      let highRoll = Math.max(strikeRoll[0], strikeRoll[1]);
 
-      if(strikeRoll[0]>strikeRoll[1]){
-        strikeCheck=strikeRoll[0];
-        strikeMsg = `~~${strikeRoll[1]}~~ ${strikeRoll[0]}`;
-      } else {
-        strikeCheck=strikeRoll[1]
-        strikeMsg = `~~${strikeRoll[0]}~~ ${strikeRoll[1]}`;
-      }
-    } else if(fav<0){
-      if(strikeRoll[0]>strikeRoll[1]){
-        strikeCheck=strikeRoll[1];
-        strikeMsg = `~~${strikeRoll[0]}~~ ${strikeRoll[1]}`;
-      } else {
-        strikeCheck=strikeRoll[0]
-        strikeMsg = `~~${strikeRoll[1]}~~ ${strikeRoll[0]}`;
-      }
+      strikeCheck = fav > 0 ? highRoll : lowRoll;
+      let otherRoll = fav > 0 ? lowRoll : highRoll;
+      strikeMsg = `~~${otherRoll}~~ ${strikeCheck}`;
     }
 
 if(strikeBonus>0){
   strikeMsg += ` + ${strikeBonus} = ${strikeCheck+strikeBonus}`;
 }
 if(strikeBonus<0){
-  strikeMsg += ` - ${strikeBonus} = ${strikeCheck+strikeBonus}`;
+  strikeMsg += ` - ${strikeBonus * -1} = ${strikeCheck+strikeBonus}`;
 }
 
 
