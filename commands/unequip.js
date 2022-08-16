@@ -62,7 +62,16 @@ exports.run = (client, message, args) => {
 			mess += `${unequipItem[0]} from your ARMOR SLOT`;
 		}
 		break;
-		
+
+		case "WEAPON":
+		case "SPECIBUS":
+			if(args[1]){
+				args.splice(0,1);
+			}
+			else{
+				args[0] = `${curWeapon + 1}`;
+			}
+		//fallthrough
 		default:
 		{
 			selectIndex = parseInt(args[0], 10) - 1;
