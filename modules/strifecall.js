@@ -1543,15 +1543,18 @@ if(client.traitcall.traitCheck(client,attUnit[1],"ELECTRIC")[0]){
 if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[0]){
    alert+=inflict(client, message, local, list, target, 6, "STUN", init[turn][0]);
 }
-  if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BLUNT")[0]){
+
+
+  let bluntness = client.traitcall.traitCheck(client,attUnit[1],"BLUNT");
+  if(bluntness[0] && !targUnit[STATUS].includes("DAZED")){
     let dchance=12;
-  if(!list[target][7].includes("DAZED")){
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BLUNT")[1]){
+    if(bluntness[1]){
       dchance = 6;
     }
     alert+=inflict(client, message, local, list, target, dchance, "DAZED", init[turn][0]);
   }
-  }
+  
+
   if(client.traitcall.traitCheck(client,attUnit[1],"SHITTY")[1]){
   alert+=inflict(client, message, local, list, target, 12, "CORRUPT", init[turn][0]);
   }
