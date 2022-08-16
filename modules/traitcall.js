@@ -17,6 +17,10 @@ exports.traitCheck = function(client,target,traitName){
   let trinket = client.charcall.charData(client,target,"trinket");
   let prototype = client.charcall.charData(client,target,"prototype");
   let checklist = [];
+  if(client.traitList.indexOf(traitName) == -1 && client.traitList.indexOf(traitName) == -1){
+	console.log(`Traitcall was asked to find stats on "${traitName}", which isn't a real trait!`);
+	return check;
+  }
   if(prototype!="NONE"&&prototype.length>0){
     for(let i=0;i<prototype.length;i++){
       checklist.push(prototype[i][1]);

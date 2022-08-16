@@ -16,7 +16,7 @@ exports.sdexCheck = async function (client, message,page, args, type, sdex, card
 
   let scheme = ["#992445","#0c6137","#992ae1","#484848"];
   let typeList = ["sylladex","strife specibus","container","room inventory"];
-  let cardList = ["captchalogue cards","strife cards","storage space","room space"]
+  let cardList = ["captchalogue cards","strife cards","storage space","room space"];
   let usedCards = sdex.length;
   let maxPage = Math.floor((usedCards-1)/ITEMS_PER_PAGE);
 
@@ -47,9 +47,9 @@ exports.sdexCheck = async function (client, message,page, args, type, sdex, card
 
   //ctx.drawImage(cardSheet,0,0,192,232,16,48,192,232);
 
-  let j = page*10;
+  let j = page*ITEMS_PER_PAGE;
 
-  for(let i=0;i<10;i++){
+  for(let i=0;i<ITEMS_PER_PAGE;i++){
 
     let x = 16+((i%5)*208);
 

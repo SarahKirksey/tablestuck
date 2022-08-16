@@ -853,20 +853,15 @@ exports.move = function(client,message,charid,local,target,mapCheck,msg,embedTit
   }
 
     targSec[target[1]][target[2]][2][target[3]][4].push(occset);
-//the &&false is to disable prospitians spawning for the tournament
     if(target[4]==message.guild.id+"medium"&&targSec[target[1]][target[2]][2][target[3]][4].length==1){
       switch(target[0]){
+        case "d":
         case "dm":
           targSec[target[1]][target[2]][2][target[3]][4]=targSec[target[1]][target[2]][2][target[3]][4].concat(client.landcall.carSpawn(client,target,0,message.guild.id))
         break;
-        case "d":
-          targSec[target[1]][target[2]][2][target[3]][4]=targSec[target[1]][target[2]][2][target[3]][4].concat(client.landcall.carSpawn(client,target,0,message.guild.id))
-        break;
-        case "pm":
-          targSec[target[1]][target[2]][2][target[3]][4]=targSec[target[1]][target[2]][2][target[3]][4].concat(client.landcall.carSpawn(client,target,1,message.guild.id))
-        break;
         case "p":
-          targSec[target[1]][target[2]][2][target[3]][4]=targSec[target[1]][target[2]][2][target[3]][4].concat(client.landcall.carSpawn(client,target,1,message.guild.id))
+        case "pm":
+          targSec[target[1]][target[2]][2][target[3]][4]=targSec[target[1]][target[2]][2][target[3]][4].concat(client.landcall.carSpawn(client,target,1,message.guild.id));
         break;
         case "bf":
           targSec[target[1]][target[2]][2][target[3]][4]=targSec[target[1]][target[2]][2][target[3]][4].concat(client.landcall.carSpawn(client,target,0,message.guild.id),client.landcall.carSpawn(client,target,1,message.guild.id));
