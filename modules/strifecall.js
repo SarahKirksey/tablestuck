@@ -2238,248 +2238,33 @@ if(list[active[ik]][3] < 1){
   }
 
 
-/*  function underTurn(client, message, local, underling) {
-
-    let strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
-
-    let playerpos = client.strifeMap.get(strifeLocal,"playerpos")
-    let active = client.strifeMap.get(strifeLocal,"active")
-    let list = client.strifeMap.get(strifeLocal,"list")
-    let turn = client.strifeMap.get(strifeLocal,"turn")
-    let init = client.strifeMap.get(strifeLocal,"init")
-
-    let stamina = list[init[turn][0]][5];
-//randomly decide target from list
-    let target = playerpos[Math.floor((Math.random() * playerpos.length))];
-
-    try{
-      //depending on underling, take actions in order before passing turn with 3 second delay between each
-    switch (underling){
-      case "imp":
-        switch(stamina){
-          case 0:
-            setTimeout(passTurn,3000,client,message,local);
-          break;
-          case 1:
-            setTimeout(passTurn,3000,client,message,local);
-          break;
-          case 2:
-            setTimeout(act,3000,client,message,local,"aggrieve",target);
-            setTimeout(passTurn,6000,client,message,local);
-          break;
-          case 3:
-            setTimeout(act,3000,client,message,local,"astrict",target);
-            setTimeout(passTurn,6000,client,message,local);
-          break;
-          case 4:
-            setTimeout(act,3000,client,message,local,"asphixiate",target);
-            setTimeout(passTurn,6000,client,message,local);
-          break;
-        }
-      break;
-      case "ogre":
-        switch(stamina){
-          case 0:
-            setTimeout(passTurn,3000,client,message,local);
-          break;
-          case 1:
-            setTimeout(passTurn,3000,client,message,local);
-          break;
-          case 2:
-            setTimeout(act,3000,client,message,local,"assail",target);
-            setTimeout(passTurn,6000,client,message,local);
-          break;
-          case 3:
-            setTimeout(act,3000,client,message,local,"assault",target);
-            setTimeout(passTurn,6000,client,message,local);
-          break;
-          case 4:
-            setTimeout(act,3000,client,message,local,"assail",target);
-            setTimeout(act,6000,client,message,local,"assail",target);
-            setTimeout(passTurn,9000,client,message,local);
-          break;
-        }
-      break;
-      case "basilisk":
-        switch(stamina){
-          case 0:
-            setTimeout(passTurn,3000,client,message,local);
-          break;
-          case 1:
-            setTimeout(act,3000,client,message,local,"assimilate",target);
-            setTimeout(passTurn,6000,client,message,local);
-          break;
-          case 2:
-            setTimeout(act,3000,client,message,local,"assimilate",target);
-            setTimeout(act,6000,client,message,local,"assimilate",target);
-            setTimeout(passTurn,9000,client,message,local);
-          break;
-          case 3:
-            setTimeout(act,3000,client,message,local,"assimilate",target);
-            setTimeout(act,6000,client,message,local,"assimilate",target);
-            setTimeout(act,9000,client,message,local,"assimilate",target);
-            setTimeout(passTurn,12000,client,message,local);
-          break;
-          case 4:
-
-          list = client.strifeMap.get(strifeLocal,"list")
-          if(list[target][7].includes("BURN")){
-            setTimeout(act,3000,client,message,local,"assimilate",target);
-            setTimeout(act,6000,client,message,local,"assimilate",target);
-            setTimeout(act,9000,client,message,local,"assimilate",target);
-            setTimeout(act,12000,client,message,local,"assimilate",target);
-            setTimeout(passTurn,15000,client,message,local);
-          } else {
-            setTimeout(act,3000,client,message,local,"arsonate",target);
-            setTimeout(passTurn,6000,client,message,local);
-          }
-          break;
-        }
-      break;
-      case "lich":
-        switch(stamina){
-          case 0:
-            setTimeout(passTurn,3000,client,message,local);
-          break;
-          case 1:
-            setTimeout(act,3000,client,message,local,"assimilate",target);
-            setTimeout(passTurn,6000,client,message,local);
-
-          break;
-          default:
-            list[init[turn][0]][5]-=2;
-            client.strifeMap.set(strifeLocal,list,"list");
-            setTimeout(act,3000,client,message,local,"acquire",target);
-
-            setTimeout(lichTurn,6000,client,message,local,underling,target);
-          break;
-        }
-        break;
-        case "giclopse":
-          switch(stamina){
-            case 0:
-              setTimeout(passTurn,3000,client,message,local);
-            break;
-            case 1:
-              setTimeout(passTurn,6000,client,message,local);
-            break;
-            case 2:
-              setTimeout(act,3000,client,message,local,"assail",target);
-              setTimeout(passTurn,6000,client,message,local);
-            break;
-            case 3:
-              setTimeout(act,3000,client,message,local,"assault",target);
-              setTimeout(passTurn,6000,client,message,local);
-            break;
-            case 4:
-
-              setTimeout(act,3000,client,message,local,"assure",target);
-              setTimeout(passTurn,6000,client,message,local);
-            break;
-            case 5:
-              setTimeout(act,3000,client,message,local,"assail",target);
-              setTimeout(act,6000,client,message,local,"assault",target);
-              setTimeout(passTurn,9000,client,message,local);
-            break;
-            case 6:
-              setTimeout(act,3000,client,message,local,"abolish",target);
-              setTimeout(passTurn,6000,client,message,local);
-            break;
-          }
-        break;
-        case "titachnid":
-          switch(stamina){
-            case 0:
-              setTimeout(passTurn,3000,client,message,local);
-            break;
-            case 1:
-              setTimeout(act,3000,client,message,local,"abuse",target);
-              setTimeout(passTurn,6000,client,message,local);
-            break;
-            case 2:
-              setTimeout(act,3000,client,message,local,"abuse",target);
-              setTimeout(act,6000,client,message,local,"abuse",target);
-              setTimeout(passTurn,9000,client,message,local);
-            break;
-            case 3:
-              setTimeout(act,3000,client,message,local,"abuse",target);
-              setTimeout(act,6000,client,message,local,"abuse",target);
-              setTimeout(act,9000,client,message,local,"abuse",target);
-              setTimeout(passTurn,12000,client,message,local);
-            break;
-            case 4:
-            list = client.strifeMap.get(strifeLocal,"list")
-            if(list[target][7].includes("BURN")){
-              setTimeout(act,3000,client,message,local,"absorb",target);
-              setTimeout(passTurn,6000,client,message,local);
-            } else {
-              setTimeout(act,3000,client,message,local,"arsonate",target);
-              setTimeout(passTurn,6000,client,message,local);
-            }
-            break;
-            case 5:
-            list = client.strifeMap.get(strifeLocal,"list")
-            if(list[target][7].includes("BURN")){
-              setTimeout(act,3000,client,message,local,"actualize",target);
-              setTimeout(act,6000,client,message,local,"abuse",target);
-              setTimeout(act,9000,client,message,local,"abuse",target);
-              setTimeout(passTurn,12000,client,message,local);
-            } else {
-              setTimeout(act,3000,client,message,local,"arsonate",target);
-              setTimeout(act,6000,client,message,local,"abuse",target);
-              setTimeout(passTurn,9000,client,message,local);
-            }
-            break;
-            case 6:
-
-            list = client.strifeMap.get(strifeLocal,"list")
-
-
-            if(list[target][7].includes("BURN")){
-              setTimeout(act,3000,client,message,local,"astound",target);
-              setTimeout(act,6000,client,message,local,"absorb",target);
-              setTimeout(passTurn,9000,client,message,local);
-            } else {
-              setTimeout(act,3000,client,message,local,"arsonate",target);
-              setTimeout(act,6000,client,message,local,"astound",target);
-              setTimeout(passTurn,9000,client,message,local);
-            }
-            break;
-          }
-        break;
-    }
-  } catch(err){
-
-  }
-}*/
 
 function getBonusFromTrinket(client, message, trinket){
-	let trinketSetting = client.configcall.get(client, message, "TRINKETS");
+    let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
-	if(trinketSetting == 0 || trinketSetting == "NONE" || trinket == undefined || trinket[1] == undefined){
-		return [0, "none"];
-	}
-	let tier = trinket[2];
-	let kind = trinket[1][0];
-	let bonus = Math.floor(Math.sqrt(tier));
-	if(trinketSetting == 1){
-		return [bonus, "accuracy"];
-	}
-	else if(trinketSetting == 2){
-		switch(kind){
-			case "t":	return [bonus, "initiative"];
-			case "u":	return [bonus, "avChance"];
-			case "v":	return [bonus, "accuracy"];
-			default:	return [0, "none"];
-		}
-	}
-	return [0, "none"];
+    if(trinketSetting == 0 || trinketSetting == "NONE" || trinket == undefined || trinket[1] == undefined){
+        return [0, "none"];
+    }
+    let tier = trinket[2];
+    let kind = trinket[1][0];
+    let bonus = Math.floor(Math.sqrt(tier));
+    if(trinketSetting == 1){
+        return [bonus, "accuracy"];
+    }
+    else if(trinketSetting == 2){
+        switch(kind){
+            case "t":   return [bonus, "initiative"];
+            case "u":   return [bonus, "avChance"];
+            case "v":   return [bonus, "accuracy"];
+            default:    return [0, "none"];
+        }
+    }
+    return [0, "none"];
 }
 
 exports.getBonusFromTrinket = function(client, message, trinket){
 	return getBonusFromTrinket(client, message, trinket);
 }
-
 
 exports.spawn = function(client,message,underling,pregrist = false){
   let charid = client.userMap.get(message.guild.id.concat(message.author.id),"possess");
@@ -2593,48 +2378,7 @@ exports.spawn = function(client,message,underling,pregrist = false){
     return(underlingSpawn);
   }
 
-/*  function lichTurn(client,message,local,underling,target) {
 
-    let strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
-
-  let init = client.strifeMap.get(strifeLocal,"init");
-  list = client.strifeMap.get(strifeLocal,"list")
-  turn = client.strifeMap.get(strifeLocal,"turn")
-  stamina = list[init[turn][0]][5];
-
-  switch(stamina){
-    case 1:
-      setTimeout(act,3000,client,message,local,"assimilate",target);
-      setTimeout(passTurn,6000,client,message,local);
-    case 2:
-      setTimeout(act,3000,client,message,local,"astound",target);
-      setTimeout(passTurn,6000,client,message,local);
-    break;
-    case 3:
-      setTimeout(act,3000,client,message,local,"astound",target);
-      setTimeout(act,6000,client,message,local,"assimilate",target);
-      setTimeout(passTurn,9000,client,message,local);
-    break;
-    case 4:
-      setTimeout(act,3000,client,message,local,"astound",target);
-      setTimeout(act,6000,client,message,local,"assimilate",target);
-      setTimeout(act,9000,client,message,local,"assimilate",target);
-      setTimeout(passTurn,12000,client,message,local);
-    break;
-    case 5:
-      setTimeout(act,3000,client,message,local,"astound",target);
-      setTimeout(act,6000,client,message,local,"assimilate",target);
-      setTimeout(act,9000,client,message,local,"assimilate",target);
-      setTimeout(act,12000,client,message,local,"assimilate",target);
-      setTimeout(passTurn,15000,client,message,local);
-    break;
-    case 6:
-      setTimeout(act,3000,client,message,local,"abate",target);
-      setTimeout(passTurn,6000,client,message,local);
-    break;
-  }
-
-}*/
 exports.npcTurn = function(client, message, charid, local) {
   npcTurn(client,message,charid,local);
 }
