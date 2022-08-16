@@ -1821,13 +1821,13 @@ if(aa.includes("RANDSTATUS")){
 
         let damage = ((dmg * dmgLvl) + bonusDmg) - bonusRes;
 
-        if(client.traitcall.traitCheck(client,targUnit[1],"SPOOKY")[1]&&(attUnit[STATUS].includes("HAUNT2")||attUnit[STATUS].includes("HAUNT")||attUnit[STATUS].includes("HAUNT3"))){
-          equals=true;
-          damage=Math.floor(damage/2);
-          damagemsg = `(`+damagemsg+`)`;
-          paren = true;
-          damagemsg +=` / 2`;
-        }
+    if(client.traitcall.traitCheck(client,targUnit[1],"SPOOKY")[1]&&(attUnit[STATUS].includes("HAUNT2")||attUnit[STATUS].includes("HAUNT")||attUnit[STATUS].includes("HAUNT3"))){
+      equals=true;
+      damage=Math.floor(damage/2);
+      damagemsg = `(`+damagemsg+`)`;
+      paren = true;
+      damagemsg +=` / 2`;
+    }
 
     if(strikeCheck == 20){
       if(effective=="HIT!"){
@@ -1846,23 +1846,21 @@ if(aa.includes("RANDSTATUS")){
           hopeStam--;
            }
          }
-           //closing here
-            if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
-              if(client.actionList[action].cst > 1){
-                hopeStam--;
-              }
-            }
 
-            if(client.traitcall.traitCheck(client,attUnit[1],"HOPE")[1]){
-              alert+=`**BURNING SPIRIT** - GOT ${hopeStam} STAMINA!\n`
-              hopeStam*=2;
-            }
+        //closing here
+        if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
+          if(client.actionList[action].cst > 1){
+            hopeStam--;
+          }
+        }
+
+        if(client.traitcall.traitCheck(client,attUnit[1],"HOPE")[1]){
+          alert+=`**BURNING SPIRIT** - GOT ${hopeStam} STAMINA!\n`
+          hopeStam*=2;
+        }
 
             attUnit[STAMIN]+=hopeStam;
-
-          }
-
-          equals=true;
+      }
 
       // Noir crit
       if(client.traitcall.traitCheck(client,attUnit[1],"NOIR")[1]){
