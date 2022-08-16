@@ -1124,23 +1124,23 @@ bdroll = tierBD[specibus[equip][2]];
 
 }
 
-let attUnit = list[init[turn][0]];
-let targUnit = list[target];
-attName = client.charcall.charData(client,list[init[turn][0]][1],"name");
-targName = client.charcall.charData(client,list[target][1],"name");
+  let attUnit = list[init[turn][0]];
+  let targUnit = list[target];
 
+  attName = client.charcall.charData(client,attUnit[1],"name");
+  targName = client.charcall.charData(client,targUnit[1],"name");
 
     let brroll;
     let av = 0;
 
-    let armor = client.charcall.charData(client,list[target][1],"armor");
+  let armor = client.charcall.charData(client,targUnit[1],"armor");
 
     if(armor.length>0){
       av = tierAv[armor[0][2]];
       brroll = tierBD[armor[0][2]];
     } else {
-      av = client.underlings[client.charcall.charData(client,list[target][1],"type")].av;
-      brroll = client.underlings[client.charcall.charData(client,list[target][1],"type")].bd;
+      av = client.underlings[client.charcall.charData(client,targUnit[1],"type")].av;
+      brroll = client.underlings[client.charcall.charData(client,targUnit[1],"type")].bd;
     }
     let effective = "HIT!"
 
@@ -1286,40 +1286,41 @@ targName = client.charcall.charData(client,list[target][1],"name");
           }
           break;
           case "ROLLOUT":
-            if(list[init[turn][0]][7].includes("ROLLOUT1")){
+            if(attUnit[STATUS].includes("ROLLOUT1")){
               dmgLvl=2;
-              removed = list[init[turn][0]][7].splice(list[init[turn][0]][7].indexOf("ROLLOUT1"),1);
-              list[init[turn][0]][7].push("ROLLOUT2")
-            }else if(list[init[turn][0]][7].includes("ROLLOUT2")){
+              removed = attUnit[STATUS].splice(attUnit[STATUS].indexOf("ROLLOUT1"),1);
+              attUnit[STATUS].push("ROLLOUT2")
+            }else if(attUnit[STATUS].includes("ROLLOUT2")){
               dmgLvl=3;
             }else{
-              list[init[turn][0]][7].push("ROLLOUT1");
+              attUnit[STATUS].push("ROLLOUT1");
             }
             break;
       }
     }
 
-    //
-    //if action deals damage or imposes effect
-
     let costMsg = `${client.actionList[action].cst}`;
 
-    if(list[init[turn][0]][7].includes("DISCOUNT")){
+    if(attUnit[STATUS].includes("DISCOUNT")){
       if(client.actionList[action].cst>1){
       alert += `ACTIONS DISCOUNTED THIS TURN\n`;
       costMsg +=` - 1`;
        }
      }
    //closing here
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"MIND")[1]){
+    if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
       if(client.actionList[action].cst > 1){
         alert += `**BUTTERFLY EFFECT** - ACTIONS DISCOUNTED\n`;
         costMsg += ` - 1`;
       }
     }
-    if(att == true) {
+
+
+    //
+    //if action deals damage or imposes effect (on the target)
+  if(att == true) {
       let precon;
-      for(precon=(list[init[turn][0]][7].length - 1);precon>=0;precon--){
+      for(precon=(attUnit[STATUS].length - 1);precon>=0;precon--){
         let removed;
 
         //check for COMBATATIVE tags
@@ -1352,8 +1353,7 @@ targName = client.charcall.charData(client,list[target][1],"name");
 
       //check enemy tags
       let precont;
-        for(precont=(list[target][7].length - 1);precont>=0;precont--){
-          let removed;
+        for(precont=(targUnit[STATUS].length - 1);precont>=0;precont--){
 
           switch(targUnit[STATUS][precont]){
             case "CORRUPT":
@@ -1377,10 +1377,10 @@ targName = client.charcall.charData(client,list[target][1],"name");
 
 }
 
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BROKEN")[0]){
+if(client.traitcall.traitCheck(client,attUnit[1],"BROKEN")[0]){
   fav--;
 }
-if(client.traitcall.traitCheck(client,list[target][1],"VOID")[1]){
+if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
   fav--;
 }
 
@@ -1475,10 +1475,10 @@ if(strikeBonus<0){
 }
 
 
-  if(client.traitcall.traitCheck(client,list[target][1],"FROG")[0]){
+  if(client.traitcall.traitCheck(client,targUnit[1],"FROG")[0]){
     av++;
   }
-  if(client.traitcall.traitCheck(client,list[target][1],"EXQUISITE")[1]){
+  if(client.traitcall.traitCheck(client,targUnit[1],"EXQUISITE")[1]){
     av = av+2;
   }
   if(client.traitcall.traitCheck(client,targUnit[1],"LIGHTWEIGHT")[1]){
@@ -1496,7 +1496,7 @@ if(strikeBonus<0){
 	}
   }
 
-  if((strikeCheck+strikeBonus)>av && (client.traitcall.traitCheck(client,list[target][1],"FROG")[1] && !(Math.floor((Math.random() * 12))))){
+  if((strikeCheck+strikeBonus)>av && (client.traitcall.traitCheck(client,targUnit[1],"FROG")[1] && !(Math.floor((Math.random() * 12))))){
     strikeCheck=0;
     alert+=`TARGET JUMPED OUT OF THE WAY! FROGGERS!!!\n`;
   }
@@ -1510,12 +1510,13 @@ if(strikeBonus<0){
 
     //check traits that inflict status effects on hit
 
-    //if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"CANDY")[1]==true){
+    //if(client.traitcall.traitCheck(client,attUnit[1],"CANDY")[1]==true){
 
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"HOT")[0]){
+    // Burn
+    if(client.traitcall.traitCheck(client,attUnit[1],"HOT")[0]){
     alert+=inflict(client, message, local, list, target, 12, "BURN", init[turn][0]);
     }
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"IRRADIATED")[0]){
+    if(client.traitcall.traitCheck(client,attUnit[1],"IRRADIATED")[0]){
     alert+=inflict(client, message, local, list, target, 12, "BURN", init[turn][0]);
     }
     if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"SHARP")[0]){
@@ -1536,7 +1537,7 @@ if(strikeBonus<0){
 if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"COLD", init[turn][0])[0]){
   alert+=inflict(client, message, local, list, target, 12, "FROSTBITE", init[turn][0]);
 }
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"ELECTRIC")[0]){
+if(client.traitcall.traitCheck(client,attUnit[1],"ELECTRIC")[0]){
    alert+=inflict(client, message, local, list, target, 12, "STUN", init[turn][0]);
 }
 if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[0]){
@@ -1551,26 +1552,27 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[0]){
     alert+=inflict(client, message, local, list, target, dchance, "DAZED", init[turn][0]);
   }
   }
-  if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"SHITTY")[1]){
+  if(client.traitcall.traitCheck(client,attUnit[1],"SHITTY")[1]){
   alert+=inflict(client, message, local, list, target, 12, "CORRUPT", init[turn][0]);
   }
   if(client.traitcall.traitCheck(client,list[target][1],"THORNS")[0]){
   alert+=inflict(client, message, local, list, init[turn][0], 12, "BLEED", target);
   }
-  if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"SPOOKY")[0]){
-  if(!list[target][7].includes("HAUNT")&&!list[target][7].includes("HAUNT2")&&!list[target][7].includes("HAUNT3")){
-      alert+=inflict(client, message, local, list, target, 12, "HAUNT", init[turn][0]);
-  }
-  }
-  if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"GRIMDARK")[0]){
-  if(!list[target][7].includes("HAUNT")&&!list[target][7].includes("HAUNT2")&&!list[target][7].includes("HAUNT3")){
+  if(client.traitcall.traitCheck(client,attUnit[1],"SPOOKY")[0]){
+  if(!targUnit[STATUS].includes("HAUNT")&&!targUnit[STATUS].includes("HAUNT2")&&!targUnit[STATUS].includes("HAUNT3")){
     alert+=inflict(client, message, local, list, target, 12, "HAUNT", init[turn][0]);
   }
   }
-if(client.traitcall.traitCheck(client,list[target][1],"CAT")[0]){
+  if(client.traitcall.traitCheck(client,attUnit[1],"GRIMDARK")[0]){
+  if(!targUnit[STATUS].includes("HAUNT")&&!targUnit[STATUS].includes("HAUNT2")&&!targUnit[STATUS].includes("HAUNT3")){
+    alert+=inflict(client, message, local, list, target, 12, "HAUNT", init[turn][0]);
+  }
+  }
+
+if(client.traitcall.traitCheck(client,targUnit[1],"CAT")[0]){
   br++;
 }
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BROKEN")[1]){
+if(client.traitcall.traitCheck(client,attUnit[1],"BROKEN")[1]){
   if(!Math.floor((Math.random() * 12))){
     bdmax = true;
   }
@@ -1594,35 +1596,36 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"STICKY")[0]){
   }
 
 
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"IRRADIATED")[1]&&strikeCheck==20){
 
-let radioburn=false;
-  for(let ir=0;ir<list.length;ir++){
-    if((init[turn][0]!=ir)&&(!list[ir][7].includes("BURN"))){
-      if(client.traitcall.traitCheck(client,list[ir][1],"BREATH")[1]){
-        alert+= `**UNRESTRAINED** - TARGET IS IMMUNE TO ALL STATUS EFFECTS!\n`;
-      } else {
-      list[ir][7].push("BURN");
-      radioburn = true;
-      if(client.traitcall.traitCheck(client,list[ir][1],"BLOOD")[1]){
-        if(!list[init[turn][0]][7].includes("BURN")){
-          list[init[turn][0]][7].push("BURN");
-          alert+=`**THICKER THAN WATER** - Target shared status effect with everyone!\n`;
+        if(client.traitcall.traitCheck(client,attUnit[1],"IRRADIATED")[1]&&strikeCheck==20){
+
+          let radioburn=false;
+          for(let ir=0;ir<list.length;ir++){
+            if((init[turn][0]!=ir)&&(!list[ir][STATUS].includes("BURN"))){
+              if(client.traitcall.traitCheck(client,list[ir][1],"BREATH")[1]){
+                alert+= `**UNRESTRAINED** - TARGET IS IMMUNE TO ALL STATUS EFFECTS!\n`;
+              } else {
+              list[ir][STATUS].push("BURN");
+              radioburn = true;
+              if(client.traitcall.traitCheck(client,list[ir][1],"BLOOD")[1]){
+                if(!attUnit[STATUS].includes("BURN")){
+                  attUnit[STATUS].push("BURN");
+                  alert+=`**THICKER THAN WATER** - Target shared status effect with everyone!\n`;
+                }
+              }
+            }
+            }
+          }
+          if(radioburn){
+            alert+=`RADIOACTIVE!!! BURNED ALL OPPONENTS!\n`;
+          }
         }
-      }
-    }
-    }
-  }
-    if(radioburn){
-    alert+=`RADIOACTIVE!!! BURNED ALL OPPONENTS!\n`;
-  }
-}
 
 
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"CHARLATAN")[1]){
   let rageList = ["BURN","GRAPPLE","BLEED","FROSTBITE","DAZED","STUN","CORRUPT","HAUNT"];
-  if(list[target][7].includes("HAUNT")||list[target][7].includes("HAUNT2")||list[target][7].includes("HAUNT3")){
     removed = rageList.splice(rageList.indexOf("HAUNT"),1);
+if(client.traitcall.traitCheck(client,attUnit[1],"CHARLATAN")[1]){
+  if(targUnit[STATUS].includes("HAUNT")||targUnit[STATUS].includes("HAUNT2")||targUnit[STATUS].includes("HAUNT3")){
   }
 alert+=inflict(client, message, local, list, target, 6, rageList[Math.floor((Math.random() * rageList.length))], init[turn][0]);
 };
@@ -1633,12 +1636,12 @@ if(aa.includes("RANDSTATUS")){
 
   let rs;
 
-  if(list[target][7].includes("HAUNT")||list[target][7].includes("HAUNT2")||list[target][7].includes("HAUNT3")){
+  if(targUnit[STATUS].includes("HAUNT")||targUnit[STATUS].includes("HAUNT2")||targUnit[STATUS].includes("HAUNT3")){
     removed = statusList.splice(statusList.indexOf("HAUNT"),1);
   }
-  for(rs=0;rs<list[target][7].length;rs++){
-    if(statusList.includes(list[target][7][rs])){
-      removed = statusList.splice(statusList.indexOf(list[target][7][rs]),1);
+  for(rs=0;rs<targUnit[STATUS].length;rs++){
+    if(statusList.includes(targUnit[STATUS][rs])){
+      removed = statusList.splice(statusList.indexOf(targUnit[STATUS][rs]),1);
     }
   }
 
@@ -1656,11 +1659,11 @@ if(aa.includes("RANDSTATUS")){
     let postcon;
     for(postcon=(list[target][7].length-1);postcon>=0;postcon--){
 
-      switch(list[target][7][postcon]){
-        case "BURN":
-          bd++;
-          if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"HOT")[1]){
-            bd++;
+          switch(targUnit[STATUS][postcon]){
+            case "BURN":
+              bd++;
+              if(client.traitcall.traitCheck(client,attUnit[1],"HOT")[1]){
+                bd++;
           }
           break;
         case "BLEED":
@@ -1787,7 +1790,7 @@ if(aa.includes("RANDSTATUS")){
 
     if(br>0){
       equals=true;
-      if(client.traitcall.traitCheck(client,list[target][1],"CUTE")[0]){
+      if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[0]){
         br++;
       }
       if(client.traitcall.traitCheck(client,targUnit[1],"PLUSH")[1]){
@@ -1803,7 +1806,7 @@ if(aa.includes("RANDSTATUS")){
 
   let damage = ((dmg * dmgLvl) + bonusDmg) - bonusRes;
 
-    if(client.traitcall.traitCheck(client,list[target][1],"SPOOKY")[1]&&(list[init[turn][0]][7].includes("HAUNT2")||list[init[turn][0]][7].includes("HAUNT")||list[init[turn][0]][7].includes("HAUNT3"))){
+    if(client.traitcall.traitCheck(client,targUnit[1],"SPOOKY")[1]&&(attUnit[STATUS].includes("HAUNT2")||attUnit[STATUS].includes("HAUNT")||attUnit[STATUS].includes("HAUNT3"))){
       equals=true;
       damage=Math.floor(damage/2);
       damagemsg = `(`+damagemsg+`)`;
@@ -1829,24 +1832,25 @@ if(aa.includes("RANDSTATUS")){
            }
          }
        //closing here
-        if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"MIND")[1]){
+        if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
           if(client.actionList[action].cst > 1){
             hopeStam--;
           }
         }
 
-        if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"HOPE")[1]){
+        if(client.traitcall.traitCheck(client,attUnit[1],"HOPE")[1]){
           alert+=`**BURNING SPIRIT** - GOT ${hopeStam} STAMINA!\n`
           hopeStam*=2;
         }
 
-        list[init[turn][0]][5]+=hopeStam;
+            attUnit[STAMIN]+=hopeStam;
 
       }
 
       equals=true;
 
-      if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"NOIR")[1]){
+      // Noir crit
+      if(client.traitcall.traitCheck(client,attUnit[1],"NOIR")[1]){
         damage *= 3;
         if(!paren){
           damagemsg = `(`+damagemsg+`)`;
@@ -1854,7 +1858,9 @@ if(aa.includes("RANDSTATUS")){
         }
         damagemsg += ` * 3`;
         alert +=`1000/1000 CLOCKS DESTROYED! TRIPLE DAMAGE!\n`;
-      }else{
+      }
+      // Normal crit
+      else{
         damage *= 2;
         if(!paren){
           damagemsg = `(`+damagemsg+`)`;
@@ -1862,7 +1868,9 @@ if(aa.includes("RANDSTATUS")){
         }
         damagemsg += ` * 2`
       }
-      if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[1]){
+
+      // Rage
+      if(client.traitcall.traitCheck(client,attUnit[1],"RAGE")[1]){
       damage *= 2;
       damagemsg += ` * 2`;
       alert +=`**BLASPHEMOUS WORD** - CRIT DOUBLED!\n`;
@@ -1927,10 +1935,10 @@ if(aa.includes("RANDSTATUS")){
       }
     }
 
-    let last = [list[init[turn][0]][1],list[target][1],damage];
+    let last = [attUnit[1],targUnit[1],damage];
 
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"VAMPIRIC")[1]&&list[target][7].includes("BLEED") ){
-      list[init[turn][0]][3]+= bonusDmg;
+    if(client.traitcall.traitCheck(client,attUnit[1],"VAMPIRIC")[1]&&targUnit[STATUS].includes("BLEED") ){
+      attUnit[HEALTH]+= bonusDmg;
       alert+= `VAMPIRICALLY SIPHONED ${bonusDmg} VITALITY!\n`
   
       if(attUnitGel<attUnit[HEALTH]){
@@ -1939,7 +1947,7 @@ if(aa.includes("RANDSTATUS")){
 
     }
 
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"DOOM")[1]&&strikeCheck==20){
+       if(client.traitcall.traitCheck(client,attUnit[1],"DOOM")[1]&&strikeCheck==20){
 
 
         alert+= `**MORTAL DECAY** YOUR DAMAGE SPREADS TO ALL FOES.\n`;
@@ -1985,22 +1993,22 @@ if(aa.includes("RANDSTATUS")){
       }
     }
 
-    if(list[target][7].includes("DEFLECT")){
+    if(targUnit[STATUS].includes("DEFLECT")){
 
       alert+= `TARGET REFLECTED ${damage} DAMAGE TO ATTACKER!\n`;
 
-      list[init[turn][0]][3]-=damage;
+      attUnit[HEALTH]-=damage;
       damage=0;
       let dc;
-      for(dc=(list[target][7].length - 1);dc>=0;dc--){
-        if(list[target][7][dc]=="DEFLECT"){
-          removed = list[target][7].splice(dc,1);
+      for(dc=(targUnit[STATUS].length - 1);dc>=0;dc--){
+        if(targUnit[STATUS][dc]=="DEFLECT"){
+          removed = targUnit[STATUS].splice(dc,1);
           }
       }
 
     }
 
-    list[target][3] -= damage;
+    targUnit[HEALTH] -= damage;
     if(absorb==true){
       let healdif = damage;
       if(attUnitGel<attUnit[HEALTH]+damage){
@@ -2148,8 +2156,8 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"BOUNCY")[0]&&!Math
 
   client.strifeMap.set(strifeLocal,list,"list");
 
-  if(list[target][7].includes("DOUBLEGRIST")&&list[target][3]>0){
-    removed = list[target][7].splice(list[target][7].indexOf("DOUBLEGRIST"));
+  if(targUnit[STATUS].includes("DOUBLEGRIST")&&targUnit[HEALTH]>0){
+    removed = targUnit[STATUS].splice(targUnit[STATUS].indexOf("DOUBLEGRIST"));
   }
 try{
 for(let ik=0;ik<active.length;ik++){
