@@ -1563,7 +1563,7 @@ if(client.traitcall.traitCheck(client,attUnit[1],"COLD", init[turn][0])[0]){
   alert+=inflict(client, message, local, list, target, 12, "FROSTBITE", init[turn][0]);
 }
 
-let bluntness = client.traitcall.traitCheck(client,attUnit[1],"BLUNT");
+  let bluntness = client.traitcall.traitCheck(client,attUnit[1],"BLUNT");
   if(bluntness[0] && !targUnit[STATUS].includes("DAZED")){
     let dchance=12;
     if(bluntness[1]){
