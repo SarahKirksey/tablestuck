@@ -2155,8 +2155,6 @@ if(list[active[ik]][3] < 1){
     act(client,charid,message,local,action,target);
   }
 
-
-
 function getBonusFromTrinket(client, message, trinket){
     let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
@@ -2180,31 +2178,9 @@ function getBonusFromTrinket(client, message, trinket){
     return [0, "none"];
 }
 
-
 exports.getBonusFromTrinket = function(client, message, trinket){
     return getBonusFromTrinket(client, message, trinket);
 }
-
-
-/*
-            if(list[target][7].includes("BURN")){
-              setTimeout(act,3000,client,message,local,"astound",target);
-              setTimeout(act,6000,client,message,local,"absorb",target);
-              setTimeout(passTurn,9000,client,message,local);
-            } else {
-              setTimeout(act,3000,client,message,local,"arsonate",target);
-              setTimeout(act,6000,client,message,local,"astound",target);
-              setTimeout(passTurn,9000,client,message,local);
-            }
-            break;
-          }
-        break;
-    }
-  } catch(err){
-
-  }
-}*/
-
 
 exports.spawn = function(client,message,underling,pregrist = false){
   let charid = client.userMap.get(message.guild.id.concat(message.author.id),"possess");
