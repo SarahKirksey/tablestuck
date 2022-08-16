@@ -62,6 +62,20 @@ exports.run = (client, message, args) => {
     client.tutorcall.progressCheck(client,message,21,["text", messText]);
     return;
   }
+
+  if(args[0].toLowerCase() == "gate"){
+    if(!args[1]){
+      message.channel.send("Specify a gate to build to!");
+      return;
+    }
+    let targetGate = parseInt(args[1], 10);
+    if(isNaN(targetGate) || targetGate<1 || targetGate > 8){
+      message.channel.send("That's not a valid Gate! Enter a number 1-7, or 8 to build to the build limit.");
+      return;
+    }
+    args[0] = `${gateReq[targetGate - 1] - buildSpent}`;
+  }
+
   value = parseInt(args[0], 10);
   if(isNaN(value) || value<1){
     message.channel.send("That is not a valid amount of grist to spend!");
