@@ -1078,15 +1078,16 @@ exports.underRally = function(client, message, local) {
 
     if(client.traitcall.traitCheck(client,list[target][1],"BLOOD")[0]){
       if(!Math.floor(Math.random()*12)&&active.length>2){
-          let bloodCheck = false;
-          while(!bloodCheck){
-            let newTarget = active[Math.floor(Math.random()*active.length)];
-            if(newTarget!=target&&newTarget!=init[turn][0]){
-              target = newTarget;
-              bloodCheck=true;
-
-            }
-          }
+        // Subtract two from the length to account for the attacker and the target.
+        // Then, if the number is greater than or equal to either, shift it up.
+        // This way, we effectively ignore the attacker and the original defender, without needing to reroll.
+        let newTarget = active[Math.floor(Math.random()*(active.length-2))];
+        if(newTarget>=target && newTarget>=init[turn][0]){
+          target += 2;
+        }
+        else if (newTarget>=target || newTarget>=init[turn][0]){
+          target += 1;
+        }
         alert+=`The target was changed!\n`;
       }
     }
@@ -1401,74 +1402,44 @@ if(client.traitcall.traitCheck(client,list[target][1],"VOID")[1]){
     let strikemsg;
 //roll to hit, similar to how stamina is handled
     let strikeRoll = [Math.floor((Math.random() * 20) + 1),Math.floor((Math.random() * 20) + 1)];
+    let metaNess = client.traitcall.traitCheck(client,attUnit[1],"META");
+    let lightNess = client.traitcall.traitCheck(client,attUnit[1],"LIGHT");
+    let attWelshNess = client.traitcall.traitCheck(client,attUnit[1],"WELSH");
+    let targWelshNess = client.traitcall.traitCheck(client,targUnit[1],"WELSH");
+    let targVoidNess = client.traitcall.traitCheck(client,targUnit[1],"VOID");
 
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"META")[0]){
-      if(strikeRoll[0]==1||strikeRoll[0]==20||strikeRoll[1]==1||strikeRoll[1]==20){
-        alert += `YOUR META GEAR AVOIDED A 1 (OR A 20...)\n`;
-        let metaCheck = true;
-        while(metaCheck) {
-
-          strikeRoll = [Math.floor((Math.random() * 20) + 1),Math.floor((Math.random() * 20) + 1)];
-          if(strikeRoll[0]!=1&&strikeRoll[0]!=20&&strikeRoll[1]!=1&&strikeRoll[1]!=20){
-            metaCheck=false;
-          }
-
+    for(let i=0; i<=(fav == 0 ? 0 : 1); i++){
+      if(metaNess[0]){
+        if(strikeRoll[i]==1||strikeRoll[i]==20){
+          alert += `YOUR META GEAR AVOIDED A 1 (OR A 20...)\n`;
+          strikeRoll[i] = Math.floor((Math.random() * 18) + 2);
         }
-
       }
-    }
 
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"WELSH")[1]||client.traitcall.traitCheck(client,list[init[turn][0]][1],"LIGHT")[0]){
-      if(strikeRoll[0]==1){
-        alert+=`TURNED A 1 INTO A 20!\n`;
-        strikeRoll[0]=20;
-      }
-      if(strikeRoll[1]==1){
-        if(fav!=0){
+      if(attWelshNess[1]||client.traitcall.traitCheck(client,attUnit[1],"LIGHT")[0]){
+        if(strikeRoll[i]==1){
           alert+=`TURNED A 1 INTO A 20!\n`;
-          strikeRoll[1]=20;
+          strikeRoll[i]=20;
         }
+      }
+      if(targWelshNess[1]||targVoidNess[0]){
+        if(strikeRoll[i]==20){
+          alert+=`TARGET TURNED A 20 INTO A 1!\n`;
+          strikeRoll[i]=1;
+        }
+      }
 
-      }
-    }
-    if(client.traitcall.traitCheck(client,list[target][1],"WELSH")[1]||client.traitcall.traitCheck(client,list[target][1],"VOID")[0]){
-      if(strikeRoll[0]==20){
-        alert+=`TARGET TURNED A 20 INTO A 1!\n`;
-        strikeRoll[0]=1;
-      }
-      if(strikeRoll[1]==20){
-        if(fav!=0){
-        alert+=`TARGET TURNED A 20 INTO A 1!\n`;
-        strikeRoll[1]=1;
-        }
-      }
-    }
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"LIGHT")[1]){
-      if(strikeRoll[0]<6){
-        alert+=`**BORN LUCKY** - Rerolled a roll less than 5\n`
-        let lightCheck=true;
-        while (lightCheck){
-          strikeRoll[0] = Math.floor((Math.random() * 20) + 1)
-          if(strikeRoll[0]>5){
-            lightCheck=false;
-          } else if(strikeRoll[0]==1){
-            strikeRoll[0]=20;
-            lightCheck=false;
-            alert+=`TURNED A 1 INTO A 20!\n`
-          }
-        }
-      }
-      if(strikeRoll[1]<6&&fav!=0){
-        alert+=`**BORN LUCKY** - Rerolled a roll less than 5\n`
-        let lightCheck=true;
-        while (lightCheck){
-          strikeRoll[1] = Math.floor((Math.random() * 20) + 1)
-          if(strikeRoll[1]>5){
-            lightCheck=false;
-          } else if(strikeRoll[1]==1){
-            strikeRoll[1]=20;
-            lightCheck=false;
-            alert+=`TURNED A 1 INTO A 20!\n`
+      if(client.traitcall.traitCheck(client,attUnit[1],"LIGHT")[1]){
+        let didReroll = false;
+        let didLight0 = false;
+        if(strikeRoll[i]<6){
+          alert+=`**BORN LUCKY** - Rerolled a roll less than 5\n`;
+          // Roll 1d16+5 instead of 1d20. In the event of a 21, set it to 20 and pretend it was a 1.
+          // This way, no further re-rolls are actually required.
+          strikeRoll[i] = Math.floor((Math.random() * 16) + 6);
+          if(strikeRoll[i]==21){
+            strikeRoll[i]=20;
+            alert += `TURNED A 1 INTO A 20!\n`;
           }
         }
       }
