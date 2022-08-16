@@ -20,7 +20,7 @@ module.exports = (client, message) => {
           if(shortcutArgs[0] && shortcutArgs[0].length == 2)
           {
             console.log("pester (implicit)");
-            shortcutCommand.run(client, message, shortcutArgs);
+            shortcutCommand.run(client, message, shortcutArgs, true);
           }
         }
       }
