@@ -89,7 +89,10 @@ exports.run = (client, message, args) => {
 				unequipItem=["STRIFE CARD","////////",1,1,[]];
 			  } else {
 				unequipItem=spec.splice(selectIndex,1)[0];
-			  }
+				if(selectIndex < curWeapon || (selectIndex > 0 && selectIndex == curWeapon && curWeapon + 1 >= spec.length)){
+					curWeapon -= 1;
+				}
+			}
 			mess += `${unequipItem[0]} from your STRIFE SPECIBUS`;
 		}
 		break;
@@ -112,7 +115,8 @@ exports.run = (client, message, args) => {
 		sec[local[1]][local[2]][2][local[3]] = room;
 		client.landMap.set(land,sec,local[0]);
 	}
-	
+
+	client.charcall.setAnyData(client,userid,charid,curWeapon,"equip");
 	client.charcall.setAnyData(client,userid,charid,scards,"scards");
 	client.charcall.setAnyData(client,userid,charid,spec,"spec");
 	client.charcall.setAnyData(client,userid,charid,trinket,"trinket");
