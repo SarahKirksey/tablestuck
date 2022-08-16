@@ -85,12 +85,10 @@ exports.run = (client, message, args) => {
 				return;
 			}
 
-
-			  if(selectIndex >= spec.length){
-
+			if(selectIndex >= spec.length && selectIndex < scards){
 				if(scards <= 1) {
-				  message.channel.send("Cannot unequip your last STRIFE CARD!");
-				  return;
+					message.channel.send("Cannot unequip your last STRIFE CARD!");
+					return;
 				}
 				
 				//decrease card count, specify a normal strife card as the returned item
