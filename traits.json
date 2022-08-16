@@ -128,21 +128,21 @@
 
   "MELEE":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757612534562896/MELEE.png",
-  "trait":"Changes a weapon type to MELEE",
+  "trait":"Does nothing. No plans yet.",
 
-  "set":"STRIKE CHECK +2 on MELEE ACTIONS"},
+  "set":"Does nothing. No plans yet."},
 
   "RANGED":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757619798835280/RANGED.png",
-  "trait":"Changes a weapon type to RANGED",
+  "trait":"Does nothing. No plans yet.",
 
-  "set":"STRIKE CHECK +2 ON RANGED ACTIONS"},
+  "set":"Does nothing. No plans yet."},
 
   "MAGIC":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757600488914994/MAGIC.png",
-  "trait":"Changes a weapon type to MAGIC",
+  "trait":"Does nothing. No plans yet.",
 
-  "set":"STRIKE CHECK +2 on MAGIC ACTIONS"},
+  "set":"Does nothing. No plans yet."},
 
   "REFINED":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757623561781318/REFINED.png",
@@ -164,15 +164,15 @@
 
   "HARLEQUIN":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757585271980053/HARLEQUIN.png",
-  "trait":"Use CHM for STRIKE CHECK",
+  "trait":"Creepy",
 
-  "set":"CHR +2"},
+  "set":"(NYI) Seriously creepy"},
 
   "WIZARD":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757774989000744/WIZARD.png",
-  "trait":"Use IMG for STRIKE CHECK",
+  "trait":"Does nothing. No plans yet.",
 
-  "set":"IMG +2"},
+  "set":"Does nothing. No plans yet."},
 
   "PLUSH":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757616155164692/PLUSH.png",
@@ -200,15 +200,15 @@
 
   "PROSPIT":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808768036706320454/PROSPIT.png",
-  "trait":"Add +1 extra STAMINA while on PROSPIT",
+  "trait":"Does nothing. No plans yet.",
 
-  "set":"+1 to all stats on PROSPIT"},
+  "set":"Does nothing. No plans yet."},
 
   "DERSE":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808770174168989786/DERSE.png",
-  "trait":"Add +1 extra STAMINA while on DERSE",
+  "trait":"Does nothing. No plans yet.",
 
-  "set":"+1 to all stats on DERSE"},
+  "set":"Does nothing. No plans yet."},
 
   "ENDURING":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808778241250426930/ENDURING.png",
@@ -352,7 +352,19 @@
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808884859270332416/DOOM.png",
   "trait":"Convert HP to Stamina",
 
-  "set":"ALL ENEMIES TAKE FULL ATTACK DAMAGE ON CRIT"}
+  "set":"ALL ENEMIES TAKE FULL ATTACK DAMAGE ON CRIT"},
+  
+  "CANDIVORE":{
+  "img":"",
+  "trait":"(NYI) Gain stamina on enemy kills",
+
+  "set":"(NYI) ENEMIES DROP CANDY"},
+  
+  "CARNIVORE":{
+  "img":"",
+  "trait":"(NYI) Gain temporary BD on enemy kills",
+
+  "set":"(NYI) ENEMIES DROP MEAT"}
 
 
 
