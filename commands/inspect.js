@@ -95,7 +95,6 @@ exports.run = (client, message, args) => {
     return;
   }
 
-
   let type = 3;
   let item = dex[value];
 
