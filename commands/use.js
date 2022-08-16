@@ -418,11 +418,18 @@ exports.run = (client, message, args) => {
           message.channel.send("You need grist to use Rainbow Grist!");
           return;
         }
-        for(let i=0;i<12;i++){
-          grist[i+1]+=sdex[selectDex][3];
+
+        let amount = sdex[selectDex][3];
+        if((client.configcall.get(client, message, "DOUBLE_RAINBOW") === "true") && client.traitcall.traitCheck(client,charid,"META")[1])
+        {
+            amount *= 2;
         }
 
-        message.channel.send(`Added ${sdex[selectDex][3]} grist of all PRIMARY grist types!`);
+        for(let i=0;i<12;i++){
+          grist[i+1]+=amount;
+        }
+
+        message.channel.send(`Added ${amount} grist of all PRIMARY grist types!`);
         client.charcall.setAnyData(client,userid,charid,grist,"grist");
         let targetItem = sdex.splice(selectDex,1);
       client.charcall.setAnyData(client,userid,charid,sdex,"sdex");
