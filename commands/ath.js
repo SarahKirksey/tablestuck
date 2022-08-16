@@ -159,11 +159,17 @@ exports.run = (client, message, args) => {
           return;
         }
 
+        let tierAll = false;
         let value = parseInt(args[1], 10) - 1;
 
         if(isNaN(value)||value<0||value>=registry.length){
-          message.channel.send("That is not a valid selection!");
-          return;
+          if(args[1].toLowerCase() == "all"){
+            tierAll = true;
+          }
+          else{
+            message.channel.send("That is not a valid selection!");
+            return;
+          }
         }
 
         let tier = parseInt(args[2], 10);
@@ -172,12 +178,28 @@ exports.run = (client, message, args) => {
           message.channel.send("That is not a valid TIER");
           return;
         }
-        if(client.traitcall.itemTrait(client,registry[value],"SHITTY")||client.traitcall.itemTrait(client,registry[value],"TRICKSTER")){
-          message.channel.send(`You can't change the tier of a ${(client.traitcall.itemTrait(client,registry[value],"SHITTY")?`SHITTY`:`TRICKSTER`)} item!`);
+
+        let minItem = (tierAll ? 0 : value);
+        let maxItem = (tierAll ? registry.length : value + 1);
+
+        for(i=minItem; i<maxItem; i++){
+          if(client.traitcall.itemTrait(client,registry[i],"SHITTY")||client.traitcall.itemTrait(client,registry[i],"TRICKSTER")){
+            if(tierAll){
+              continue;
+            }
+            message.channel.send(`You can't change the tier of a ${(client.traitcall.itemTrait(client,registry[i],"SHITTY")?`SHITTY`:`TRICKSTER`)} item!`);
+            return;
+          }
+          if(registry[i][2] == 0){
+            continue;
+          }
+          registry[i][2]=tier;
+        }
+        client.charcall.setAnyData(client,userid,charid,registry,"registry");
+        if(tierAll){
+          message.channel.send(`Scaled all valid items to TIER ${tier}!`);
           return;
         }
-        registry[value][2]=tier;
-        client.charcall.setAnyData(client,userid,charid,registry,"registry");
         message.channel.send(`Scaled the ${registry[value][0]} to TIER ${tier}!`);
         return;
 
