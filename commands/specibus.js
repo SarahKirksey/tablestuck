@@ -44,6 +44,11 @@ exports.run = (client, message, args) => {
 	extraPort = ` + ${port - kinds.length}`;
   }
 
+  let extraPort = "";
+  if(kinds.length < port){
+    extraPort = ` + ${port - kinds.length}`;
+  }
+
   specibusPrint = new client.MessageEmbed()
   .setTitle(`**${name.toUpperCase()}'S STRIFE SPECIBUS**`)
   .setColor("#00e371")
