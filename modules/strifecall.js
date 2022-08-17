@@ -1589,12 +1589,12 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"STICKY")[0]){
 
   if(list[target][7].includes("DEFROST")){
     removed = list[target][7].splice(list[target][7].indexOf("DEFROST"),1);
-    alert+=`TARGETS INFLICTS FROSTBITE ON ATTACKER!\n`
+    alert+=`TARGET INFLICTS FROSTBITE ON ATTACKER!\n`
     alert+=inflict(client, message, local, list, init[turn][0], 1, "FROSTBITE", target);
   }
   if(list[target][7].includes("DEGRAP")){
     removed = list[target][7].splice(list[target][7].indexOf("DEGRAP"),1);
-    alert+=`TARGETS GRAPPLES ATTACKER!\n`
+    alert+=`TARGET GRAPPLES ATTACKER!\n`
     alert+=inflict(client, message, local, list, init[turn][0], 1, "GRAPPLE", target);
   }
 
