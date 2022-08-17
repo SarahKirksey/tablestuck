@@ -1716,10 +1716,10 @@ if(aa.includes("RANDSTATUS")){
       }
     }
 
-    //if check passed, calculate all bonus damage
+        //if check passed, calculate all bonus damage
 
-    let bonusDmg = 0;
-    let bonusRes = 0;
+        let bonusDmg = 0;
+        let bonusRes = 0;
 
     let k;
     for(k=0;k<list[init[turn][0]][7].length;k++){
