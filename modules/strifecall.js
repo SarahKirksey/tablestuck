@@ -1686,7 +1686,6 @@ if(aa.includes("RANDSTATUS")){
             case "BLEED":
               bd++;
           }
-
         }
 
         let post;
