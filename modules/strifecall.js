@@ -1519,10 +1519,11 @@ if(strikeBonus<0){
     if(client.traitcall.traitCheck(client,attUnit[1],"IRRADIATED")[0]){
     alert+=inflict(client, message, local, list, target, 12, "BURN", init[turn][0]);
     }
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"SHARP")[0]){
+
+    if(client.traitcall.traitCheck(client,attUnit[1],"SHARP")[0]){
     alert+=inflict(client, message, local, list, target, 12, "BLEED", init[turn][0]);
     }
-    if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"VAMPIRIC")[0]){
+    if(client.traitcall.traitCheck(client,attUnit[1],"VAMPIRIC")[0]){
     alert+=inflict(client, message, local, list, target, 12, "BLEED", init[turn][0]);
     }
     if(aa.includes("BLEED8")){
@@ -1531,16 +1532,18 @@ if(strikeBonus<0){
     if(aa.includes("BLEED4")){
     alert+=inflict(client, message, local, list, target, 4, "BLEED", init[turn][0]);
     }
+
     if(aa.includes("STUN4")){
     alert+=inflict(client, message, local, list, target, 4, "STUN", init[turn][0]);
     }
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"COLD", init[turn][0])[0]){
+if(client.traitcall.traitCheck(client,attUnit[1],"COLD", init[turn][0])[0]){
   alert+=inflict(client, message, local, list, target, 12, "FROSTBITE", init[turn][0]);
 }
 if(client.traitcall.traitCheck(client,attUnit[1],"ELECTRIC")[0]){
    alert+=inflict(client, message, local, list, target, 12, "STUN", init[turn][0]);
 }
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[0]){
+
+if(client.traitcall.traitCheck(client,attUnit[1],"RAGE")[0]){
    alert+=inflict(client, message, local, list, target, 6, "STUN", init[turn][0]);
 }
 
@@ -1558,9 +1561,11 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"RAGE")[0]){
   if(client.traitcall.traitCheck(client,attUnit[1],"SHITTY")[1]){
   alert+=inflict(client, message, local, list, target, 12, "CORRUPT", init[turn][0]);
   }
-  if(client.traitcall.traitCheck(client,list[target][1],"THORNS")[0]){
-  alert+=inflict(client, message, local, list, init[turn][0], 12, "BLEED", target);
-  }
+
+    if(client.traitcall.traitCheck(client,targUnit[1],"THORNS")[0]){
+    alert+=inflict(client, message, local, list, init[turn][0], 12, "BLEED", target);
+    }
+
   if(client.traitcall.traitCheck(client,attUnit[1],"SPOOKY")[0]){
   if(!targUnit[STATUS].includes("HAUNT")&&!targUnit[STATUS].includes("HAUNT2")&&!targUnit[STATUS].includes("HAUNT3")){
     alert+=inflict(client, message, local, list, target, 12, "HAUNT", init[turn][0]);
@@ -1580,24 +1585,24 @@ if(client.traitcall.traitCheck(client,attUnit[1],"BROKEN")[1]){
     bdmax = true;
   }
 }
-if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"STICKY")[0]){
-  alert+=inflict(client, message, local, list, target, 12, "GRAPPLE", init[turn][0]);
-}
-  if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"STICKY")[1] && list[target][7].includes("GRAPPLE")){
+
+  if(client.traitcall.traitCheck(client,attUnit[1],"STICKY")[0]){
+    alert+=inflict(client, message, local, list, target, 12, "GRAPPLE", init[turn][0]);
+  }
+  if(client.traitcall.traitCheck(client,attUnit[1],"STICKY")[1] && targUnit[STATUS].includes("GRAPPLE")){
     bd++;
   }
 
-  if(list[target][7].includes("DEFROST")){
-    removed = list[target][7].splice(list[target][7].indexOf("DEFROST"),1);
+  if(targUnit[STATUS].includes("DEFROST")){
+    removed = targUnit[STATUS].splice(targUnit[STATUS].indexOf("DEFROST"),1);
     alert+=`TARGET INFLICTS FROSTBITE ON ATTACKER!\n`
     alert+=inflict(client, message, local, list, init[turn][0], 1, "FROSTBITE", target);
   }
-  if(list[target][7].includes("DEGRAP")){
-    removed = list[target][7].splice(list[target][7].indexOf("DEGRAP"),1);
+  if(targUnit[STATUS].includes("DEGRAP")){
+    removed = targUnit[STATUS].splice(targUnit[STATUS].indexOf("DEGRAP"),1);
     alert+=`TARGET GRAPPLES ATTACKER!\n`
     alert+=inflict(client, message, local, list, init[turn][0], 1, "GRAPPLE", target);
   }
-
 
 
         if(client.traitcall.traitCheck(client,attUnit[1],"IRRADIATED")[1]&&strikeCheck==20){
@@ -1666,11 +1671,11 @@ if(aa.includes("RANDSTATUS")){
               bd++;
               if(client.traitcall.traitCheck(client,attUnit[1],"HOT")[1]){
                 bd++;
+              }
+              break;
+            case "BLEED":
+              bd++;
           }
-          break;
-        case "BLEED":
-          bd++;
-      }
 
         }
 
@@ -1766,8 +1771,8 @@ if(aa.includes("RANDSTATUS")){
             damagemsg += ` + (~~${bddice[0]}~~ ${bddice[1]})`
             bdadd = bddice[1];
           }
-      }
-      bonusDmg += bdadd;
+            }
+            bonusDmg += bdadd;
 
           }
           if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[1]){
