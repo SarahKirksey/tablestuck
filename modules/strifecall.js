@@ -1725,33 +1725,32 @@ if(aa.includes("RANDSTATUS")){
           }
         }
 
-        //if check passed, calculate all bonus damage
+    //if check passed, calculate all bonus damage
 
-        let bonusDmg = 0;
-        let bonusRes = 0;
+    let bonusDmg = 0;
+    let bonusRes = 0;
+    let k;
+    for(k=0;k<attUnit[STATUS].length;k++){
+      try{
+        if(`${attUnit[STATUS][k].substring(0,4)}`==`MEAT`){
+          let meat = attUnit[STATUS].splice(k,1);
+          meat = meat[0].substring(4);
 
-        let k;
-        for(k=0;k<attUnit[STATUS].length;k++){
-          try{
-            if(`${attUnit[STATUS][k].substring(0,4)}`==`MEAT`){
-              let meat = attUnit[STATUS].splice(k,1);
-              meat = meat[0].substring(4);
-
-              meatVal = parseInt(meat, 10);
-              if(isNaN(meatVal)){
-                console.log(`${meat} looked like a meat status, but it wasn't. Putting it back....`);
-                attUnit[STATUS].splice(k, 0, meat);
-                continue;
-              }
-              else{
-                bd+=meatVal;
-              }
-            }
-
-          } catch(err) {
-            console.log(err);
+          meatVal = parseInt(meat, 10);
+          if(isNaN(meatVal)){
+            console.log(`${meat} looked like a meat status, but it wasn't. Putting it back....`);
+            attUnit[STATUS].splice(k, 0, meat);
+            continue;
+          }
+          else{
+            bd+=meatVal;
           }
         }
+
+      } catch(err) {
+        console.log(err);
+      }
+    }
 
         let damagemsg = `${dmg * dmgLvl}`;
         let equals = false;
