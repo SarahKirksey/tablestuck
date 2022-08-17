@@ -14,8 +14,6 @@ exports.run = (client, message, args) => {
   var userid = message.guild.id.concat(message.author.id);
   var charid = client.userMap.get(userid,"possess");
 
-
-
   let local = client.charcall.charData(client,charid,"local");
   let land = local[4];
   let sec = client.landMap.get(land,local[0]);
@@ -45,45 +43,6 @@ exports.run = (client, message, args) => {
     return;
   }
 
-
-/*if(!args[0]){
-
-  //if no argument, list information on room
-  //Maybe put this within an >inspect room command? That way we can have multiple pages of inventory so messages aren't as long
-
-  let i;
-  let j;
-  let msg = ``;
-  let occ = ``;
-  if (dex.length==0) {
-    msg = "**EMPTY**";
-  } else {
-  for(i=0;i<dex.length && i<16;i++){
-    msg += `**[${i+1}] ${dex[i][0]} x${dex[i][3]}** \n${dex[i][1]} TIER - ${dex[i][2]}\n\n`
-  }
-}
-//check if occupants are in room
-  if(occList<=0){
-
-    occ = `**EMPTY**`
-
-}else{
-  //list all occupants in room
-  for(j=0;j<occList.length&&j<10;j++){
-      occ += `**${client.playerMap.get(occList[j][1],"name")}**\n\n`
-  }
-}
-  sylladexPrint = new client.Discord.MessageEmbed()
-  .setTitle(`**INSPECTING AREA**`)
-  .addField(`**AREA TYPE**`,`**${typeList[area[0]]}**`,true)
-  .addField(`**ROOM**`,`**${room[2]}**`,true)
-  .addField(`**CURRENT OCCUPANTS**`,occ.toUpperCase())
-  .addField("**INVENTORY**",msg);
-  message.channel.send(sylladexPrint);
-  return;
-
-}*/
-
   value = parseInt(args[0], 10) - 1;
   if(isNaN(value)){
     message.channel.send("That is not a valid argument!");
@@ -94,7 +53,6 @@ exports.run = (client, message, args) => {
     message.channel.send("That is not a valid argument!")
     return;
   }
-
 
   let type = 3;
   let item = dex[value];

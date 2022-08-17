@@ -61,15 +61,15 @@ const underlingTypes = ["imp","ogre","basilisk","lich","giclopse","titachnid"];
 exports.createQuest = function(client,name,questid,local,type){
   let questData =
   {
-  id:`${questid}01`,
-  title:``,
-  desc:[``,``],
-  dialogue:[``,``],
-  goal:0,
-  type:``,
-  boon:0,
-  completion:0
-}
+    id:`${questid}01`,
+    title:``,
+    desc:[``,``],
+    dialogue:[``,``],
+    goal:0,
+    type:``,
+    boon:0,
+    completion:0
+  }
   switch (type){
     case "kill":
       let dataIndex = Math.floor(Math.random()*3);
@@ -84,16 +84,16 @@ exports.createQuest = function(client,name,questid,local,type){
       ];
       switch(local[0]){
         case "s4":
-		  dataIndex+=3;
-		  break;
+          dataIndex+=3;
+          break;
         case "s3":
-		  dataIndex += 2;
-		  break;
-		case "s2":
-		  dataIndex++;
-		  break;
+          dataIndex += 2;
+          break;
+        case "s2":
+          dataIndex++;
+          break;
         case "s1":
-		  break;
+          break;
         default:
           dataIndex = 0;
           break;
