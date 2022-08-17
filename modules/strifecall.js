@@ -1601,20 +1601,19 @@ if(client.traitcall.traitCheck(client,attUnit[1],"BROKEN")[1]){
   alert+=inflict(client, message, local, list, target, 12, "GRAPPLE", init[turn][0]);
   }
   if(client.traitcall.traitCheck(client,attUnit[1],"STICKY")[1] && targUnit[STATUS].includes("GRAPPLE")){
-  bd++;
+    bd++;
   }
 
-          if(targUnit[STATUS].includes("DEFROST")){
-            removed = targUnit[STATUS].splice(targUnit[STATUS].indexOf("DEFROST"),1);
-            alert+=`TARGET INFLICTS FROSTBITE ON ATTACKER!\n`
-            alert+=inflict(client, message, local, list, init[turn][0], 1, "FROSTBITE", target);
-          }
-          if(targUnit[STATUS].includes("DEGRAP")){
-            removed = targUnit[STATUS].splice(targUnit[STATUS].indexOf("DEGRAP"),1);
-            alert+=`TARGET GRAPPLES ATTACKER!\n`
-            alert+=inflict(client, message, local, list, init[turn][0], 1, "GRAPPLE", target);
-          }
-
+  if(targUnit[STATUS].includes("DEFROST")){
+    removed = targUnit[STATUS].splice(targUnit[STATUS].indexOf("DEFROST"),1);
+    alert+=`TARGET INFLICTS FROSTBITE ON ATTACKER!\n`
+    alert+=inflict(client, message, local, list, init[turn][0], 1, "FROSTBITE", target);
+  }
+  if(targUnit[STATUS].includes("DEGRAP")){
+    removed = targUnit[STATUS].splice(targUnit[STATUS].indexOf("DEGRAP"),1);
+    alert+=`TARGET GRAPPLES ATTACKER!\n`
+    alert+=inflict(client, message, local, list, init[turn][0], 1, "GRAPPLE", target);
+  }
 
         if(client.traitcall.traitCheck(client,attUnit[1],"IRRADIATED")[1]&&strikeCheck==20){
 
