@@ -1752,47 +1752,48 @@ if(aa.includes("RANDSTATUS")){
       }
     }
 
-        let damagemsg = `${dmg * dmgLvl}`;
-        let equals = false;
-        let paren = false;
-        if(bd>0){
-          equals=true;
-          if(client.traitcall.traitCheck(client,attUnit[1],"MEAT")[1]){
-            bd++;
-          }
-          let i;
-          for(i=0;i<bd;i++){
-            let bddice =[Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0]), Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0])];
-            if (bdmax){
-              bddice = [bdroll[1],bdroll[1]];
-            }
-            if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[1]||client.traitcall.traitCheck(client,targUnit[1],"REFINED")[1]){
-              bddice[0]= Math.floor(bddice[0]/2);
-              bddice[1]= Math.floor(bddice[1]/2);
-            }
+    let damagemsg = `${dmg * dmgLvl}`;
+    let equals = false;
+    let paren = false;
+    if(bd>0){
+      equals=true;
+      if(client.traitcall.traitCheck(client,attUnit[1],"MEAT")[1]){
+        bd++;
+      }
+      let i;
+      for(i=0;i<bd;i++){
+        let bddice =[Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0]), Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0])];
+        if (bdmax){
+          bddice = [bdroll[1],bdroll[1]];
+        }
+        if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[1]||client.traitcall.traitCheck(client,targUnit[1],"REFINED")[1]){
+          bddice[0]= Math.floor(bddice[0]/2);
+          bddice[1]= Math.floor(bddice[1]/2);
+        }
 
-            let bdadd;
-            if(!client.traitcall.traitCheck(client,attUnit[1],"SHARP")[1]){
-              bdadd = bddice[0];
-              damagemsg+= ` + ${bdadd}`;
-            } else {
-              if (bddice[0]>bddice[1]){
-                damagemsg += ` + (~~${bddice[1]}~~ ${bddice[0]})`
-                bdadd = bddice[0];
-              } else{
-                damagemsg += ` + (~~${bddice[0]}~~ ${bddice[1]})`
-                bdadd = bddice[1];
-              }
-            }
-            bonusDmg += bdadd;
-          }
-          if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[1]){
-            alert += `TARGET IS TOO CUTE, THEY TOOK REDUCED BD!\n`
-          }
-          if(client.traitcall.traitCheck(client,targUnit[1],"REFINED")[1]){
-            alert += `TARGET IS REFINED, THEY TOOK REDUCED BD!\n`
+        let bdadd;
+        if(!client.traitcall.traitCheck(client,attUnit[1],"SHARP")[1]){
+          bdadd = bddice[0];
+          damagemsg+= ` + ${bdadd}`;
+        } else {
+          if (bddice[0]>bddice[1]){
+            damagemsg += ` + (~~${bddice[1]}~~ ${bddice[0]})`
+            bdadd = bddice[0];
+          } else{
+            damagemsg += ` + (~~${bddice[0]}~~ ${bddice[1]})`
+            bdadd = bddice[1];
           }
         }
+        bonusDmg += bdadd;
+
+      }
+      if(client.traitcall.traitCheck(client,targUnit[1],"CUTE")[1]){
+        alert += `TARGET IS TOO CUTE, THEY TOOK REDUCED BD!\n`
+      }
+      if(client.traitcall.traitCheck(client,targUnit[1],"REFINED")[1]){
+        alert += `TARGET IS REFINED, THEY TOOK REDUCED BD!\n`
+      }
+    }
 
     if(br>0){
       equals=true;
