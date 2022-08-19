@@ -110,6 +110,9 @@ for(let i=0;i<occList.length;i++){
     client.charcall.setAnyData(client,userid,altself,local,"local");
     const cmd = client.commands.get("loot");
     cmd.run(client,message,args,true);
+  }
+
+    // If the player already has armor, remove it.
     if(client.charcall.charData(client,charid,"armor").length>0){
       sdex = client.charcall.charData(client,charid,"sdex");
       cardcount = client.charcall.charData(client,charid,"cards");
@@ -117,7 +120,7 @@ for(let i=0;i<occList.length;i++){
       sdex.push(client.charcall.charData(client,charid,"armor")[0]);
       client.charcall.setAnyData(client,userid,charid,sdex,"sdex");
     }
-  }
+
     let aspectList=["BREATH","LIFE","LIGHT","TIME","HEART","RAGE","BLOOD","VOID","SPACE","MIND","HOPE","DOOM"];
     let quickKey =[["m","n","o","p","q","r","s","t","u","v","w","x"],["D","C","B","A","9","8","7","6","5","4","3","2"]];
     let aspectIndex =aspectList.indexOf(client.landMap.get(local[4],"aspect"));
