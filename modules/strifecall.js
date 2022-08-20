@@ -2681,7 +2681,7 @@ function npcTurn(client, message, charid, local){
   if(spec.length!=0){
     for(let i=0;i<4;i++){
       tempAct = client.action[client.codeCypher[i+4][client.captchaCode.indexOf(spec[equip][1].charAt(i+4))]];
-      if(client.actionList[tempAct].cst<=list[init[turn][0]][5]&&(!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].aa.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
+      if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].aa.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
         actionSet.push(tempAct);
       }
 
@@ -2690,7 +2690,7 @@ function npcTurn(client, message, charid, local){
   for(let j =0;j<prototype.length;j++){
     for(let i=0;i<4;i++){
       tempAct = client.action[client.codeCypher[i+4][client.captchaCode.indexOf(prototype[j][1].charAt(i+4))]];
-      if(client.actionList[tempAct].cst<=list[init[turn][0]][5]&&(!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].aa.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
+      if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].aa.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
         actionSet.push(tempAct);
       }
     }
@@ -2698,13 +2698,13 @@ function npcTurn(client, message, charid, local){
 
     tempAct=client.underlings[type].act;
     for(let i=0;i<tempAct.length;i++){
-      if(client.actionList[tempAct[i]].cst<=list[init[turn][0]][5]&&(!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].aa.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
+      if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].aa.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
         actionSet.push(tempAct[i]);
       }
     }
-    if(actionSet.length>0&&targetList.length>0){
 
-
+    let turnTaken = false;
+    while(!turnTaken&&actionSet.length>0&&targetList.length>0){
       let action = actionSet[Math.floor((Math.random() * actionSet.length))];
       if(actionSet.includes(prefMove)){
         action=prefMove;
@@ -2719,7 +2719,24 @@ function npcTurn(client, message, charid, local){
           }
         }
       }
-      list[init[turn][0]][5]-=client.actionList[action].cst;
+
+      let lcost = client.actionList[action].cst;
+      if(lcost > 3 && client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1]){
+        lcost--;
+      }
+      if(lcost > 1 && list[init[turn][0]][7].includes("DISCOUNT")){
+        lcost--;
+      }
+      if(lcost > 1 && client.traitcall.traitCheck(client,charid,"MIND")[1]){
+        lcost--;
+      }
+
+      if(lcost > list[init[turn][0]][5]){
+        actionSet.splice(actionSet.indexOf(action), 1);
+        continue;
+      }
+
+      list[init[turn][0]][5]-=lcost;
       list[init[turn][0]][6].push(action);
       client.strifeMap.set(strifeLocal,list,"list");
 
@@ -2737,6 +2754,7 @@ function npcTurn(client, message, charid, local){
         target = targetList[Math.floor((Math.random() * targetList.length))];
 
       }
+      turnTaken = true;
       setTimeout(act,1000,client,charid,message,local,action,target)
         setTimeout(npcTurn,2000,client,message,charid,local);
 
