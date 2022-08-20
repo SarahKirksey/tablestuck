@@ -60,8 +60,7 @@ exports.progressCheck = async function(client,message,step,affix=false,bypass = 
   */
   userid = message.guild.id.concat(message.author.id);
   charid = client.userMap.get(userid,"possess");
-  // channelid = client.userMap.get(userid,"channel");
-  channelid = message.channel.id;
+  channelid = client.userMap.get(userid,"channel");
   progress = client.charcall.allData(client,userid,charid,"tutor");
   //if the step is done and a message is affixed, sends the message without the tutorial attached.
   if(!progress[0]||client.charcall.npcCheck(client,charid)||progress[step]&&!bypass){
