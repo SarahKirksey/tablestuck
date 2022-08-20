@@ -163,60 +163,60 @@ exports.run = function(client,message,args){
         message.channel.send("You must select a fog-change mode and a new state! Modes include 'map', 'walls', and 'current'. States include 'on' and 'off'.");
         return;
       }
-	  
-	  let filterFunc;
-	  
-	  switch(args[1].toLowerCase())
-	  {
-		case "map":
-			filterFunc = isAnyTile;
-			break;
-		case "wall":
-		case "walls":
-			filterFunc = isWallTile;
-			break;
-		case "current":
-			filterFunc = isFogTile;
-			break;
-		default:
-			message.channel.send(`That's not a valid mode!`);
-			return;
-	  }
-	  
-	  let newState;
-	  
-	  switch(args[2].toLowerCase())
-	  {
-		case "on":
-		case "true":
-			newState = false;
-			break;
-		case "off":
-		case "false":
-			newState = true;
-			break;
-		default:
-			message.channel.send(`That's not a valid new state!`);
-			return;
-	  }
+
+      let filterFunc;
+
+      switch(args[1].toLowerCase())
+      {
+        case "map":
+            filterFunc = isAnyTile;
+            break;
+        case "wall":
+        case "walls":
+            filterFunc = isWallTile;
+            break;
+        case "current":
+            filterFunc = isFogTile;
+            break;
+        default:
+            message.channel.send(`That's not a valid mode!`);
+            return;
+      }
+
+      let newState;
+
+      switch(args[2].toLowerCase())
+      {
+        case "on":
+        case "true":
+            newState = false;
+            break;
+        case "off":
+        case "false":
+            newState = true;
+            break;
+        default:
+            message.channel.send(`That's not a valid new state!`);
+            return;
+      }
 
       let local = client.charcall.allData(client,userid,charid,"local");
       let land = local[4];
 
-	  if(land == undefined){
-		message.channel.send(`There's something wrong with your location!`);
-		return;
-	  }
+      if(land == undefined){
+        message.channel.send(`There's something wrong with your location!`);
+        return;
+      }
 
       let sec = client.landMap.get(land,local[0]);
-	  
-	  for(let i=0; i<sec.length; i++){
-		  for(let j=0; j<sec[0].length; j++){
-			  if(filterFunc(sec[i][j])){
-				  sec[i][j][2][0][3] = newState;
-			  }
-		  }
-	  }
+
+      for(let i=0; i<sec.length; i++){
+          for(let j=0; j<sec[0].length; j++){
+              if(filterFunc(sec[i][j])){
+                  sec[i][j][2][0][3] = newState;
+              }
+          }
+      }
 
       client.landMap.set(land, sec, local[0]);
 
@@ -232,10 +232,10 @@ exports.run = function(client,message,args){
   if(client.userMap.has(targetID))
   {
     charid = client.userMap.get(targetID,"possess");
-	if(charid == "NONE" || charid == undefined){
+    if(charid == "NONE" || charid == undefined){
       message.channel.send(`${targetID == userid ? "You're" : "They're"} not possessing anything!`);
       return;
-	}
+    }
   }
   else
   {
@@ -355,13 +355,13 @@ debugCommand = function(cmd){
 }
 
 isWallTile = function(tile){
-	return tile[0]==7;
+    return tile[0]==7;
 }
 
 isFogTile = function(tile){
-	return (tile[2][0][3] === false);
+    return (tile[2][0][3] === false);
 }
 
 isAnyTile = function(tile){
-	return true;
+    return true;
 }
