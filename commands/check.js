@@ -9,13 +9,11 @@ exports.run = (client, message, args) => {
 
   let local = client.charcall.charData(client,charid,"local");
 
-  let sec = client.landMap.get(local[4],local[0]);
-  let occList = sec[local[1]][local[2]][2][local[3]][4];
-  let area = sec[local[1]][local[2]];
-  let room = area[2][local[3]];
   let targId = charid;
 
 if(args[0]){
+  let sec = client.landMap.get(local[4],local[0]);
+  let occList = sec[local[1]][local[2]][2][local[3]][4];
 
   let value = parseInt(args[0], 10) - 1;
   if(isNaN(value)){
@@ -27,7 +25,7 @@ if(args[0]){
     message.channel.send(`That is not a valid selection! See a list of entities in the room with ${client.auth.prefix}list`);
     return;
   }
-targId = occList[value][1];
+  targId = occList[value][1];
 }
 
   listPrint = new client.MessageEmbed()
