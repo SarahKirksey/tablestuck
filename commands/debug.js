@@ -273,7 +273,7 @@ exports.run = function(client,message,args){
       return;
     }
     break;
-	
+
     case "materialize": {
       let gristCheck = client.charcall.allData(client,targetID,charid,"grist");
       let currentInv = client.charcall.allData(client,targetID,charid,"sdex");
@@ -288,18 +288,23 @@ exports.run = function(client,message,args){
 
       // First, determine how much rainbow grist the player can produce.
       for(i=2;i<=12;i++){
-        if(gristCheck[i] < amount)
+        if(gristCheck[i] < amount){
           amount = gristCheck[i];
+          if(amount <= 0){
+            message.channel.send(`That player doesn't have any ${gristTypes[i]} grist.`);
+            return;
+          }
+        }
       }
 
       // Then, remove that much grist from the player's cache
-	  for(i=1; i<=12; i++){
-		  gristCheck[i] -= amount;
-	  }
+      for(i=1; i<=12; i++){
+          gristCheck[i] -= amount;
+      }
 
       // Lastly, give that grist to the player in item form.
-	  let rainbowItem = ["RAINBOW GRIST", "////////", 1, amount, []];
-	  currentInv.unshift(rainbowItem);
+      let rainbowItem = ["RAINBOW GRIST", "////////", 1, amount, []];
+      currentInv.unshift(rainbowItem);
       client.charcall.setAnyData(client,targetID,charid,currentInv,"sdex");
       client.charcall.setAnyData(client,targetID,charid,gristCheck,"grist");
       message.channel.send("Rainbow'd!");
