@@ -67,6 +67,8 @@ for(let l=0;l<specialMerge.length;l++){
     client.charcall.setAnyData(client,userid,sleepid,[],specialMerge[l]);
   }
 }
+
+// Remove the fallen body from the world.
 if(!merge){
   for(let i=0;i<occList.length;i++){
     if(occList[i][1]==sleepid){

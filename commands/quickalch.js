@@ -52,6 +52,8 @@ exports.run = (client, message, args) => {
 
 if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")[1]){
 
+
+  // If there is only one argument, the player simply wants to register the item into the athenaeum
   if(args.length == 1){
     select1 = parseInt(args[0], 10) - 1;
     if(isNaN(select1)){
@@ -63,10 +65,13 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
       message.channel.send(`That is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
       return;
     }
+
+    // Grab a copy of the item from the sylladex, and set the quantity and contents to 1 and empty, respectively.
     item1 = sdex[select1].slice();
     item1[3] = 1;
     item1[4] = [];
 
+    // Make sure the code doesn't already exist in the athenaeum
     function checkCode(checkItem){
       return checkItem[1] == item1[1];
     }
@@ -80,6 +85,8 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
       message.channel.send("You can't alchemize that!");
       return;
     }
+
+    // If everything checks out, add the item to the registry!
     registry.unshift(item1);
     client.charcall.setAnyData(client,userid,charid,registry,"registry");
     message.channel.send(`Registered the ${item1[0]} to the alchemy atheneum! Alchemize it using the ${client.auth.prefix}alchemize command`);
@@ -173,6 +180,7 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
 
 
   let mode = args[1].toLowerCase();
+  // Check the mode of the alchemy being performed
   if(mode=="oror"||mode=="or")
   {
       mode = "||";
@@ -188,8 +196,11 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
       return;
   }
 
+  // Alchemize up a new item
   newItem = funcall.alchemize(client,item1,item2,mode);
 
+  // Apply trait-based changes to freshly-alchemized items, as you do
+  // TODO: Move this to funcall.alchemize.
   if(client.traitcall.itemTrait(client,newItem,"SHITTY"))
   {
     newItem[2]=1;
@@ -205,6 +216,7 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
     newItem[1] = newItem[1][0] + "!" + newItem[1].substr(2);
   }
 
+  // Determine whether the resulting code is already in the athenaeum. If so, notify the player and don't register the item.
   function checkNewCode(checkItem){
     return checkItem[1] == newItem[1];
   }
@@ -214,6 +226,7 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
     return;
   }
 
+  // Lastly, add the new item to the athenaeum and save the ath data.
   registry.unshift(newItem);
   client.charcall.setAnyData(client,userid,charid,registry,"registry");
   message.channel.send(`Registered the resulting item to the alchemy atheneum! Alchemize it using the ${client.auth.prefix}alchemize command`);
