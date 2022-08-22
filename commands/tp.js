@@ -12,7 +12,6 @@ exports.run = (client, message, args) => {
   }
 
   let local = client.charcall.charData(client,charid,"local");
-  let sec = client.landMap.get(local[4],local[0]);
   var occset = [(client.charcall.npcCheck(client,charid)?false:true),charid];
   if(args[0]=="home"){
     if(!occset[0]){

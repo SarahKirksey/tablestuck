@@ -23,7 +23,7 @@ exports.run = (client, message, args) => {
   //if no argument, list all weapons
   if(!args[0]){
   let i;
-  for(i=0;i<scards && i<16;i++){
+  for(i=0;i<(scards||1) && i<16;i++){
     if(i<spec.length){
       msg += `**[${i+1}] ${spec[i][0]} x${spec[i][3]}** \n${spec[i][1]} TIER - ${spec[i][2]}\n\n`
     } else {

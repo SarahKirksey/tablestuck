@@ -70,7 +70,7 @@ ctx.drawImage(mouth,0,0);
 let oldColor = [[251,242,54],[217,160,102],[143,86,59],[103,70,37]];
 let newColor = [[11,181,255],[11,181,255],[0,146,214],[250,250,250]]
 
-if(args){
+if(args.length > 0){
   try{
     newColor = client.grist[args[0]].rgb;
   }catch(err){
