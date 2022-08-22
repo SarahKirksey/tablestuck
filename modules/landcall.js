@@ -188,7 +188,16 @@ empty =[];
 
       let castle = client.landMap.get(message.guild.id+"medium",moon[1][i]);
 
-      castle[transLocal[0]][transLocal[1]][2][0][5].push([`${message.author.username}`,`@/jG${transCode1}`,1,1,[],"https://cdn.discordapp.com/attachments/808757312520585227/814690784209010738/TRANSPORTALIZER.png"])
+      // This exists to support "HACKY_WORLDGEN".
+	  console.log(castle[transLocal[0]][transLocal[1]]);
+	  let needsReload = (i === 0) && (castle[0][0] === castle[0][1]) && (transCount <= 2);
+	  if(needsReload){
+		castle[transLocal[0]] = castle[transLocal[0]].slice();
+		castle[transLocal[0]][transLocal[1]] = JSON.parse(JSON.stringify(castle[transLocal[0]][transLocal[1]]));
+	  }
+
+	  let transHubTile = castle[transLocal[0]][transLocal[1]];
+      transHubTile[2][0][5].push([`${message.author.username}`,`@/jG${transCode1}`,1,1,[],"https://cdn.discordapp.com/attachments/808757312520585227/814690784209010738/TRANSPORTALIZER.png"])
 
       section[temp[0][0]][temp[0][1]]=[11,1,[[[],[],`${moon[0][i]} OUTPOST`,false,[],[[`${moon[0][i]} TRANSPORTALIZER`,`@/jG${transCode}`,1,1,[],"https://cdn.discordapp.com/attachments/808757312520585227/814690784209010738/TRANSPORTALIZER.png"]]]]];
       client.transMap.set(`${message.guild.id}${transCode}`,transSet);
@@ -1149,6 +1158,14 @@ while(empty.length>0){
 
 
 exports.hackyMoonGen = function(client,castleLocal,towerLocal,message) {
+
+// SECTION 0: PREPARATION
+//
+// hackyMoonGen is in charge of generating a total of twelve maps; however, there are interdependencies and duplication among these maps.
+// These cause the generation process to be logically divided into four parts: castle generation, planet generation, moon generation, and dungeon generation.
+// Before we can start any of these, there are some preparations that need to be made.
+//
+
 	const PROSPIT = 0;
 	const DERSE = 1;
 	const PLANETS = [PROSPIT, DERSE];
@@ -1170,97 +1187,116 @@ exports.hackyMoonGen = function(client,castleLocal,towerLocal,message) {
   let section = [[],[],[],[],[],[],[]];
 
   // The dungeons are completely identical, and can be created in a truly simultaneous manner.
-  for(let i=0; i<PROSPIT_DUNGEONS.length; i++){
-    section.push(section[PROSPIT_DUNGEONS[i]]);
-  }
-
-/*
-  for(i=0;i<11;i++){
-	// While the hackiness of these lines can be applied to rooms within a line,
-	// it cannot be applied to lines within a map.
-	// As a result, we must actually produce each line individually.
-	//  (If we really wanted, we could make an exception for lines 2 and 8, as well as 5 in the dungeons.)
-	//  (But that's more trouble than it's worth.)
-    section[0].push(generateEmptyLineHackily("STREET",10));
-    section[1].push(generateEmptyLineHackily("ALLEYWAY",10));
-    section[2].push(generateEmptyLineHackily("STREET",10));
-    section[3].push(generateEmptyLineHackily("ALLEYWAY",10));
-  }
-*/
-
-  for(let j=PROSPIT_DUNGEONS[0]; j<PROSPIT_DUNGEONS[PROSPIT_DUNGEONS.length - 1]; j++)
+  for(let j=DUNGEONS[0]; j<=DUNGEONS[DUNGEONS.length - 1]; j++)
   {
     section[j] = generatePrisonBlockHackily();
   }
 
-  let castle = [,,,,,,,,,,];
-
-  for(i=0;i<11;i++){
-    castle[j] = (generateEmptyLine("OUT OF BOUNDS",7));
+  for(let i=0; i<DUNGEONS.length; i++){
+    section.push(section[DUNGEONS[i]]);
   }
 
-  let select = [0,1,3,4,6,7,9,10]
-  let empty1 = [,,,,,,,];	// Used to identify available space for worldgen on the dream moons
-  let empty2 = [,,,,,,,];	// Used to identify available space for worldgen on the dream planets
-  let empty3 = [,,,,,,,];	// Used to identify available space for worldgen in the first and second dungeons
-  let empty4 = [,,,,,,,];	// Used to identify available space for worldgen in the second and third dungeons
 
-  for(i=0;i<8;i++){
-    for(j=0;j<8;j++){
-      empty1 = [select[i],select[j]];
-      empty2 = [select[i],select[j]];
-      empty3 = [select[i],select[j]];
-      empty4 = [select[i],select[j]];
-    }
+  for(let i=0;i<11;i++){
+	// While the hackiness of these lines can be applied to tiles within a line,
+	// it cannot be applied to lines within a map.
+	// As a result, we must actually produce each line individually.
+	//  (If we really wanted, we could make an exception for lines 2 and 8, as well as 5 in the dungeons.)
+	//  (But that's more trouble than it's worth.)
+    section[0].push(generateEmptyLineHackily("STREET",10, true));
+    section[1].push(generateEmptyLineHackily("ALLEYWAY",10,true));
+    section[2].push(generateEmptyLineHackily("STREET",10, true));
+    section[3].push(generateEmptyLineHackily("ALLEYWAY",10,true));
   }
-
-  empty1.splice(select.indexOf(towerLocal[0])*8+select.indexOf(towerLocal[1]), 1);
-  empty2.splice(select.indexOf(castleLocal[0])*8+select.indexOf(castleLocal[1]),1);
 
   {
-	let chain = generateBasicTile(13, "CHAIN");
-	for(let i=0; i<ALL_MAIN.length; i++){
+	let chain = generateDistinguishedTile(13, "CHAIN");
+	for(let i=0; i<4; i++){
 	  section[i][5][5]=chain;
 	}
   }
 
-  let transLocal=[5,4];
-  //castle generation
-  castle[5][5]=[12,1,[[[],[],"CASTLE ENTRANCE",true,[],[]]]];
-  castle[4][5]=[10,1,[[[],[],"HALL",true,[],[]]]];
-  castle[3][5]=[8,1,[[[],[],"THRONE ROOM",true,[],[]]]];
-  castle[5][4]=[19,1,[[[],[],"TRANSPORTALIZER HUB",true,[],[]]]];
+  let empty1 = [];	// Used to identify available space for worldgen on the dream moons
+  let empty2 = [];	// Used to identify available space for worldgen on the dream planets
+  let empty3 = [];	// Used to identify available space for worldgen in the first and second dungeons
+  let empty4 = [];	// Used to identify available space for worldgen in the second and third dungeons
 
-  // While these are literally the same castle, everything that distinguishes them from each other comes later.
-  // The castles are generated at initialization-time, before transportalizers are added to the hubs.
-  // Likewise, there's no actual logic to the castle entrance, as that's based on the mappings of the castles in the medium.
-  // Thus, the castles are identical in literally every way at this time.
-  // And, more importantly: before ANY changes are made to any part of either castle, these arrays are serialized and stored in the database.
-  // Once there, the castles become distinct from each other.
-  section.push(castle[0]);
-  section.push(castle[0]);
-  section.push(transLocal);
-  //end castle generation
+  {
+    let select = [0,1,3,4,6,7,9,10];
+    for(let i=0;i<8;i++){
+      for(let j=0;j<8;j++){
+        empty1.push([select[i],select[j]]);
+        empty2.push([select[i],select[j]]);
+        empty3.push([select[i],select[j]]);
+        empty4.push([select[i],select[j]]);
+      }
+    }
+    
+    empty1.splice(select.indexOf(towerLocal[0])*8+select.indexOf(towerLocal[1]),1);
+    empty2.splice(select.indexOf(castleLocal[0])*8+select.indexOf(castleLocal[1]),1);
+  }
 
 
-//Prospit / Derse Main
-let station = generateBasicTile(14, "POLICE STATION");
-let prison = generateBasicTile(15, "PRISON");
-let court = generateBasicTile(16, "COURT");
-let hospital = generateBasicTile(17, "HOSPITAL");
-let bank=generateBasicTile(18, "BANK");
-let postOffice=generateBasicTile(19, "POST OFFICE");
-let outpost=generateBasicTile(20, "MILITARY OUTPOST");
-let guildHall=generateBasicTile(21, "GUILD HALL");
-let theatre=generateBasicTile(22, "THEATRE");
+// SECTION 1: CASTLE GENERATION
+//
+// While there are two distinct castles--one for Prospit and one for Derse--everything that distinguishes them from each other comes later.
+// The castles are generated at initialization-time, before transportalizers are added to the hubs.
+// Likewise, there's no actual logic to the castle entrance, as that's based on the mappings of the castles in the medium.
+// Thus, the castles are identical in literally every way at this time.
+// And, more importantly: before ANY changes are made to any part of either castle, these arrays are serialized and stored in the database.
+// Once there, the castles become distinct from each other.
+// At least, in theory. In practice, the Enmap that stores Land data continues--only in memory--to identify the castles using the same pointer.
+// Once the bot is reset, the castles will be truly distinct. However, we can't expect bot hosts to reset it just because a session was initialized.
+// So, we create the main castle out of "distinguished" tiles, meaning they will be automatically serialized and deserialized once they become relevant.
+//
+{
+  let castle = [,,,,,,,,,,];
+  // We don't need to distinguish the walls themselves, however, because those never change.
+  let wall = generateBasicTile(7, "OUT OF BOUNDS", true);
 
-let museum=generateBasicTile(24, "MUSEUM");
-let library=generateBasicTile(25, "LIBRARY");
-let restaurant=generateBasicTile(26, "RESTAURANT");
-let jeweler=generateBasicTile(32, "JEWELER");
+  for(let i=0;i<11;i++){
+	castle[i] = [,,,,,,,,,,];
+	for(let j=0;j<11;j++){
+      castle[i][j] = wall;
+	}
+  }
+  castle[5][5]=generateDistinguishedTile(12,"CASTLE ENTRANCE",true);
+  castle[4][5]=generateDistinguishedTile(10,"HALL",true);
+  castle[3][5]=generateDistinguishedTile(8, "THRONE ROOM",true);
+  // We don't make the transportalizer hub distinguished because it's a special case.
+  // We instead serialize and deserialize one of them when the first player in the session registers.
+  castle[5][4]=generateBasicTile(19,"TRANSPORTALIZER HUB",true);
+
+
+  section.push(castle);
+  section.push(castle.slice());
+  section.push([5,4]);
+}
+
+// SECTION 2: PLANET GENERATION
+//
+// Unlike the castles, the main planets of Prospit and Derse ***do*** have distinguishing features established at initialization-time.
+// That said, the majority of these two maps are identical to each other, and only a small handful of tiles are distinct in any way except name.
+// Instead of trying to generate 
+//
+
+let station = generateDistinguishedTile(14, "POLICE STATION", true);
+let prison = generateDistinguishedTile(15, "PRISON", true);
+let court = generateDistinguishedTile(16, "COURT", true);
+let hospital = generateDistinguishedTile(17, "HOSPITAL", true);
+let bank=generateDistinguishedTile(18, "BANK", true);
+let postOffice=generateDistinguishedTile(19, "POST OFFICE", true);
+let outpost=generateDistinguishedTile(20, "MILITARY OUTPOST", true);
+let guildHall=generateDistinguishedTile(21, "GUILD HALL", true);
+let theatre=generateDistinguishedTile(22, "THEATRE", true);
+
+let museum=generateDistinguishedTile(24, "MUSEUM", true);
+let library=generateDistinguishedTile(25, "LIBRARY", true);
+let restaurant=generateDistinguishedTile(26, "RESTAURANT", true);
+let jeweler=generateDistinguishedTile(32, "JEWELER", true);
 
 // Yes, even this can get duplicated thanks to hackiness.
-let generalStore = generateBasicTile(27, "GENERAL STORE");
+let generalStore = generateDistinguishedTile(27, "GENERAL STORE", true);
 
 
 
@@ -1268,7 +1304,7 @@ let generalStore = generateBasicTile(27, "GENERAL STORE");
 let randomPlanetX = [];
 let randomPlanetY = [];
 for(let i=0; i<42; i++){
-	let temp = empty2.splice(Math.random()*empty2.length,1)[0];
+	let temp = client.randcall.spliceRandom(empty2);
 	randomPlanetY.push(temp[0]);
 	randomPlanetX.push(temp[1]);
 }
@@ -1304,25 +1340,21 @@ for(i=0;i<5;i++){
 }
 
 
-
-
-
 // Then, split into distinct planets.
 section[DERSE] = createDeepishCopy(section[PROSPIT]);
 
+
 // Lastly, generate features that are specific to Prospit or Derse.
-section[PROSPIT][castleLocal[0]][castleLocal[1]]=[12,1,[[[],[],"PROSPIT CASTLE",true,[],[]]]];
-section[DERSE][castleLocal[0]][castleLocal[1]]=[12,1,[[[],[],"DERSE CASTLE",true,[],[]]]];
+section[PROSPIT][castleLocal[0]][castleLocal[1]]=generateBasicTile(12,"PROSPIT CASTLE",true);
+section[DERSE][castleLocal[0]][castleLocal[1]]  =generateBasicTile(12,"DERSE CASTLE",true);
 
 
-
-
-let bingo = generateBasicTile(23, "BINGO HALL");
-let casino = generateBasicTile(23, "CASINO");
-let candy = generateBasicTile(28, "CANDY SHOP");
-let butcher = generateBasicTile(29, "BUTCHER");
-let tailor = generateBasicTile(31, "TAILOR");
-let armory = generateBasicTile(30, "ARMORY");
+let bingo = generateDistinguishedTile(23, "BINGO HALL", true);
+let casino = generateDistinguishedTile(23, "CASINO", true);
+let candy = generateDistinguishedTile(28, "CANDY SHOP", true);
+let butcher = generateDistinguishedTile(29, "BUTCHER", true);
+let tailor = generateDistinguishedTile(31, "TAILOR", true);
+let armory = generateDistinguishedTile(30, "ARMORY", true);
 
 // Only one of each of these
 {
@@ -1342,114 +1374,135 @@ for(i=0;i<5;i++){
   section[PLANETS[1]][temp[0]][temp[1]]=armory;
 }
 
-
-
-
-
-while(empty2.length>0){
-  let temp=empty2.splice(Math.random()*empty2.length,1);
-
-  let ran = Math.floor(Math.random()*6);
-
-  if(ran == 0){
-    section[0][temp[0][0]][temp[0][1]]=generateBasicTile(0, "PUBLIC PARK");
-    section[1][temp[0][0]][temp[0][1]]=generateBasicTile(0, "ABANDONED BUILDING");
-  } else {
-  section[0][temp[0][0]][temp[0][1]]=generateBasicTile(45, "APPARTMENT");
-  section[1][temp[0][0]][temp[0][1]]=generateBasicTile(45, "SLUMS");
-}
-}
-
-
-
-// Next, the moons
-for(i=0;i<2;i++){
-  let temp=empty1.splice(Math.random()*empty1.length,1);
-  section[2][temp[0][0]][temp[0][1]]=station
-}
-
-for(i=0;i<1;i++){
-  let temp=empty1.splice(Math.random()*empty1.length,1);
-  section[2][temp[0][0]][temp[0][1]]=hospital
-}
-
-for(i=0;i<2;i++){
-  let temp=empty1.splice(Math.random()*empty1.length,1);
-  section[2][temp[0][0]][temp[0][1]]=postOffice;
-}
-
-
-for(i=0;i<4;i++){
-  let tempRan = Math.floor(Math.random()*empty1.length)-1;
-  let temp=empty1.splice(tempRan,1);
-
-  section[PROSPIT_MOON][temp[0][0]][temp[0][1]]=generateBasicTile(1, "DUNGEON ENTRANCE");
-  section[DUNGEONS[0]][temp[0][0]][temp[0][1]]=generateBasicTile(1, "DUNGEON EXIT");
-
-  empty3.splice(empty3.findIndex(tile => tile[0] == temp[0][0] && tile[1] == temp[0][1]),1)
-}
-
-for(i=0;i<5;i++){
-  let temp=empty1.splice(Math.random()*empty1.length,1);
-  section[PROSPIT_MOON][temp[0][0]][temp[0][1]]=restaurant;
-}
-
-for(i=0;i<5;i++){
-  let temp=empty1.splice(Math.random()*empty1.length,1);
-  section[PROSPIT_MOON][temp[0][0]][temp[0][1]]=generalStore;
-}
-
-for(i=0;i<5;i++){
-  let temp=empty1.splice(Math.random()*empty1.length,1);
-  section[PROSPIT_MOON][temp[0][0]][temp[0][1]]=generateBasicTile(32, "JEWELER");
-}
-
-for(let i=0; i<ASPECTS.length; i++){
-  let temp=empty1.splice(Math.random()*empty1.length,1)[0];
-  section[PROSPIT_MOON][temp[0]][temp[1]]=generateBasicTile(33 + i, `${ASPECTS[i]} MONUMENT`);
-}
-
-// Split into two distinct moons
-section[DERSE_MOON] = createDeepishCopy(section[PROSPIT_MOON]);
-section[PROSPIT_MOON][towerLocal[0]][towerLocal[1]]=generateBasicTile(11,"PROSPIT TOWER BASE",true);
-section[DERSE_MOON][towerLocal[0]][towerLocal[1]]=generateBasicTile(11,"DERSE TOWER BASE",true);
-
-while(empty1.length>0){
-	let temp=empty1.splice(Math.random()*empty1.length,1)[0];
-
-	if(Math.floor(Math.random()*6) == 0){
-		section[PROSPIT_MOON][temp[0]][temp[1]]=generateBasicTile(0, "PUBLIC PARK");
-		section[DERSE_MOON][temp[0]][temp[1]]=generateBasicTile(0, "ABANDONED BUILDING");
-	} else {
-		section[PROSPIT_MOON][temp[0]][temp[1]]=generateBasicTile(45, "APPARTMENT");
-		section[DERSE_MOON][temp[0]][temp[1]]=generateBasicTile(45, "SLUMS");
+// And, of whatever is left, apply these names and icons
+{
+	let park = generateDistinguishedTile(0, "PUBLIC PARK", true);
+	let building = generateDistinguishedTile(0, "ABANDONED BUILDING", true);
+	let apartment = generateDistinguishedTile(45, "APPARTMENT", true);
+	let slums = generateDistinguishedTile(45, "SLUMS", true);
+	while(empty2.length>0){
+		let temp = client.randcall.spliceRandom(empty2);
+		if(client.randcall.randLessThan(6) == 0){
+			section[PROSPIT][temp[0]][temp[1]]=park;
+			section[DERSE][temp[0]][temp[1]]=building;
+		}
+		else {
+			section[PROSPIT][temp[0]][temp[1]]=apartment;
+			section[DERSE][temp[0]][temp[1]]=slums;
+		}
 	}
 }
 
+// SECTION 3: MOON GENERATION
+//
+// Honestly, there's not a whole lot to be said about the moons that hasn't already been said about the main planets.
+// The key difference here is that some tiles selected on the moons will impact the layout of the dungeons that get established in section 4.
+//
+
+// Two of each of these
+for(i=0;i<2;i++){
+  let temp=client.randcall.spliceRandom(empty1);
+  section[2][temp[0]][temp[1]]=station
+  temp=client.randcall.spliceRandom(empty1);
+  section[2][temp[0]][temp[1]]=postOffice;
+}
+
+for(i=0;i<1;i++){
+  let temp=client.randcall.spliceRandom(empty1);
+  section[2][temp[0]][temp[1]]=hospital
+}
+
+// Generate the dungeon entraces
+{
+let dungeonEntrance = generateDistinguishedTile(1, "DUNGEON ENTRANCE", true);
+let dungeonExit = generateDistinguishedTile(1, "DUNGEON EXIT");
+for(i=0;i<4;i++){
+  let tempRan = client.randcall.spliceRandom(empty1);
+  let temp=[tempRan];
+
+  section[PROSPIT_MOON][temp[0][0]][temp[0][1]]=dungeonEntrance;
+  section[DUNGEONS[0]][temp[0][0]][temp[0][1]]=dungeonExit;
+
+  // Note that a dungeon entrance on the moon surface means a dungeon exit in the first dungeon,
+  // And a dungeon exit in the first dungeon means no descending stairs in the first dungeon.
+  // So, we need to remove this coordinate pair from that candidate list.
+  empty3.splice(empty3.findIndex(tile => tile[0] == temp[0][0] && tile[1] == temp[0][1]),1)
+}
+}
+
+// Five of each of these
+for(let i=0; i<5; i++){
+  let temp=[client.randcall.spliceRandom(empty1)];
+  section[PROSPIT_MOON][temp[0][0]][temp[0][1]]=restaurant;
+  temp=[client.randcall.spliceRandom(empty1)];
+  section[PROSPIT_MOON][temp[0][0]][temp[0][1]]=generalStore;
+  temp=[client.randcall.spliceRandom(empty1)];
+  section[PROSPIT_MOON][temp[0][0]][temp[0][1]]=jeweler;
+}
+
+for(let i=0; i<ASPECTS.length; i++){
+  let temp=client.randcall.spliceRandom(empty1);
+  section[PROSPIT_MOON][temp[0]][temp[1]]=generateDistinguishedTile(33 + i, `${ASPECTS[i]} MONUMENT`, true);
+}
+
+// Split into two distinct moons, and then apply the features unique to each side.
+section[DERSE_MOON] = createDeepishCopy(section[PROSPIT_MOON]);
+
+section[PROSPIT_MOON][towerLocal[0]][towerLocal[1]]=generateBasicTile(11,"PROSPIT TOWER BASE",true);
+section[DERSE_MOON][towerLocal[0]][towerLocal[1]]=generateBasicTile(11,"DERSE TOWER BASE",true);
+
+// And, of whatever is left, apply these names and icons
+{
+	let park = generateDistinguishedTile(0, "PUBLIC PARK");
+	let building = generateDistinguishedTile(0, "ABANDONED BUILDING");
+	let apartment = generateDistinguishedTile(45, "APPARTMENT");
+	let slums = generateDistinguishedTile(45, "SLUMS");
+	while(empty1.length>0){
+		let temp = client.randcall.spliceRandom(empty1);
+		if(client.randcall.randLessThan(6) == 0){
+			section[PROSPIT_MOON][temp[0]][temp[1]]=park;
+			section[DERSE_MOON][temp[0]][temp[1]]=building;
+		}
+		else {
+			section[PROSPIT_MOON][temp[0]][temp[1]]=apartment;
+			section[DERSE_MOON][temp[0]][temp[1]]=slums;
+		}
+	}
+}
+
+
+// SECTION 4: DUNGEON GENERATION
+//
+// The only unique feature of generating the dungeons themselves is that the stairs must be synchronized,
+// So the second dungeon cannot have ascending stairs and descending stairs in the same location.
+// 
+//
+
+{
+  let stairsDown = generateDistinguishedTile(46, "DESCENDING STAIRS");
+  let stairsUp = generateDistinguishedTile(47, "ASCENDING STAIRS");
+  let slabRoomEntrance = generateDistinguishedTile(46, "DOWNSTAIRS ENTRANCE");
+
   for(i=0;i<3;i++){
-    let temp=empty3.splice(Math.random()*empty3.length, 1);
+    let temp=client.randcall.spliceRandom(empty3);
 
-    section[4][temp[0][0]][temp[0][1]]=generateBasicTile(46, "DESCENDING STAIRS");
-    section[5][temp[0][0]][temp[0][1]]=generateBasicTile(47, "ASCENDING STAIRS");
+    section[DUNGEONS[0]][temp[0]][temp[1]]=stairsDown;
+    section[DUNGEONS[1]][temp[0]][temp[1]]=stairsUp;
 
-    empty4.splice(empty4.findIndex(tile => tile[0] == temp[0][0] && tile[1] == temp[0][1]),1)
+    empty4.splice(empty4.findIndex(tile => tile[0] == temp[0][0] && tile[1] == temp[0][1]),1);
   }
 
   for(i=0;i<2;i++){
-    let temp=empty4.splice(Math.floor(Math.random()*empty4.length),1)[0];
+    let temp=client.randcall.spliceRandom(empty4);
 
-    section[5][temp[0]][temp[1]]=generateBasicTile(46, "DOWNSTAIRS ENTRANCE");
-    section[6][temp[0]][temp[1]]=generateBasicTile(47, "ASCENDING STAIRS");
+    section[DUNGEONS[1]][temp[0]][temp[1]]=slabRoomEntrance;
+    section[DUNGEONS[2]][temp[0]][temp[1]]=stairsUp;
   }
 
-//tossing in the sac slabs, stealing the light aspect symbol for now.
-  let tempRan = Math.floor(Math.random()*empty4.length)-1;
-  let temp=empty4.splice(tempRan,1)[0];
-  section[SLAB_DUNGEON][temp[0]][temp[1]]=generateBasicTile(35, "SACRIFICIAL SLAB");
-  
-  for(let i=0; i<DUNGEONS.length; i++){
-	section.push(section[DUNGEONS[i]]);
-  }
+  //tossing in the sac slabs, stealing the light aspect symbol for now.
+  let temp=client.randcall.spliceRandom(empty4);
+  section[SLAB_DUNGEON][temp[0]][temp[1]]=generateDistinguishedTile(35, "SACRIFICIAL SLAB");
+}
 
   return section;
 }
@@ -1461,7 +1514,10 @@ function createDeepishCopy(input, depth=1){
 	// input.slice() returns a new array that is an exact copy of the exising array, but is still distinct from it.
 	// Any pointers IN the array, however, will not be distinct. AKA, a shallow copy.
 	if(depth <= 0){
-		return input.slice();;
+		if(!input.slice){
+			console.log(input);
+		}
+		return input.slice();
 	}
 	
 	let retVal = [];
@@ -1502,8 +1558,8 @@ function generatePrisonBlock(){
 function generatePrisonBlockHackily(){
 	let sec = [];
 	let corridorLine = generateEmptyLineHackily("CORRIDOR", 10);
-	let corridor = generateBasicTile(10, "CORRIDOR");
-	let cell = generateBasicTile(15, "PRISON CELL");
+	let corridor = generateDistinguishedTile(10, "CORRIDOR");
+	let cell = generateDistinguishedTile(15, "PRISON CELL");
 	for(let i=0; i<11; i++){
 		if(i % 3 == 2){
 			sec.push(corridorLine);
@@ -1525,22 +1581,22 @@ function generatePrisonBlockHackily(){
 }
 
 // Returns a line of tiles where every tile is a reference to the exact same tile.
-// Useful in situations where you plan on every tile being either replaced, or serialized without any further modification.
-function generateEmptyLineHackily(name, tile, explored = false, length = 11){
+// This tile is marked with a flag telling the game to "distinguish" it when writing to it.
+function generateEmptyLineHackily(name, icon, explored = false, length = 11){
 	let retVal = [];
-	let room = generateBasicTile(tile, name, explored);
+	let tile = generateDistinguishedTile(icon, name, explored);
 	for(let i=0; i<length; i++){
-		retVal.push(room);
+		retVal.push(tile);
 	}
 	return retVal;
 }
 
 // Returns a line of tiles where every tile is a unique reference.
 // Useful if you want to do it the right way, or if you just plan on modifying the contents of those tiles.
-function generateEmptyLine(name, tile, explored = false, length = 11){
+function generateEmptyLine(name, icon, explored = false, length = 11){
 	let retVal = [];
 	for(let i=0; i<length; i++){
-		retVal.push(generateBasicTile(tile, name, explored));
+		retVal.push(generateBasicTile(icon, name, explored));
 	}
 	return retVal;
 }
@@ -1554,7 +1610,7 @@ function generateBasicTile(icon, name, explored = false){
 			// The one (and only) room within this tile
 			[
 				[],		    // Shop inventory
-				[],		    // An array of strings that represent functions to be called when certain events occur in or to the room. (Currently unusued.)
+                {},		    // Dictionary of string arrays that represent functions to be called when certain events occur in or to the room.
 				name,	    // The name of this room.
 				explored,	// Whether this room has already been explored/visited.
 				[],		    // List of all creatures in the room
@@ -1562,6 +1618,13 @@ function generateBasicTile(icon, name, explored = false){
 			]
 		]
 	];
+}
+
+function generateDistinguishedTile(icon, name, explored = false){
+	let tile = generateBasicTile(icon, name, explored);
+	// Set the tile's trigger list to include a DISTINGUISH on any trigger.
+	tile[2][0][1].any = ["DISTINGUISH"];
+	return tile;
 }
 
 
@@ -1709,7 +1772,8 @@ for(i=0;i<11;i++){
 let attachment = new client.MessageAttachment(canvas.toBuffer(), 'landmap.png');
 //message.channel.send(attachment);
 return attachment;
-} else {
+}
+else {
 
 const canvas = client.Canvas.createCanvas(192,192);
 const ctx = canvas.getContext('2d');
@@ -1914,8 +1978,30 @@ coords.push(sburbid);
 // TODO: Make these convert arrays to dictionaries, and back again.
 // Also, maybe rename them.
 
-exports.localToTile = function(client,message,local){
+function localToTile(local){
+	return {
+		icon: local[0],
+		numRooms: local[1],
+		roomArray: local[2],
+		triggers: local[3]
+	}
 }
 
-exports.tileToLocal = function(client,message,tile){
+
+function tileToLocal(tile){
+	return [tile.icon, tile.numRooms, tile.roomArray, local.triggers];
 }
+
+
+function areaToRoom(area){
+	return {
+		shopInv: area[0],
+		triggers: area[1],
+		name: area[2],
+		explored: area[3],
+		occList: area[4],
+		roomInv: area[5]	// TODO: Decide whether to keep this name BEFORE using this everywhere.
+	}
+}
+
+
