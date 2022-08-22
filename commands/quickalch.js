@@ -219,36 +219,9 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
   message.channel.send(`Registered the resulting item to the alchemy atheneum! Alchemize it using the ${client.auth.prefix}alchemize command`);
   client.funcall.tick(client,message);
 
-    /*cost1=tierCost[newItem[2]];
-
-    cost2=tierCost[newItem[2]-1];
-
-    if(newItem[1].charAt(1)=="!"){
-      cost1*=2;
-      cost2*=2;
-    }
-
-    grist=client.gristTypes[client.codeCypher[1][client.captchaCode.indexOf(newItem[1].charAt(1))]];
-
-    if(playerGrist[0]<cost1||playerGrist[client.grist[grist].pos]<cost2){
-      message.channel.send("You can't afford to alchemize that!");
-      return;
-    }
-
-    playerGrist[0]-=cost1;
-    playerGrist[client.grist[grist].pos]-=cost2;
-    room[5].push(newItem);
-    client.playerMap.set(charid,playerGrist,"grist");
-    sec[local[1]][local[2]][2][local[3]] = room;
-    client.landMap.set(land,sec,local[0]);
-
-    message.channel.send(`Expended **${client.emojis.cache.get(client.grist["build"].emoji)} ${cost1}** and **${client.emojis.cache.get(client.grist[grist].emoji)} ${cost2}** to alchemize the **${newItem[0]}**`);
-    funcall.actionCheck(client,message,"alchemized");
-
-*/
-    return;
-
-}else{
+  return;
+}
+else{
     client.tutorcall.progressCheck(client,message,42,["text","To QUICK ALCHEMIZE, you must be in a room with an INSTANT ALCHEMITER."]);
     return;
   }

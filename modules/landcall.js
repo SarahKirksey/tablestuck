@@ -1765,19 +1765,6 @@ for(i=-1;i<2;i++){
   return attachment;
 }
 }
-//this will be remade and moved to charcall.
-// exports.underlingCheck = function(occList,client) {
-//   check = false;
-//   if(occList.length>0){
-//     for(i=0;i<occList.length;i++){
-//       if(occList[i][0]==false&&client.playerMap.get(occList[i][1],"faction")=="underling"){
-//         check=true;
-//       }
-//     }
-//   }
-//
-//   return check;
-// }
 
 //creates a carpacian
 exports.carSpawn = function(client,local,lunar,sessionID){
