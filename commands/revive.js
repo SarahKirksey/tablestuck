@@ -12,8 +12,12 @@ if(client.configcall.get(client, message, "death")==0){
   let local = client.charcall.charData(client,charid,"local");
 
   let sec = client.landMap.get(local[4],local[0]);
-  let occList = sec[local[1]][local[2]][2][local[3]][4];
-  let area = sec[local[1]][local[2]];
+  let occList;
+  let area;
+  if(sec && sec[0]){
+    occList = sec[local[1]][local[2]][2][local[3]][4];
+    area = sec[local[1]][local[2]];
+  }
   let channelCheck = [];
   let revcheck = false;
 
@@ -62,7 +66,7 @@ if(client.configcall.get(client, message, "death")==0){
     return;
   }
 
-  if(area[2][0][2]!="DREAM BED"&&area[2][0][2]!="SACRIFICIAL SLAB"&&!client.charcall.charData(client,charid,"alive")){
+  if((!area || (area[2][0][2]!="DREAM BED"&&area[2][0][2]!="SACRIFICIAL SLAB"))&& (client.charcall.charData(client,charid,"alive") != true)){
     message.channel.send("It seems you are dead! Depending on your game, you might be revived, or you might be gone for good. Have fun!");
     return;
   }
