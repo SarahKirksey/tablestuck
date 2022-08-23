@@ -101,9 +101,9 @@ for(let i=0;i<occList.length;i++){
 
     // Attempt to identify the other self.
     if(client.charcall.allData(client,userid,charid,"dreamer")){
-      altself = client.charcall.allData(client,userid,charid,"dreamingID");
-    } else {
       altself = client.charcall.allData(client,userid,charid,"wakingID");
+    } else {
+      altself = client.charcall.allData(client,userid,charid,"dreamingID");
     }
 
     // Remove the other self from wherever they are.
