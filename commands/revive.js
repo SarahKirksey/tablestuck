@@ -28,8 +28,8 @@ if(client.configcall.get(client, message, "death")==0){
       message.channel.send(`If you are using this command as a player, do "${client.auth.prefix}revive override". If you're using this as a Author/DM judging a Godtier's fate, ping them to bring them back. Otherwise, let them lay.`);
       return;
     }
-	
-	dmOverride = (args[0].toLowerCase() == "override");
+
+    dmOverride = (args[0] && args[0].toLowerCase() == "override");
     if(pinged&&client.configcall.get(client, message, "IMMORTAL")==1){
       let targuser = message.guild.id.concat(pinged.id);
       let target = client.userMap.get(targuser,"possess");
