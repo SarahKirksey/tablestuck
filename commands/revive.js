@@ -99,8 +99,8 @@ for(let i=0;i<occList.length;i++){
     client.charcall.setAnyData(client,userid,charid,true,"godtier");
 
     //removes dreamself from wherever they are and merges the bodies if the player hasn't revived yet
-    if(!client.charcall.allData(client,userid,charid,"revived"))
-    {
+    if(!client.charcall.allData(client,userid,charid,"revived")){
+
     client.charcall.setAnyData(client,userid,charid,true,"revived");
 
     let altself;
