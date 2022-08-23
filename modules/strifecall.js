@@ -31,7 +31,8 @@ const PROFILE = {
     FAVORS: 4,
     STAMIN: 5,
     ACTION: 6,
-    STATUS: 7
+    STATUS: 7,
+	SPECIAL: 8
 }
 
 function inflict(client, message, local, list, target, chance, status, attacker){
@@ -617,6 +618,7 @@ function startTurn(client, message, local) {
   let type = client.charcall.charData(client,list[init[turn][0]][1],"type");
   let i;
 //reset actions taken this turn
+  let lastAction = list[init[turn][0]][6].pop();
   list[init[turn][0]][6]=[];
 
   let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
@@ -665,6 +667,12 @@ function startTurn(client, message, local) {
         stunned=true;
         removed = list[init[turn][0]][7].splice(i,1);
       break;
+	  case "ENCORE":
+	    if(!list[init[turn][0]][PROFILE.SPECIAL]){
+			list[init[turn][0]][PROFILE.SPECIAL] = {};
+		}
+		list[init[turn][0]][PROFILE.SPECIAL].encoreMove = lastAction;
+	  break;
       case "ALLBD":
       case "ALLFAV":
       case "ALLUNFAV":
@@ -1224,6 +1232,16 @@ else {
     let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
     let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
 
+
+    // Action tags I need to program:
+    //  AMASS
+    //  BOMB
+    //  ENCORE
+    //  PROTOTYPE
+    //  STRIFEEJECT
+    //  BOONLOSS    ?
+    //
+
     //check for each action tag that is NONCOMBATIVE
     //PRE-ROLL ACT
     let pre;
@@ -1297,6 +1315,18 @@ else {
             dmgLvl=2;
           }
           break;
+        case "ROLLOUT0":
+          if(attUnit[STATUS].includes("ROLLOUT0")){
+            dmgLvl=1;
+            removed = attUnit[STATUS].splice(attUnit[STATUS].indexOf("ROLLOUT0"),1);
+            attUnit[STATUS].push("ROLLOUT1");
+            break;
+          }
+          else if(!attUnit[STATUS].includes("ROLLOUT1") && !attUnit[STATUS].includes("ROLLOUT2")){
+            attUnit[STATUS].push("ROLLOUT0");
+            break;
+          }
+          //fallthrough
           case "ROLLOUT":
             if(attUnit[STATUS].includes("ROLLOUT1")){
               dmgLvl=2;
@@ -1697,6 +1727,7 @@ if(aa.includes("RANDSTATUS")){
             case "BURN":
             case "FROSTBITE":
             case "STUN":
+            case "ENCORE":
             alert+=inflict(client, message, local, list, target, 1, aa[post], init[turn][0]);
               break;
             case "STUNCHANCE":

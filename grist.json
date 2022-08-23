@@ -131,5 +131,19 @@
     "emoji":"715632522662379631",
     "spos":16,
     "rgb":[[0,0,255],[255,0,0],[255,255,0],[0,255,0],[0,255,255]]
+  },
+  "royal":{
+    "emoji":"1010049190887436320",
+    "spos":17,
+    "effective":["unknown","unknown","unknown","unknown"],
+    "ineffective":["unknown","unknown","unknown","unknown"],
+    "rgb":[[1,1,1],[1,1,1],[250,250,250],[250,250,250],[250,250,250]]
+  },
+  "unknown":{
+    "emoji":"1010049190887436320",
+    "spos":17,
+    "effective":["unknown","unknown","unknown","unknown"],
+    "ineffective":["unknown","unknown","unknown","unknown"],
+    "rgb":[[1,1,1],[1,1,1],[250,250,250],[250,250,250],[250,250,250]]
   }
 }

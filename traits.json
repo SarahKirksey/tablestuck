@@ -364,8 +364,12 @@
   "img":"",
   "trait":"(NYI) Gain temporary BD on enemy kills",
 
-  "set":"(NYI) ENEMIES DROP MEAT"}
-
+  "set":"(NYI) ENEMIES DROP MEAT"},
+  
+  "ROYAL":{
+  "img":"",
+  "trait":"Royal perks",
+  "set":"N/A"}
 
 
 }

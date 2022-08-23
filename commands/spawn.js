@@ -14,8 +14,17 @@ message.channel.send(`Please select what you want to spawn, such as \"${client.a
 return;
 }
 
-let spawnList = ["imp","ogre","basilisk","lich","giclopse","titachnid","denizen"];
-if(!spawnList.includes(args[0].toLowerCase())){
+args[0] = args[0].toLowerCase();
+
+switch(args[0]){
+  case "ss": args[1] = "royal", args[0] = "Sovereign Slayer"; break;
+  case "dd": args[1] = "royal", args[0] = "Draconian Dignitary"; break;
+  case "hb": args[1] = "royal", args[0] = "Hegemonic Brute"; break;
+  case "cd": args[1] = "royal", args[0] = "Courtyard Droll"; break;
+}
+
+let spawnList = ["imp","ogre","basilisk","lich","giclopse","titachnid","denizen","queen","king", "Draconian Dignitary", "Sovereign Slayer", "Hegemonic Brute", "Courtyard Droll"];
+if(!spawnList.includes(args[0])){
 let msg = `Sorry, your choice isn't recognized. The current spawns supported are:`;
 for(let i=0;i<spawnList.length;i++){
   msg+=`\n${spawnList[i]}`;
@@ -34,9 +43,12 @@ if(args[1]&&!gristList.includes(args[1].toLowerCase())){
 }
 let undername;
 if(!args[1]){
-undername = client.strifecall.spawn(client,message,args[0].toLowerCase())
+undername = client.strifecall.spawn(client,message,args[0])
 } else {
-undername = client.strifecall.spawn(client,message,args[0].toLowerCase(),args[1].toLowerCase());
+undername = client.strifecall.spawn(client,message,args[0],args[1].toLowerCase());
+}
+if(args[1] === "royal"){
+  undername = args[0];
 }
 message.channel.send(`Spawned ${undername} in current room!`);
 }

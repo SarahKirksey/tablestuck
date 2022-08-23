@@ -81,7 +81,8 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
       return;
     }
 
-    if(item1[1].charAt(0) == "/"||item1[1]=="########"){
+    // And make sure that it's a valid, alchemizeable item.
+    if(item1[1].charAt(0) == "/"||item1[1]=="########"||item1[1].length!=8){
       message.channel.send("You can't alchemize that!");
       return;
     }

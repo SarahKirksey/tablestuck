@@ -232,5 +232,77 @@
     "stats":[0,0,0,0,0,0],
     "xp":2,
     "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
+  },
+  "Courtyard Droll":{
+    "stm":10,
+    "vit":400,
+    "av":12,
+    "prefMove":"none",
+    "d":200,
+    "bd":[4,16],
+    "act":["amuse", "amble", "amen", "abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":1000,
+    "naturalbonus":{"accuracy":4, "avChance":4, "initiative":10}
+  },
+  "Draconian Dignitary":{
+    "stm":10,
+    "vit":400,
+    "av":12,
+    "prefMove":"none",
+    "d":200,
+    "bd":[4,16],
+    "act":["amnesty", "ameliorate", "amend", "abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":1000,
+    "naturalbonus":{"accuracy":4, "avChance":4, "initiative":8}
+  },
+  "Hegemonic Brute":{
+    "stm":10,
+    "vit":400,
+    "av":12,
+    "prefMove":"none",
+    "d":200,
+    "bd":[10,60],
+    "act":["amputate", "ambuscade", "amortize", "abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":1000,
+    "naturalbonus":{"accuracy":2, "avChance":4, "initiative":0}
+  },
+  "Sovereign Slayer":{
+    "stm":10,
+    "vit":400,
+    "av":12,
+    "prefMove":"none",
+    "d":200,
+    "bd":[4,48],
+    "act":["ambush", "amplify", "amount", "abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":1000,
+    "naturalbonus":{"accuracy":8, "avChance":4, "initiative":4}
+  },
+  "queen":{
+    "stm":4,
+    "vit":400,
+    "av":12,
+    "prefMove":"none",
+    "d":200,
+    "bd":[4,16],
+    "act":["amalgamate","abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":9001,
+    "naturalbonus":{"accuracy":4, "avChance":5, "initiative":10}
+  },
+  "king":{
+    "stm":4,
+    "vit":500,
+    "av":15,
+    "prefMove":"none",
+    "d":250,
+    "bd":[4,16],
+    "act":["amalgamate","abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":10230,
+    "naturalbonus":{"accuracy":6, "avChance":5, "initiative":10}
   }
 }

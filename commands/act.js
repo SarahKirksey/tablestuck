@@ -210,6 +210,11 @@ for(i=0;i<action.length;i++){
       tempbg = `#ffbdb3`;
       break;
 
+      case `am`:
+      tempcolor=  `#000000`;
+      tempbg = `#cccccc`;
+      break;
+
       case `ab`:
       tempcolor=  `#ffae00`;
       tempbg = `#ffe7b3`;

@@ -29,6 +29,7 @@ const canvas = client.Canvas.createCanvas(230,50);
   ctx.font = applyText(canvas,msg,220);
   ctx.lineWidth = 10;
 let tempcolor;
+let bgColor = "#ffffff";
   switch(msg.substring(0,2)){
     case `no`:
     tempcolor= `#6D6D6D`;
@@ -45,13 +46,17 @@ let tempcolor;
     case `ab`:
     tempcolor=  `#ffae00`;
     break;
+    case `am`:
+    tempcolor=  `#ffffff`;
+    bgColor=  `#000000`;
+    break;
     case 'ag':
     tempcolor = "#3ef443";
     break;
     default:
     tempcolor= `#6D6D6D`;
 }
-ctx.fillStyle = "#ffffff";
+ctx.fillStyle = bgColor;
 ctx.fillRect(0,0,canvas.width,canvas.height);
 ctx.strokeStyle = tempcolor;
 ctx.strokeRect(0,0,canvas.width,canvas.height);
