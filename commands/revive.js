@@ -23,8 +23,9 @@ if(client.configcall.get(client, message, "death")==0){
   let dmOverride = false;
 
   if(client.funcall.dmcheck(client,message)){
-	let pinged = message.mentions.members.first();
-    if(!args[0]&&!pinged&&client.configcall.get(client, message, "IMMORTAL")!=1){
+    let pinged = message.mentions.members.first();
+    // Okay, this still doesn't QUITE work because now DMs have to ping themselves to revive on quest beds.
+    if(!args[0]&&!pinged&&client.configcall.get(client, message, "IMMORTAL")==1){
       message.channel.send(`If you are using this command as a player, do "${client.auth.prefix}revive override". If you're using this as a Author/DM judging a Godtier's fate, ping them to bring them back. Otherwise, let them lay.`);
       return;
     }
