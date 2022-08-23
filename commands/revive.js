@@ -81,22 +81,27 @@ for(let i=0;i<occList.length;i++){
         message.channel.send(`You've already reached godtier, you can't do it again! Wait for Fate to decide if you live or die.`);
         return;
       }
-      if(area[2][0][2]==="DREAM BED"&&local[4]!=client.charcall.allData(client,userid,charid,"owner")){
+      let isBed = (area[2][0][2]==="DREAM BED");
+      if(isBed&&local[4]!=client.charcall.allData(client,userid,charid,"owner")){
         message.channel.send(`Your body lies on the bed, the right kind but the wrong place. You need to be on your own dreambed to come back, it seems.`);
       }
-      if(area[2][0][2]==="DREAM BED"&&client.charcall.allData(client,userid,occList[i][1],"revived")){
+      if(isBed&&client.charcall.allData(client,userid,occList[i][1],"revived")){
         message.channel.send(`Your body lies inert on the bed it was meant to become something greater upon. It seems you lack a dreaming self to ascend. Maybe there's another place for you, somewhere.`);
         return;
-      } else {
-        if(area[2][0][2]==="DREAM BED"){
+      }
+	  else {
+        if(isBed){
           message.channel.send(`The light around you surges, round-tipped pillars that line the bed glowing. Your body floats up, and you hover in mid-air, adorned in new clothes. They are...comfy.`);
-        } else {
+        }
+		else {
           message.channel.send(`The dark chamber glows as the slab hums with energy. Your body floats up, and you hover in mid-air, adorned in new clothes. They are...comfy. Last chance.`);
         }
     client.charcall.setAnyData(client,userid,charid,true,"godtier");
-        //removes dreamself from wherever they are and merges the bodies if the player hasn't revived yet
-    if(!client.charcall.allData(client,userid,charid,"revived")){
-      client.charcall.setAnyData(client,userid,charid,true,"revived");
+
+    //removes dreamself from wherever they are and merges the bodies if the player hasn't revived yet
+    if(!client.charcall.allData(client,userid,charid,"revived"))
+    {
+    client.charcall.setAnyData(client,userid,charid,true,"revived");
 
     let altself;
 
@@ -126,7 +131,7 @@ for(let i=0;i<occList.length;i++){
     // Loot your other self.
     const cmd = client.commands.get("loot");
     cmd.run(client,message,args,true);
-  }
+    }
 
     // If the player already has armor, remove it.
     if(client.charcall.charData(client,charid,"armor").length>0){
@@ -146,8 +151,8 @@ for(let i=0;i<occList.length;i++){
     // If grabbing the aspect from the current Land didn't work, try grabbing it from the player's Land.
     if(isNaN(aspectIndex) || local[4]!=client.charcall.allData(client,userid,charid,"owner") || aspectIndex == undefined)
     {
-    	let landID = client.sburbMap.get(client.charcall.allData(client,userid,charid,"owner"), "landID");
-    	aspectIndex = aspectList.indexOf(client.landMap.get(landID, "aspect"));
+        let landID = client.sburbMap.get(client.charcall.allData(client,userid,charid,"owner"), "landID");
+        aspectIndex = aspectList.indexOf(client.landMap.get(landID, "aspect"));
     }
 
     // Create the GTPJs and revive the player.
@@ -159,13 +164,14 @@ for(let i=0;i<occList.length;i++){
     let sburbidArray = client.landMap.get(message.guild.id+"medium","playerList");
     for(let i=0;i<sburbidArray.length;i++){
       destination = client.sburbMap.get(sburbidArray[i],"wakingID");
-      altdestination = client.sburbMap.get(sburbidArray[i],"wakingID");
+      altdestination = client.sburbMap.get(sburbidArray[i],"dreamingID");
       if(destination!=charid&&altdestination!=charid){
-    		client.funcall.chanMsg(client,destination,`The sky glows as you see the ${aspectList[aspectIndex]} symbol burn in the distance. Someone has ascended.`);
+        client.funcall.chanMsg(client,destination,`The sky glows as you see the ${aspectList[aspectIndex]} symbol burn in the distance. Someone has ascended.`);
       }
     }
 }
-} else {
+}
+else {
   if(client.charcall.allData(client,userid,occList[i][1],"godtier")){
     message.channel.send(`it seems ${client.charcall.charData(client,occList[i][1],"name")} has ascended to godtier. If they're dead, their life is in Fate's hands now. Nothing you can do.`);
     return;
@@ -183,7 +189,7 @@ for(let i=0;i<occList.length;i++){
       } else {
         target = client.charcall.allData(client,userid,occList[i][1],"wakingID");
       }
-      (dreamer?client.charcall.setAnyData(client,userid,occList[i][1],false,"dreamer"):client.charcall.setAnyData(client,userid,occList[i][1],true,"dreamer"));
+      client.charcall.setAnyData(client,userid,occList[i][1],!dreamer,"dreamer");
       if(curuserid.length===0){
         channel = client.charcall.allData(client,userid,occList[i][1],"channel");
         client.channels.cache.get(channel).send(`You have been brought back to life. Whenever you're ready, possess your ${dreamer?`waking`:`dreaming`} self again. You can get your things back by >loot-ing your old body.\n\nEnjoy the second chance.`);
