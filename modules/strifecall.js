@@ -713,7 +713,7 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
 }
 
     let endurance = client.traitcall.traitCheck(client,list[init[turn][0]][1],"ENDURING");
-	
+
 	let denom = 1;
 	if(endurance[1]){
 	  denom = 4;
@@ -1298,7 +1298,6 @@ else {
     }
 
     let costMsg = `${client.actionList[action].cst}`;
-
 
     if(client.actionList[action].cst > 3 && client.traitcall.traitCheck(client,attUnit[1],"LIGHTWEIGHT")[1]){
       alert += `YOUR LIGHTWEIGHT GEAR DISCOUNTS EXPENSIVE MOVES\n`;
