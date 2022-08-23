@@ -29,8 +29,7 @@ for(let n=0;n<local.length;n++){
 }
 
 
-
-if(merge||matching&&client.charcall.allData(client,userid,charid,"revived")){
+if(merge||(matching&&client.charcall.allData(client,userid,charid,"revived"))){
 
   //if same location AND revived
 
@@ -78,11 +77,13 @@ if(!merge){
     }
   }
 }
+
   client.charcall.setAnyData(client,userid,sleepid,[],"local");
   if(!merge){
-  message.channel.send("You touch your fallen body, and claim what was on it. It fades away.");
+    message.channel.send("You touch your fallen body, and claim what was on it. It fades away.");
+  }
 }
-} else {
+else {
   message.channel.send("You don't have anything to do with this command.");
 }
 
