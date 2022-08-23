@@ -721,7 +721,7 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
 }
 
     let endurance = client.traitcall.traitCheck(client,list[init[turn][0]][1],"ENDURING");
-	
+
 	let denom = 1;
 	if(endurance[1]){
 	  denom = 4;
@@ -1293,6 +1293,9 @@ else {
 
           break;
 
+        case "DEGRAP":
+          list[init[turn][0]][7].push("DEGRAP");
+
         // ABJURE
         case "SCALEDMG":
           if(attUnit[HEALTH]<Math.floor(attUnitGel/4)){
@@ -1328,7 +1331,6 @@ else {
     }
 
     let costMsg = `${client.actionList[action].cst}`;
-
 
     if(client.actionList[action].cst > 3 && client.traitcall.traitCheck(client,attUnit[1],"LIGHTWEIGHT")[1]){
       alert += `YOUR LIGHTWEIGHT GEAR DISCOUNTS EXPENSIVE MOVES\n`;
@@ -1935,6 +1937,9 @@ if(aa.includes("RANDSTATUS")){
       targUnit[HEALTH]+= damage;
       alert+=`HEALED TARGET BY ${damage} POINTS OF HEALING!\n`;
       damage=0;
+      if(targUnitGel<targUnit[HEALTH]){
+        targUnit[HEALTH]=targUnitGel;
+      }
     }
 
     let last = [attUnit[1],targUnit[1],damage];
@@ -2064,10 +2069,34 @@ if(aa.includes("RANDSTATUS")){
         .setColor(client.actionList[action].col)
         .setImage(client.actionList[action].img);
 
-        for(i=0;i<active.length;i++){
-          if(client.charcall.controlCheck(client,list[active[i]][0])){
-            client.funcall.chanMsg(client,list[active[i]][1],"NONE",embed);
-          }
+    for(i=0;i<active.length;i++){
+      if(client.charcall.controlCheck(client,list[active[i]][0])){
+        client.funcall.chanMsg(client,list[active[i]][1],"NONE",embed);
+      }
+    }
+
+  } else {
+
+    //if attack misses
+
+    if(aa.includes("REFUND")){
+
+      let hopeStam = client.actionList[action].cst;
+      alert+=`ACTION IS FREE!\n`;
+      if(hopeStam > 3 && client.traitcall.traitCheck(client,attUnit[1],"LIGHTWEIGHT")[1]){
+        hopeStam--;
+      }
+
+      if(attUnit[STATUS].includes("DISCOUNT")){
+        if(client.actionList[action].cst>1){
+          hopeStam--;
+        }
+      }
+
+      //closing here
+      if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"MIND")[1]){
+        if(client.actionList[action].cst > 1){
+          hopeStam--;
         }
 
     }
@@ -2508,41 +2537,37 @@ client.funcall.chanMsg(client,charid,"NONE",embed);
 
 }
 
+// Returns an array containing health, maximum health, and additional HP resulting from the PLUSH trait.
 function getCharHealth(client, userid, charid){
-    let vit = client.charcall.allData(client,userid,charid,"vit");
-    let gel = client.charcall.allData(client,userid,charid,"gel");
+  let vit = client.charcall.allData(client,userid,charid,"vit");
+  let gel = client.charcall.allData(client,userid,charid,"gel");
 
-    let gelDiff = 0;
+  let gelDiff = 0;
 
-    if(gel == "NONE"){
-        //try{
-            gel = client.underlings[client.charcall.charData(client,charid,"type")].vit;
-        //}
-        //catch (e){
-
-        //}
+  if(gel == "NONE"){
+    gel = client.underlings[client.charcall.charData(client,charid,"type")].vit;
+  }
+  
+  if(gel != undefined){
+    let plushness = client.traitcall.traitCheck(client,charid,"PLUSH");
+    if(plushness[0] == true){
+      let rung = client.charcall.allData(client,userid,charid,"rung");
+      if(rung != "NONE"){
+        gelDiff = rungGel[rung+5] - rungGel[rung];
+        vit += gelDiff;
+        gel += gelDiff;
+      }
+      else{
+        gelDiff = Math.floor(gel / 4);
+        vit += gelDiff;
+        gel += gelDiff;
+      }
     }
+  }
 
-    if(gel != undefined){
-        let plushness = client.traitcall.traitCheck(client,charid,"PLUSH");
-        if(plushness[0] == true){
-            let rung = client.charcall.allData(client,userid,charid,"rung");
-            if(rung != "NONE"){
-                gelDiff = rungGel[rung+5] - rungGel[rung];
-                vit += gelDiff;
-                gel += gelDiff;
-            }
-            else{
-                gelDiff = Math.floor(gel / 4);
-                vit += gelDiff;
-                gel += gelDiff;
-            }
-        }
-    }
-
-    return [vit, gel, gelDiff];
+  return [vit, gel, gelDiff];
 }
 
 exports.getCharHealth = function(client, userid, charid){
-    return getCharHealth(client, userid, charid);
+  return getCharHealth(client, userid, charid);
 }
