@@ -97,6 +97,8 @@ for(let i=0;i<occList.length;i++){
     if(!client.charcall.allData(client,userid,charid,"revived")){
       client.charcall.setAnyData(client,userid,charid,true,"revived");
 
+    let altself;
+
     // Attempt to identify the other self.
     if(client.charcall.allData(client,userid,charid,"dreamer")){
       altself = client.charcall.allData(client,userid,charid,"dreamingID");
@@ -118,6 +120,7 @@ for(let i=0;i<occList.length;i++){
 
     // Then, move the other self to the current location, and mark them as dead.
     client.charcall.setAnyData(client,userid,altself,local,"local");
+    client.charcall.setAnyData(client,userid,charid,false,"alive");
 
     // Loot your other self.
     const cmd = client.commands.get("loot");
