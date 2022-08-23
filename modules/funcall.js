@@ -4,113 +4,99 @@
 //const { GoogleSpreadsheet } = require('google-spreadsheet');
 const lootcall = require("./lootcall.js");
 
-//declaring list of premade items and their codes (there are 102 entries)
-
-//const premadeNames = ["COMPUTER","LAPTOP","DESK","BED","CELLPHONE","FLAT SCREEN TV","CRT TV","LAMP","ANTIQUE LAMP","POTTED PLANT","REMOTE","COFFEE TABLE","COUCH","BOARD GAME","DICE","WOODEN DUCK","WIZARD STATUE","HARLEQUIN","DECORATIVE KATANA","GAME CONSOLE","YOYO","FANCY SANTA","TOASTER","FORK","STEAK KNIFE","BUTTER KNIFE","OVEN","FRIDGE","ICE","ROCKET-POP","CANDY CORN","FRUIT GUSHERS","STEAK ","LUNCH MEAT","HOT DOG","BREAD","SALAD","BOOKSHELF","DESK","ROLLING CHAIR","BOOK","PEN","PENCIL","PAINTBRUSH","NEWSPAPER","STAPLER","DECK OF CARDS","READING GLASSES","HAT","COMPUTER","OLD COMPUTER","CANDLE","INK","GLUE","UMBRELLA","SAFE","MOUNTED DEER HEAD","HUNTING RIFLE","SHOTGUN","REPLICA SWORD","PISTOL","KNITTING NEEDLES","YARN","TOILET PAPER","TOOTHBRUSH","TOOTHPASTE","SHAVING CREAM","RAZOR","TIM ALLEN BUST","BROOM","SPRING","WASHER","DRYER","POWER COORD","FLASHLIGHT","IRON","HAT","SHOES","POGO RIDE","SHOVEL","ROCK","LAWN GNOME","BASKETBALL","SOCCER BALL","HOCKEY STICK","HOCKEY PUCK","BASEBALL BAT","BASEBALL","SWINGSET","MAILBOX","HAMMER","NAIL","SAW","WRENCH","SCREWDRIVER","PLIERS","CROWBAR","AXE","ROPE","FIREWORKS","CHAINSAW","SLEDGEHAMMER"]
-
-//const premadeCodes = ["yQiKRZH8","02iKkCLD","yLWjNwPf","yVaW3ohX","0oiXldWZ","yQASN0xP","ycAQBint","yPAVQcF7","yiUNVJPh","0nC2u8jL","0qWDawXo","yOHU3FhE","yd2FVRHK","0v2fHxfR","Gt2W9naV","xnHHGKpC","xRHbrDH4","84WHmOSf","4rWf881p","0EeKZWAY","YuWHpv1O","N32bdOcn","0reHWNK3","6XWH1aeL","frCHRunB","fBW2FaL2","yAcFDFTD","y9dUU1qy","0JdWv89f","0hYdl7RH","0DYWOQes","08YWJ3ZR","0kZjzFvm","0aKHs80B","0kZ3H55x","0zXWjRYw","0DI3Mt9D","yukjZvcc","yLWjNwPf","yv2WzjUz","XGW2rZ2j","bC22tRFG","bn2Hz4nL","cqHHLUk6","XhHHoMUg","ZBWW1w1j","rdW2VmtN","vSWWcavE","uNWWBSDV","yQiKRZH8","yeiQxD2s","0M8X8qz7","0yWYiwUY","0lbW2ypQ","OgWH3jZf","y4kFp303","xkH2Mece","5MWWyGJT","akWW5Vzw","4rHW0tYH","9yHHBjj5","382WRQrS","hvWIUwQt","MhWIw0tr","cg23mfhd","0UbH2NUT","097WToWS","p7RX1S44","xRaNeE1H","P3HW2sUq","0rLW5L4P","yT9UObs7","y58UrxP8","hQAWLcfb","QcPk0GU1","0fN2sDPx","uNWWBSDV","tCWH7NQ8","zuLB08Ct","gHHWT83p","mIHWgzkD","xFWMZ5R0","lg6XBeTB","liL35T9G","nZWH7nce","ll9HJ9e5","I522DfyR","lmH2Qox9","yrHWPKQ6","yHkIqlBC","2Z2WCHwF","VLHXhBj6","RTgW5zvi","SMWW5eW6","TWWWnvcB","UZ2HE2Oe","WwH2uezj","iTgWA1rs","hbWHfFP1","0wDdKKDf","Ef2W6ibV","2T2Fq1ms"]
-
-const premadeNames = ["LAPTOP","BRIEFCASE","FIREWORK","BREAD","GUSHERS","STEAK","SPRING","GLUE","CANDLE","ICE","BATTERY","PIN","DOORSTOPPER","SQUIDDLE","LOLLIPOP","DIAMOND","JPEG","BOW","OUIJA BOARD","VAMPIRE TEETH","FROG","CAT","DOG","SHATTERED GLASS","HARLEQUIN STATUE","CRYSTAL BALL","SMUPPET","MICROSCOPE","WEIGHT","FEATHER","FAN","PLANT","COIN","CLOCK","LOCKET","HORN","HEIRLOOM","ERASER","YARD STICK","BRAIN","RELIGIOUS SYMBOL","SKULL","ROSE","URANIUM ROD","PIPE","CUEBALL","TIE","POKER CHIP","PILLOW","BRICK","YOGA MAT","WHOOPIE CUSHION","TABLESTUCK GUIDE","DERSE FLAG","PROSPIT FLAG","HAMMER","KNITTING NEEDLES","KATANA","HUNTING RIFLE","FORK","GLOVES","PUPPET","HANDGUN","LANCE","THROWING STAR","SICKLE","CLAWS","CHAINSAW","CANE","DICE","BOW","BASEBALL BAT","WAND","SPEAR","STUFFED RABBIT","NEWSPAPER","FANCY SANTA","UMBRELLA","BROOM","FLASHLIGHT","SAW","MONKEY WRENCH","SCREWDRIVER","PLIERS","NAIL","CROWBAR","BOOK","YOYO","STAPLER","SHOTGUN","PENCIL","PAINTBRUSH","SCYTHE","SCISSORS","KNIFE","SHOVEL","ROPE","AXE","DART","CHAIN","BASKETBALL","ROCK","HOCKEY STICK","TRIDENT","RAZOR","PAPER FAN","PLAYING CARDS"]
-
-const premadeCodes = ["022x86AC","0O3wDB5A","0kcN448k","0d4vbbCh","0R5uHk7p","0b5uRUEo","05KfTWf7","0bLeYaVh","0g7sCIJN","0x8rHRe5","0E9qJ5gZ","0fAp9kC5","0IBoW1cS","0yiH5aWS","0?lEVS92","0AhI4kDM","00Cncccc","0qDmqTJY","0CElTWag","0SQZEIGn","0cRYI0I3","0XFk91Ob","0NGjEeT4","08HikHMk","0sSXFv2k","0XTWLgVo","04UV6i6t","0QVUllCT","0rWTMnEj","0VXSAoCH","0vmDlhTn","0PnCGh8J","0hoBRhAJ","0qpAZ19O","0iq9Q9Mf","0dr8JvTd","0Ms7up0J","0Nt6EPpm","02u5L1eq","05v4gERn","0sw3SZbv","0yx2n98N","0zbOHlVI","0oeL7hiB","0CfKnb6I","0JkFhQkO","0gJg8X0c","0IdMFWF7","0tIhvR2a","0ePaPkgW","0HaPMeF3","0AgJ1ZIp","0jjGRj6g","0OZQK0AW","0PYResv6","2K0zO1pY","3J0z0lqF","4H0zK0eE","5A0zdU0L","6l0zE9H1","740z0CUT","890zEsUj","9A0zK0W5","AU0zhsV0","BH0z1lSP","Cf0zp0MW","D60zKW1m","Ea0z1e8Z","FF0z1koc","GI0zH9E8","Hz0z0qiI","IP0zq03R","Jd0zMqEY","Kh0zfZ1G","LB0zIoDi","Ma0zX71X","N40zDmTk","OC0zcANq","PP0z1dho","Q20zJb81","Rf0zSd1i","Sw0z91Ji","Tc0zhA1N","Uq0zpK30","V50zl1kb","Wq0zJF4M","Xt0zP8KJ","Yc0zsdZ0","Z60z0FHC","ak0z0ep0","bb0zu80I","cK0z15Q3","dr0zpea1","e90zLVcl","f50z0hTI","gH0zi9Gx","hD0zCqU1","iA0z560e","jv0z0Lg5","k50zCq1U","lm0zK1Jl","mZ0zTjk1","nt0z1F2o","o90zipZm","ph0zpojb","qV0zHM1j","r40zEY90"]
-
 //bedroom,living room, study, kitchen, bathroom, yard, shed
 
-function dubs(x){
-  return Math.floor(Math.random() * x) + Math.floor(Math.random() * x);
-}
-
 exports.dmcheck = function(client,message){
-try{
-
-  if(message.member.roles.cache.some(role => role.name.toLowerCase() === 'dm')||message.member.roles.cache.some(role => role.name.toLowerCase() === 'author')){
-    return true;
-  }else{
+  try{
+    if(message.member.roles.cache.some(role => role.name.toLowerCase() === 'dm')||message.member.roles.cache.some(role => role.name.toLowerCase() === 'author')){
+      return true;
+    }else{
+      return false;
+    }
+  }catch(err){
     return false;
   }
-}catch(err){
-  return false;
-}
 }
 
 //TODO: make experience and boondollars gained actually track what they say
 exports.actionCheck = function(client, message, score){
-try{
-  var userid = message.guild.id.concat(message.author.id);
-  var charid = client.userMap.get(userid,"possess");
-  let curCount = client.charcall.allData(client,userid,charid,"act");
-  let name = client.charcall.allData(client,userid,charid,"name");
-  let leaderAdd = message.guild.id+"mediumlead";
-  let key = "";
-//curCount++;
-switch(score){
-  case "alchemized":
-    key = "itemsAlchemized"
-    break;
-  case "tile":
-    key = "tilesDiscovered"
-    break;
-  case "underling":
-    key = "underlingsDefeated"
-    break;
-  case "player":
-    key = "playersDefeated"
-    break;
-  case "boss":
-    key = "bossesDefeated"
-    break;
-  case "item":
-    key = "itemsCaptchalogued"
-    break;
-}
-//if the target doesn't have a score for the action being incremented, return.
-if(client.charcall.allData(client,userid,charid,key)=="NONE"){
-  return;
-}
-increase = client.charcall.allData(client,userid,charid,key);
-increase++;
-client.charcall.setAnyData(client,userid,charid,increase,key);
-if(increase>client.landMap.get(leaderAdd,key)[1]){
-  client.landMap.set(leaderAdd,[name,increase],key);
-}
+  try{
+    var userid = message.guild.id.concat(message.author.id);
+    var charid = client.userMap.get(userid,"possess");
+    let curCount = client.charcall.allData(client,userid,charid,"act");
+    let name = client.charcall.allData(client,userid,charid,"name");
+    let leaderAdd = message.guild.id+"mediumlead";
+    let key = "";
+    //curCount++;
+    switch(score){
+      case "alchemized":
+        key = "itemsAlchemized"
+        break;
+      case "tile":
+        key = "tilesDiscovered"
+        break;
+      case "underling":
+        key = "underlingsDefeated"
+        break;
+      case "player":
+        key = "playersDefeated"
+        break;
+      case "boss":
+        key = "bossesDefeated"
+        break;
+      case "item":
+        key = "itemsCaptchalogued"
+        break;
+    }
 
-let b = client.charcall.allData(client,userid,charid,"b");
-let xp = client.charcall.allData(client,userid,charid,"xp");
-if(b>client.landMap.get(leaderAdd,"boondollarsGained")[1]){
-  client.landMap.set(leaderAdd,[name,b],"boondollarsGained");
-}
-if(xp>client.landMap.get(leaderAdd,"experienceGained")[1]){
-  client.landMap.set(leaderAdd,[name,xp],"experienceGained");
-}
+    //if the target doesn't have a score for the action being incremented, return.
+    if(client.charcall.allData(client,userid,charid,key)=="NONE"){
+      return;
+    }
 
-if(curCount!="NONE"&&curCount>=client.limit&&client.limit!=0){
+    increase = client.charcall.allData(client,userid,charid,key);
+    increase++;
+    client.charcall.setAnyData(client,userid,charid,increase,key);
+    if(increase>client.landMap.get(leaderAdd,key)[1]){
+      client.landMap.set(leaderAdd,[name,increase],key);
+    }
 
-  let tiles = client.charcall.allData(client,userid,charid,"tilesDiscovered");
-  let alchemized = client.charcall.allData(client,userid,charid,"itemsAlchemized");
-  let underlings =  client.charcall.allData(client,userid,charid,"underlingsDefeated");
-  let players =  client.charcall.allData(client,userid,charid,"playersDefeated");
-  let bosses = client.charcall.allData(client,userid,charid,"bossesDefeated");
-  let items = client.charcall.allData(client,userid,charid,"itemsCaptchalogued");
+    let b = client.charcall.allData(client,userid,charid,"b");
+    let xp = client.charcall.allData(client,userid,charid,"xp");
+    if(b>client.landMap.get(leaderAdd,"boondollarsGained")[1]){
+      client.landMap.set(leaderAdd,[name,b],"boondollarsGained");
+    }
 
-  message.channel.send("That was your last action in the tournament, here's your final stats:");
-  let stats = new client.MessageEmbed()
-  .setTitle(`**HERE'S HOW YOU DID**`)
-  .addFields(
-    {name:`**EXPERIENCE GAINED**`,value:xp,inline:true},
-    {name:`**BOONDOLLARS GAINED**`,value:b,inline:true},
-    {name:`**TILES DISCOVERED**`,value:tiles,inline:true},
-    {name:`**ITEMS ALCHEMIZED**`,value:alchemized,inline:true},
-    {name:`**ITEMS CAPTCHALOGUED**`,value:items,inline:true},
-    {name:`**UNDERLNGS DEFEATED**`,value:underlings,inline:true},
-    {name:`**PLAYERS DEFEATED**`,value:players,inline:true},
-    {name:`**BOSSES DEFEATED**`,value:bosses,inline:true}
-  );
-  message.channel.send({embed:[stats]});
-  //enter stat stuff here
-}
-  //client.playerMap.set(charid,curCount,"act")
-}catch(err){
-}
+    if(xp>client.landMap.get(leaderAdd,"experienceGained")[1]){
+      client.landMap.set(leaderAdd,[name,xp],"experienceGained");
+    }
+
+    if(curCount!="NONE"&&curCount>=client.limit&&client.limit!=0){
+      let tiles = client.charcall.allData(client,userid,charid,"tilesDiscovered");
+      let alchemized = client.charcall.allData(client,userid,charid,"itemsAlchemized");
+      let underlings =  client.charcall.allData(client,userid,charid,"underlingsDefeated");
+      let players =  client.charcall.allData(client,userid,charid,"playersDefeated");
+      let bosses = client.charcall.allData(client,userid,charid,"bossesDefeated");
+      let items = client.charcall.allData(client,userid,charid,"itemsCaptchalogued");
+
+      message.channel.send("That was your last action in the tournament, here's your final stats:");
+      let stats = new client.MessageEmbed()
+        .setTitle(`**HERE'S HOW YOU DID**`)
+        .addFields(
+          {name:`**EXPERIENCE GAINED**`,value:xp,inline:true},
+          {name:`**BOONDOLLARS GAINED**`,value:b,inline:true},
+          {name:`**TILES DISCOVERED**`,value:tiles,inline:true},
+          {name:`**ITEMS ALCHEMIZED**`,value:alchemized,inline:true},
+          {name:`**ITEMS CAPTCHALOGUED**`,value:items,inline:true},
+          {name:`**UNDERLNGS DEFEATED**`,value:underlings,inline:true},
+          {name:`**PLAYERS DEFEATED**`,value:players,inline:true},
+          {name:`**BOSSES DEFEATED**`,value:bosses,inline:true}
+        );
+      message.channel.send({embed:[stats]});
+    }
+    //client.playerMap.set(charid,curCount,"act")
+  }catch(err){
+  }
 }
 
 exports.tick = function(client, message){
@@ -127,9 +113,11 @@ exports.tick = function(client, message){
   let name = client.charcall.allData(client,userid,charid,"name");
   let b = client.charcall.allData(client,userid,charid,"b");
   let xp = client.charcall.allData(client,userid,charid,"xp");
+
   if(b>client.landMap.get(leaderAdd,"boondollarsGained")[1]){
     client.landMap.set(leaderAdd,[name,b],"boondollarsGained");
   }
+
   if(xp>client.landMap.get(leaderAdd,"experienceGained")[1]){
     client.landMap.set(leaderAdd,[name,xp],"experienceGained");
   }
@@ -145,17 +133,17 @@ exports.tick = function(client, message){
 
     message.channel.send("That was your last action in the tournament, here's your final stats:");
     let stats = new client.MessageEmbed()
-    .setTitle(`**HERE'S HOW YOU DID**`)
-    .addFields(
-      {name:`**EXPERIENCE GAINED**`,value:xp,inline:true},
-      {name:`**BOONDOLLARS GAINED**`,value:b,inline:true},
-      {name:`**TILES DISCOVERED**`,value:tiles,inline:true},
-      {name:`**ITEMS ALCHEMIZED**`,value:alchemized,inline:true},
-      {name:`**ITEMS CAPTCHALOGUED**`,value:items,inline:true},
-      {name:`**UNDERLNGS DEFEATED**`,value:underlings,inline:true},
-      {name:`**PLAYERS DEFEATED**`,value:players,inline:true},
-      {name:`**BOSSES DEFEATED**`,value:bosses,inline:true}
-    );
+      .setTitle(`**HERE'S HOW YOU DID**`)
+      .addFields(
+        {name:`**EXPERIENCE GAINED**`,value:xp,inline:true},
+        {name:`**BOONDOLLARS GAINED**`,value:b,inline:true},
+        {name:`**TILES DISCOVERED**`,value:tiles,inline:true},
+        {name:`**ITEMS ALCHEMIZED**`,value:alchemized,inline:true},
+        {name:`**ITEMS CAPTCHALOGUED**`,value:items,inline:true},
+        {name:`**UNDERLNGS DEFEATED**`,value:underlings,inline:true},
+        {name:`**PLAYERS DEFEATED**`,value:players,inline:true},
+        {name:`**BOSSES DEFEATED**`,value:bosses,inline:true}
+      );
     message.channel.send({embed:[stats]});
     //enter stat stuff here
   }
@@ -166,28 +154,30 @@ exports.tick = function(client, message){
 //function creates a list of random items to populate player house
 
 exports.preItem = function(client,room,quantity,list,gristList) {
-//declares random number
-let itemList = [];
-let item;
-if(isNaN(room)){
-for(let j=0;j<quantity;j++){
-  do{
-    item = lootcall.itemGen(room,gristList);
-  } while(itemList.includes(item[0]));
-    list.push(item);
-    itemList.push(item[0]);
+  //declares random number
+  let itemList = [];
+  let item;
+  if(isNaN(room)){
+    for(let j=0;j<quantity;j++){
+      do{
+        item = lootcall.itemGen(room,gristList);
+      } while(itemList.includes(item[0]));
 
-}
-} else {
-  for(let j=0;j<quantity;j++){
-    do{
-      item = lootcall.lootGen(client,room);
-    } while(itemList.includes(item[0]));
       list.push(item);
       itemList.push(item[0]);
-
+    }
   }
-}
+  else {
+    for(let j=0;j<quantity;j++){
+      do{
+        item = lootcall.lootGen(client,room);
+      } while(itemList.includes(item[0]));
+
+      list.push(item);
+      itemList.push(item[0]);
+    }
+  }
+
   return list;
 }
 //creates a random list of characters that can be used in a captcha code
@@ -197,23 +187,20 @@ exports.ranChar = function(client, x) {
   for (i=0; i < x; i++){
     string += client.captchaCode[Math.floor(Math.random()*62)+2]
   }
+
   return string;
 }
 //test if player is registered
 exports.regTest = function(client, message, target) {
-
   try {
     if(client.playerMap.get(message.guild.id.concat(target.id),"alive")==false){
-
       return false;
     }
     else{
-
       return true;
     }
   }
   catch(err){
-
     return false;
   }
 }
@@ -237,14 +224,17 @@ exports.alchemize = function(client, item1, item2, type){
   if(code1 == code2){
     return item1;
   }
+
   let coderes = ["/","/","/","/","/","/","/","/"]
   for(i=0;i<8;i++){
 
     if(code1[i]=="/"||code1[i]=="#"||code1[i]=="@"){
       coderes[i]=code2[i];
-    } else if(code2[i]=="/"||code2[i]=="#"||code1[i]=="@"){
+    }
+    else if(code2[i]=="/"||code2[i]=="#"||code1[i]=="@"){
       coderes[i]=code1[i];
-    } else{
+    }
+    else{
       char1 = client.captchaCode.indexOf(code1[i]);
       char2 = client.captchaCode.indexOf(code2[i]);
 
@@ -252,44 +242,48 @@ exports.alchemize = function(client, item1, item2, type){
         case "||":
           if(char1<char2){
             coderes[i]=code1[i];
-          }else{
+          }
+          else{
             coderes[i]=code2[i];
           }
-        break;
+          break;
         case "&&":
-        if(char1>char2){
-          coderes[i]=code1[i];
-        }else{
-          coderes[i]=code2[i];
-        }
-        break;
+          if(char1>char2){
+            coderes[i]=code1[i];
+          }
+          else{
+            coderes[i]=code2[i];
+          }
+
+          break;
       }
-
     }
-
-
   }
+
   if(code1[0]==code2[0]){
     if(item1[2]>item2[2]){
       tier = item1[2] + 1;
-    }else{
+    }
+    else{
       tier = item2[2] + 1;
     }
-  }else if(coderes[0]==code1[0]){
+  }
+  else if(coderes[0]==code1[0]){
     tier = item1[2] + 1;
-  } else {
+  }
+  else {
     tier = item2[2] + 1;
   }
   if(tier > 16){
     var resItem = ["ALCHEMIZED ITEM",`${coderes[0]}${coderes[1]}${coderes[2]}${coderes[3]}${coderes[4]}${coderes[5]}${coderes[6]}${coderes[7]}`,16,1,[]];
 
     return resItem;
-  } else {
+  }
+  else {
     var resItem = ["ALCHEMIZED ITEM",`${coderes[0]}${coderes[1]}${coderes[2]}${coderes[3]}${coderes[4]}${coderes[5]}${coderes[6]}${coderes[7]}`,tier,1,[]];
 
-  return resItem;
-}
-
+    return resItem;
+  }
 }
 
 //used to give xp to a player and level them up
@@ -321,19 +315,20 @@ exports.xpGive = function(client, message, xp, target){
     client.playerMap.set(target, newXp,"xp");
 
     let congrats = new client.MessageEmbed()
-    .setTitle(`${name} ASCENDED THEIR ECHELADDER!`)
-    .addFields(
-      {name:"RUNG",value:`${curRung} + ${i - curRung}`,inline:true},
-      {name:"GEL VISCOSITY",value:`${client.emojis.cache.get(client.emoji["GEL"])} ${curGel} + ${gvGain}`},
-      {name:"GRIST CACHE",value: `${client.emojis.cache.get(client.grist["build"].emoji)} ${curCache} + ${client.cache(i) - curCache}`}
-    )
-    .setThumbnail(target.avatarURL());
+      .setTitle(`${name} ASCENDED THEIR ECHELADDER!`)
+      .addFields(
+        {name:"RUNG",value:`${curRung} + ${i - curRung}`,inline:true},
+        {name:"GEL VISCOSITY",value:`${client.emojis.cache.get(client.emoji["GEL"])} ${curGel} + ${gvGain}`},
+        {name:"GRIST CACHE",value: `${client.emojis.cache.get(client.grist["build"].emoji)} ${curCache} + ${client.cache(i) - curCache}`}
+      )
+      .setThumbnail(target.avatarURL()
+    );
     message.channel.send({embeds:[congrats]});
   }
 }
 
 exports.combineArgs = function(args,start) {
-
+  // Shouldn't this be zero?
   var i=1;
 
   if(start!=undefined){
@@ -348,6 +343,7 @@ exports.combineArgs = function(args,start) {
     output = output + args[i];
     i++
   }
+
   return output;
 }
 
@@ -358,9 +354,11 @@ exports.gristCacheEmbed = function(client,sburbid) {
   let max;
   if(client.sburbMap.get(sburbid,`godtier`)){
     max = `♾️`
-  } else {
+  }
+  else {
     max = client.cache(rung);
   }
+
   let grist = client.sburbMap.get(sburbid,"grist");
   let name = client.sburbMap.get(sburbid,"name");
   let msg =``;
@@ -372,109 +370,78 @@ exports.gristCacheEmbed = function(client,sburbid) {
   for(i=0;i<gristTypes.length;i++){
     msg += `${client.emojis.cache.get(client.grist[gristTypes[i]].emoji)} **${gristTypes[i].toUpperCase()} - ${grist[i]}**\n\n`
   }
+
   cachePrint = new client.MessageEmbed()
-  .setTitle(`**${name.toUpperCase()}'S GRIST**`)
-  .addFields(
-    {name:`**GRIST CAP**`,value:`**${max}**`},
-    {name:"**GRIST CACHE**",value:msg}
+    .setTitle(`**${name.toUpperCase()}'S GRIST**`)
+    .addFields(
+      {name:`**GRIST CAP**`,value:`**${max}**`},
+      {name:"**GRIST CACHE**",value:msg}
   );
   return cachePrint;
 }
 
 exports.chanMsg = function(client, target, msg, embed){
-  if(!msg)
+  if(!msg){
     return;
-    if(!client.charcall.controlCheck(client,target)){
-      return;
-    } else {
-      controlList = client.charcall.charData(client,target,"control");
-      for(let i=0;i<controlList.length;i++){
-        if(embed!=undefined){
-          if(msg=="NONE"){
-            client.channels.cache.get(client.charcall.allData(client,controlList[i],target,"channel")).send({embeds:[embed]});
-          } else {
-            client.channels.cache.get(client.charcall.allData(client,controlList[i],target,"channel")).send(msg,{embeds:[embed]});
-          }
-        }else{
-        client.channels.cache.get(client.charcall.allData(client,controlList[i],target,"channel")).send(msg);
+  }
+  if(!client.charcall.controlCheck(client,target)){
+    return;
+  }
+  else {
+    controlList = client.charcall.charData(client,target,"control");
+    for(let i=0;i<controlList.length;i++){
+      if(embed!=undefined){
+        if(msg=="NONE"){
+          client.channels.cache.get(client.charcall.allData(client,controlList[i],target,"channel")).send({embeds:[embed]});
+        }
+        else {
+          client.channels.cache.get(client.charcall.allData(client,controlList[i],target,"channel")).send(msg,{embeds:[embed]});
+        }
       }
+      else{
+        client.channels.cache.get(client.charcall.allData(client,controlList[i],target,"channel")).send(msg);
       }
     }
   }
-/*try{
-
-  let charid;
-  if(client.sburbMap.get(target,"dreamer")){
-    charid = client.sburbMap.get(target,"dreamingID");
-  }else{
-    charid = client.sburbMap.get(target,"wakingID");
-  }
-
-
-
-  if(client.sburbMap.has(target,"channel")){
-    if(embed!=undefined){
-    client.channels.cache.get(client.sburbMap.get(target,"channel")).send(msg,embed);
-    }else{
-    client.channels.cache.get(client.sburbMap.get(target,"channel")).send(msg);
-  }
-  }
-}catch(err){
-  console.log("Error occured with the chanMsg command!");
-  console.log(err);
 }
-
-  let charid;
-  if(client.sburbMap.get(target,"dreamer")){
-    charid = client.sburbMap.get(target,"dreamingID");
-  }else{
-    charid = client.sburbMap.get(target,"wakingID");
-  }
-
-  let possess = client.playerMap.get(charid,"control");
-
-  for(let i=0;i<possess.length;i++){
-    if(embed!=undefined){
-    client.channels.cache.get(client.playerMap.get(possess[i],"channel")).send(msg,embed);
-  }else{
-    client.channels.cache.get(client.playerMap.get(possess[i],"channel")).send(msg);
-  }
-  }
-
-} */
 
 exports.sleepHeal = function(client,charid){
   userid = client.charcall.charData(client,charid,"control");
   let target;
   if(client.charcall.allData(client,userid,charid,"dreamer")){
     target = client.charcall.allData(client,userid,charid,"wakingID");
-  } else {
+  }
+  else {
     target = client.charcall.allData(client,userid,charid,"dreamingID");
   }
- if(target=="NONE"){
-   return;
- }
-    let vit = client.charcall.charData(client,target,"vit");
-    let gel = client.charcall.allData(client,userid,target,"gel");
 
-    if(vit<gel){
-      let heal = 5;
-      if(client.traitcall.traitCheck(client,target,"CUSHIONED")[1]){
-        heal*=4;
-      }else if(client.traitcall.traitCheck(client,target,"CUSHIONED")[0]){
-        heal*=2;
-      }
-      if(vit+heal>gel){
-        client.charcall.setAnyData(client,userid,target,gel,"vit");
-      }else{
-        client.charcall.setAnyData(client,userid,target,vit+heal,"vit");
-      }
+  if(target=="NONE"){
+    return;
+  }
+
+  let vit = client.charcall.charData(client,target,"vit");
+  let gel = client.charcall.allData(client,userid,target,"gel");
+
+  if(vit<gel){
+    let heal = 5;
+    if(client.traitcall.traitCheck(client,target,"CUSHIONED")[1]){
+      heal*=4;
+    }
+    else if(client.traitcall.traitCheck(client,target,"CUSHIONED")[0]){
+      heal*=2;
+    }
+
+    if(vit+heal>gel){
+      client.charcall.setAnyData(client,userid,target,gel,"vit");
+    }
+    else{
+      client.charcall.setAnyData(client,userid,target,vit+heal,"vit");
     }
   }
+}
 
 
 exports.move = function(client,message,charid,local,target,mapCheck,msg,embedTitle="moving to"){
-
   let targetLandID = target[4];
   let targSec = client.landMap.get(targetLandID,target[0]);
   var occset = [(client.charcall.npcCheck(client,charid)?false:true),charid];
@@ -498,28 +465,29 @@ exports.move = function(client,message,charid,local,target,mapCheck,msg,embedTit
 
   let targetTile = onSomeoneEnterRoom(client, message, charid, targSec[target[1]][target[2]], target[3]);
 
-    targetTile[2][target[3]][4].push(occset);
-    if(targetLandID==message.guild.id+"medium" && targetTile[2][target[3]][4].length==1){
-      switch(target[0]){
-        case "d":
-        case "dm":
-          targetTile[2][target[3]][4]=targetTile[2][target[3]][4].concat(client.landcall.carSpawn(client,target,0,message.guild.id))
-        break;
-        case "p":
-        case "pm":
-          targetTile[2][target[3]][4]=targetTile[2][target[3]][4].concat(client.landcall.carSpawn(client,target,1,message.guild.id));
-        break;
-        case "bf":
-          targetTile[2][target[3]][4]=targetTile[2][target[3]][4].concat(client.landcall.carSpawn(client,target,0,message.guild.id),client.landcall.carSpawn(client,target,1,message.guild.id));
-        break;
-      }
+  targetTile[2][target[3]][4].push(occset);
+  if(targetLandID==message.guild.id+"medium" && targetTile[2][target[3]][4].length==1){
+    switch(target[0]){
+      case "d":
+      case "dm":
+        targetTile[2][target[3]][4]=targetTile[2][target[3]][4].concat(client.landcall.carSpawn(client,target,0,message.guild.id));
+      break;
+      case "p":
+      case "pm":
+        targetTile[2][target[3]][4]=targetTile[2][target[3]][4].concat(client.landcall.carSpawn(client,target,1,message.guild.id));
+      break;
+      case "bf":
+        targetTile[2][target[3]][4]=targetTile[2][target[3]][4].concat(client.landcall.carSpawn(client,target,0,message.guild.id),client.landcall.carSpawn(client,target,1,message.guild.id));
+      break;
     }
-	else if(targetLandID!=message.guild.id+"medium"){
-      if(targetTile[2][target[3]][4].length==1){
-    targSec =  client.strifecall.underSpawn(client,target,targSec,message.guild.id);
   }
+  else if(targetLandID!=message.guild.id+"medium"){
+    if(targetTile[2][target[3]][4].length==1){
+      targSec =  client.strifecall.underSpawn(client,target,targSec,message.guild.id);
+    }
   }
-//for now, NPCs won't reveal new tiles.
+
+  //for now, NPCs won't reveal new tiles.
   if(!client.charcall.npcCheck(client,charid)&&targetTile[2][target[3]][3]==false){
     client.funcall.actionCheck(client,message,"tile")
     targetTile[2][target[3]][3]=true;
@@ -628,7 +596,8 @@ function dreamCheck(client,target,local){
 
   if(targLocal[0]===local[0]&&targLocal[1]===local[1]&&targLocal[2]===local[2]&&targLocal[3]===local[3]&&targLocal[4]===local[4]){
     return true;
-  } else {
+  }
+  else {
     return false;
   }
 }
@@ -639,50 +608,49 @@ exports.dreamCheck =  function(client,target,local){
 function onSomeoneEnterRoom(client, message, charid, tile, roomIndex){
   // console.log("onSomeoneEnterRoom called!");
   if(!tile[2] || !tile[2][roomIndex]){
-	console.log("onSomeoneEnterRoom called on entering a room that doesn't exist!");
-	return tile;
+    console.log("onSomeoneEnterRoom called on entering a room that doesn't exist!");
+    return tile;
   }
-  
+
   let triggers = tile[2][roomIndex][1];
   if(!triggers){
-	return tile;
+    return tile;
   }
-  
+
   tile = actOnActionList(client, message, charid, tile, roomIndex, triggers.any);
   tile = actOnActionList(client, message, charid, tile, roomIndex, triggers.onSomeoneEnterRoom);
-  
+
   return tile;
 }
 
 function actOnActionList(client, message, charid, tile, roomIndex, actionList){
   if(!actionList){
-	return tile;
+    return tile;
   }
 
   for(let i=0; i<actionList.length; i++){
-	switch(actionList[i].toUpperCase()){
-	  case "DISTINGUISH":{
-		if(roomIndex == 0){
-		  console.log("Distinguishing tile!");
-		  tile = JSON.parse(JSON.stringify(tile));
-		}
-		else{
-		  console.log("Distinguishing room!");
-		  tile[2][roomIndex] = JSON.parse(JSON.stringify(tile[2][roomIndex]));
-		}
-		let actionsMap = tile[2][roomIndex][1];
-		let distinguishTriggerArray = [actionsMap.any];
-		for(let j=0; j<distinguishTriggerArray.length; j++){
-		  distinguishTriggerArray[j].splice(distinguishTriggerArray[j].findIndex(functionName => functionName.toUpperCase() === "DISTINGUISH"), 1);
-		}
-		break;
-	  }
+    switch(actionList[i].toUpperCase()){
+      case "DISTINGUISH":{
+        if(roomIndex == 0){
+          console.log("Distinguishing tile!");
+          tile = JSON.parse(JSON.stringify(tile));
+        }
+        else{
+          console.log("Distinguishing room!");
+          tile[2][roomIndex] = JSON.parse(JSON.stringify(tile[2][roomIndex]));
+        }
+        let actionsMap = tile[2][roomIndex][1];
+        let distinguishTriggerArray = [actionsMap.any];
+        for(let j=0; j<distinguishTriggerArray.length; j++){
+          distinguishTriggerArray[j].splice(distinguishTriggerArray[j].findIndex(functionName => functionName.toUpperCase() === "DISTINGUISH"), 1);
+        }
+        break;
+      }
       default:{
-	    console.log(`actOnActionList encountered unexpected action ${actionList[i].toUpperCase()}`);
-	  }
-	}
+        console.log(`actOnActionList encountered unexpected action ${actionList[i].toUpperCase()}`);
+      }
+    }
   }
 
   return tile;
 }
-
