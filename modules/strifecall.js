@@ -392,7 +392,7 @@ function giveXp(client,target,xp){
   curRung = client.charcall.allData(client,userid,target,"rung");
 
   if(client.traitcall.traitCheck(client,target,"HEAVY")[1]){
-	xp *= 2;
+    xp *= 2;
   }
 
 //check if XP gained is higher than what is needed to level up
@@ -721,28 +721,16 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
 }
 
     let endurance = client.traitcall.traitCheck(client,list[init[turn][0]][1],"ENDURING");
-
-    // Stamina value that are currently used are 4, 6, 8, 10, and 12.
-    //        Normal     Enduring[0]     Enduring[1]
-    //  4     1d4        1d3 + 1         1d2 + 2
-    //  6     1d6        1d4.5 + 1       1d3 + 3     // 1d4.5 is basically (1d9)/2, round up.
-    //  8     1d8        1d6 + 2         1d4 + 4
-    //  10    1d10       1d7.5 + 2       1d5 + 5     // 1d7.5 is basically (1d15)/2, round up.
-    //  12    1d12       1d9 + 3         1d6 + 6
-    //
-    if(endurance[1]){
-
-      stamroll = [Math.floor((Math.random() * stamMax/2) + Math.floor(stamMax/2)+1),Math.floor((Math.random() * stamMax/2) + Math.floor(stamMax/2)+1)];
-
-    } else if(endurance[0]){
-
-      stamroll = [Math.floor((Math.random() * (stamMax-stamMax/4)) + Math.floor(stamMax/4)+1), Math.floor((Math.random() * (stamMax-stamMax/4)) + Math.floor(stamMax/4)+1)];
-
-    } else {
-
-    stamroll = [Math.floor((Math.random() * stamMax) + 1),Math.floor((Math.random() * stamMax) + 1)];
-
-  }
+	
+	let denom = 1;
+	if(endurance[1]){
+	  denom = 4;
+	}
+	else if(endurance[0]){
+	  denom = 2;
+	}
+	
+	stamroll = [ client.randcall.rollXdY(denom, stamMax/denom), client.randcall.rollXdY(denom, stamMax/denom) ];
 
     if(stamfav==0){
       stamina=stamroll[0];
@@ -1200,7 +1188,6 @@ else {
         if(attScience[0]){
             br *= 2;
             bd *= 2;
-            attackEfficacy *= 2;
             strikeBonus *= 2;
             alert+=`SCIENCE!!! Grist matchup effects were doubled!\n`;
         }
@@ -1208,7 +1195,6 @@ else {
         if(targScience[0]){
             br *= 2;
             bd *= 2;
-            attackEfficacy *= 2;
             strikeBonus *= 2;
             alert+=`SCIENCE!!! Grist matchup effects were doubled!\n`;
         }
@@ -1343,6 +1329,11 @@ else {
 
     let costMsg = `${client.actionList[action].cst}`;
 
+
+    if(client.actionList[action].cst > 3 && client.traitcall.traitCheck(client,attUnit[1],"LIGHTWEIGHT")[1]){
+      alert += `YOUR LIGHTWEIGHT GEAR DISCOUNTS EXPENSIVE MOVES\n`;
+      costMsg +=` - 1`;
+    }
     if(attUnit[STATUS].includes("DISCOUNT")){
       if(client.actionList[action].cst>1){
       alert += `ACTIONS DISCOUNTED THIS TURN\n`;
@@ -1429,14 +1420,14 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
   if(client.traitcall.traitCheck(client,attUnit[1],"HEAVY")[0]){
     fav--;
   }
-  if(client.traitcall.traitCheck(client,attUnit[1],"LIGHTWEIGHT")[1]){
+  if(client.traitcall.traitCheck(client,attUnit[1],"LIGHTWEIGHT")[0]){
     fav += 1;
   }
 
   if(client.traitcall.traitCheck(client,targUnit[1],"HEAVY")[0]){
     fav += 1;
   }
-  if(client.traitcall.traitCheck(client,targUnit[1],"LIGHTWEIGHT")[1]){
+  if(client.traitcall.traitCheck(client,targUnit[1],"LIGHTWEIGHT")[0]){
     fav -= 1;
   }
 
@@ -1514,9 +1505,6 @@ if(strikeBonus<0){
     av++;
   }
   if(client.traitcall.traitCheck(client,targUnit[1],"EXQUISITE")[1]){
-    av = av+2;
-  }
-  if(client.traitcall.traitCheck(client,targUnit[1],"LIGHTWEIGHT")[1]){
     av = av+2;
   }
   if(client.traitcall.traitCheck(client,targUnit[1],"BREATH")[0]){
@@ -1867,6 +1855,10 @@ if(aa.includes("RANDSTATUS")){
         let hopeStam = client.actionList[action].cst;
         alert+=`ACTION IS FREE!\n`;
 
+        if(hopeStam > 3 && client.traitcall.traitCheck(client,attUnit[1],"LIGHTWEIGHT")[1]){
+            hopeStam--;
+        }
+
         if(list[init[turn][0]][7].includes("DISCOUNT")){
           if(client.actionList[action].cst>1){
           hopeStam--;
@@ -2087,6 +2079,10 @@ if(aa.includes("RANDSTATUS")){
 
           let hopeStam = client.actionList[action].cst;
           alert+=`ACTION IS FREE!\n`;
+
+          if(hopeStam > 3 && client.traitcall.traitCheck(client,attUnit[1],"LIGHTWEIGHT")[1]){
+            hopeStam--;
+          }
 
           if(attUnit[STATUS].includes("DISCOUNT")){
             if(client.actionList[action].cst>1){
@@ -2388,7 +2384,7 @@ function npcTurn(client, message, charid, local){
   if(spec.length!=0){
     for(let i=0;i<4;i++){
       tempAct = client.action[client.codeCypher[i+4][client.captchaCode.indexOf(spec[equip][1].charAt(i+4))]];
-      if(client.actionList[tempAct].cst<=list[init[turn][0]][5]&&(!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].aa.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
+      if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].aa.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
         actionSet.push(tempAct);
       }
 
@@ -2397,7 +2393,7 @@ function npcTurn(client, message, charid, local){
   for(let j =0;j<prototype.length;j++){
     for(let i=0;i<4;i++){
       tempAct = client.action[client.codeCypher[i+4][client.captchaCode.indexOf(prototype[j][1].charAt(i+4))]];
-      if(client.actionList[tempAct].cst<=list[init[turn][0]][5]&&(!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].aa.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
+      if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].aa.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
         actionSet.push(tempAct);
       }
     }
@@ -2405,13 +2401,13 @@ function npcTurn(client, message, charid, local){
 
     tempAct=client.underlings[type].act;
     for(let i=0;i<tempAct.length;i++){
-      if(client.actionList[tempAct[i]].cst<=list[init[turn][0]][5]&&(!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].aa.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
+      if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].aa.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
         actionSet.push(tempAct[i]);
       }
     }
-    if(actionSet.length>0&&targetList.length>0){
 
-
+    let turnTaken = false;
+    while(!turnTaken&&actionSet.length>0&&targetList.length>0){
       let action = actionSet[Math.floor((Math.random() * actionSet.length))];
       if(actionSet.includes(prefMove)){
         action=prefMove;
@@ -2426,7 +2422,24 @@ function npcTurn(client, message, charid, local){
           }
         }
       }
-      list[init[turn][0]][5]-=client.actionList[action].cst;
+
+      let lcost = client.actionList[action].cst;
+      if(lcost > 3 && client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1]){
+        lcost--;
+      }
+      if(lcost > 1 && list[init[turn][0]][7].includes("DISCOUNT")){
+        lcost--;
+      }
+      if(lcost > 1 && client.traitcall.traitCheck(client,charid,"MIND")[1]){
+        lcost--;
+      }
+
+      if(lcost > list[init[turn][0]][5]){
+        actionSet.splice(actionSet.indexOf(action), 1);
+        continue;
+      }
+
+      list[init[turn][0]][5]-=lcost;
       list[init[turn][0]][6].push(action);
       client.strifeMap.set(strifeLocal,list,"list");
 
@@ -2444,6 +2457,7 @@ function npcTurn(client, message, charid, local){
         target = targetList[Math.floor((Math.random() * targetList.length))];
 
       }
+      turnTaken = true;
       setTimeout(act,1000,client,charid,message,local,action,target)
         setTimeout(npcTurn,2000,client,message,charid,local);
 
