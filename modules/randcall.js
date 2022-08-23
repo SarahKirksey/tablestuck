@@ -41,12 +41,41 @@ function rollXdYZTimes(x, y, z){
 	return retVal;
 }
 
-exports.rollBonusUsingOldMethod(tier){
+function rollBonus(client, message, tier){
+	return rollBonusWithKnownConfig(client.configcall.get(client, message, "BONUS_ROLLS"), tier);
+}
+
+exports.rollBonus = function(client, message, tier){
+	return rollBonus(client, message, tier);
+}
+
+exports.rollBonusWithKnownConfig = function(config,tier){
+	return rollBonusWithKnownConfig(config, tier);
+}
+
+function rollBonusWithKnownConfig(config, tier){
+	switch(config){
+		case 0: return rollBonusUsingDice(tier);
+		case 1: return rollBonusUsingOldLabels(tier);
+		case 2: return rollBonusUsingOldMethod(tier);
+	}
+	if(config !== "NONE"){
+		console.log(`Someone just called rollBonusWithKnownConfig with config value "${config}"/ It didn't work.`);
+	}
+	return rollBonusUsingOldMethod(tier);
+}
+
+function rollBonusUsingOldMethod(tier){
 	let bonusRoll = bonus[tier];
 	return Math.floor((Math.random() * (bonusRoll[1] - bonusRoll[0])) + bonusRoll[0]);
 }
 
-exports.rollBonusUsingDice(tier){
+function rollBonusUsingOldLabels(tier){
+	let bonusRoll = bonus[tier];
+	return rollXdY(bonus[0], bonus[1]);
+}
+
+function rollBonusUsingDice(tier){
 	let bonusRoll = bonus[tier];
 	return rollXdY(bonusRoll[0], bonusRoll[1]/bonusRoll[0]);
 }
