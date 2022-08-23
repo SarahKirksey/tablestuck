@@ -11,7 +11,7 @@ exports.run = (client, message, args) => {
 
 //defining the costs to alchemize the item based on the tier
 
-  const tierCost = [0,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072]
+  const tierCost = [0,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072];
 
 //defining important variables
 
@@ -51,7 +51,13 @@ exports.run = (client, message, args) => {
 
 
 if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")[1]){
+  let registerFromSpec = false;
 
+  // If there are exactly two arguments, then the player is either using the function incorrectly, or trying to register something from their specibus.
+  if(args.length == 2 && args[0].toLowerCase() == "specibus"){
+	registerFromSpec = true;
+	args.splice(0, 1);
+  }
 
   // If there is only one argument, the player simply wants to register the item into the athenaeum
   if(args.length == 1){
@@ -60,6 +66,11 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
       message.channel.send("That is is not a valid argument!");
       return;
     }
+
+    // If the player is trying to register from the specibus, the easiest fix is to lie and say that the specibus is the sylladex.
+	if(registerFromSpec){
+	  sdex = client.charcall.allData(client,userid,charid,"spec");
+	}
 
     if(select1 >= sdex.length || select1< 0){
       message.channel.send(`That is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
@@ -99,102 +110,100 @@ if (ialchemiter == true || client.traitcall.traitCheck(client,charid,"COMPUTER")
   let argsCount = args.length;
 
   if(argsCount < 3){
-    client.tutorcall.progressCheck(client,message,48,["text",`To use the Instant Alchemiter, you need to select an item from your sylladex or atheneum, select an alchemy type (&& or ||), and select a second item from your sylladex or atheneum. For example, ${client.auth.prefix}quickalch 1 && 2. If you want to just reproduce a single item, just select the first item.`]);
+    client.tutorcall.progressCheck(client,message,48,["text",`To use the Instant Alchemiter, you need to select an item from your sylladex, strife deck, or atheneum, select an alchemy type (&& or ||), and select a second item from your sylladex, strife deck, or atheneum. For example, ${client.auth.prefix}quickalch 1 && specibus 2. If you want to just reproduce a single item, just select the first item.`]);
     return;
   }
 
-  let is1Ath = (args[0].toLowerCase() == "ath");
-  let is2Ath = (args[argsCount - 2].toLowerCase() == "ath");
+  let expectedArgsCount = 3;
+  let item1Location = sdex;
+  let item2Location = sdex;
+  let item1Arg = 0;
+  let item2Arg = argsCount - 1;
 
-  if((is1Ath ? 1 : 0) + (is2Ath ? 1 : 0) + 3 != argsCount)
+  let specibus = client.charcall.allData(client,userid,charid,"spec");
+
+  // Determine where the first item is, both inventory-wise and arguments-wise
+  switch(args[0].toLowerCase()){
+	case "ath":
+	  item1Location = registry;
+	  expectedArgsCount++;
+	  item1Arg = 1;
+	  break;
+	case "specibus":
+	  item1Location = specibus;
+	  expectedArgsCount++;
+	  item1Arg = 1;
+	  break;
+  }
+
+  // Determine where the second item is. We already know it's the last argument, so we only need to find it inventory-wise.
+  switch(args[argsCount - 2].toLowerCase()){
+	case "ath":
+	  item2Location = registry;
+	  expectedArgsCount++;
+	  break;
+	case "specibus":
+	  item2Location = specibus;
+	  expectedArgsCount++;
+	  break;
+  }
+
+  if(expectedArgsCount != argsCount)
   {
-    client.tutorcall.progressCheck(client,message,48,["text",`To use the Instant Alchemiter, you need to select an item from your sylladex or atheneum, select an alchemy type (&& or ||), and select a second item from your sylladex or atheneum. For example, ${client.auth.prefix}quickalch 1 && ath 2. If you want to just reproduce a single item, just select the first item.`]);
+    client.tutorcall.progressCheck(client,message,48,["text",`To use the Instant Alchemiter, you need to select an item from your sylladex or atheneum, select an alchemy type (&& or ||), and select a second item from your sylladex, strife deck, or atheneum. For example, ${client.auth.prefix}quickalch 1 && ath 2. If you want to just reproduce a single item, just select the first item.`]);
     return;
   }
 
-  if(is1Ath)
+  // Identify the first item
+  select1 = parseInt(args[item1Arg], 10) - 1;
+  if(isNaN(select1))
   {
-      select1 = parseInt(args[1], 10) - 1;
-      if(isNaN(select1))
-      {
-        message.channel.send("Item 1 is not a valid argument!");
-        return;
-      }
-      if(select1 >= registry.length || select1< 0){
-        message.channel.send(`The first selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
-        return;
-      }
-      args.splice(0, 1);
+    message.channel.send("Item 1 is not a valid argument!");
+    return;
   }
-  else
+  if(select1 >= item1Location.length || select1 < 0)
   {
-      select1 = parseInt(args[0], 10) - 1;
-      if(isNaN(select1))
-      {
-        message.channel.send("Item 1 is not a valid argument!");
-        return;
-      }
-      if(select1 >= sdex.length || select1< 0)
-      {
-        message.channel.send(`The first selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
-        return;
-      }
+    message.channel.send(`The first selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
+    return;
   }
 
-
-  if(is2Ath)
+  // Identify the second item
+  select2 = parseInt(args[item2Arg], 10) - 1;
+  if(isNaN(select2))
   {
-      select2 = parseInt(args[3], 10) - 1;
-      if(isNaN(select2))
-      {
-        message.channel.send("Item 2 is not a valid argument!");
-        return;
-      }
-      if(select2 >= registry.length || select2< 0)
-      {
-        message.channel.send(`The second selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
-        return;
-      }
-      args.splice(2, 1);
+    message.channel.send("Item 2 is not a valid argument!");
+    return;
   }
-  else
+  if(select2 >= item2Location.length || select2 < 0)
   {
-      select2 = parseInt(args[2], 10) - 1;
-      if(isNaN(select2))
-      {
-        message.channel.send("Item 2 is not a valid argument!");
-        return;
-      }
-      if(select2 >= sdex.length || select2< 0)
-      {
-        message.channel.send(`The second selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
-        return;
-      }
+    message.channel.send(`The second selection is not a valid item! Check the list of items in your Sylladex with ${client.auth.prefix}sylladex`);
+    return;
   }
 
-  if(select1==select2){
+  // If they're the same item...?
+  if(select1==select2 && item1Location == item2Location){
 
   }
 
-  if(is1Ath) { item1 = registry[select1]; } else { item1 = sdex[select1]; }
-  if(is2Ath) { item2 = registry[select2]; } else { item2 = sdex[select2]; }
+  // Load both items for easy referencing
+  item1 = item1Location[select1];
+  item2 = item2Location[select2];
 
-
-  let mode = args[1].toLowerCase();
   // Check the mode of the alchemy being performed
+  let mode = args[item1Arg+1].toLowerCase();
   if(mode=="oror"||mode=="or")
   {
-      mode = "||";
+    mode = "||";
   }
   else if(mode=="andand"||mode=="and")
   {
-      mode = "&&";
+    mode = "&&";
   }
 
   if(mode!="||"&&mode!="&&")
   {
-      message.channel.send("That is not a valid alchemy type!");
-      return;
+    message.channel.send("That is not a valid alchemy type!");
+    return;
   }
 
   // Alchemize up a new item
@@ -239,5 +248,4 @@ else{
     client.tutorcall.progressCheck(client,message,42,["text","To QUICK ALCHEMIZE, you must be in a room with an INSTANT ALCHEMITER."]);
     return;
   }
-
 }
