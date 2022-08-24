@@ -132,6 +132,7 @@ async function register(client,message,args,userid,userData,sburbid,aspectChoice
 
 
 }
+
 //------- Start of Function Definitions -------------------------------------------------------
 function createTutorial(client,message,userid,userData){
   //if the user doesn't already have tutorial data, it'll be created here.
@@ -162,22 +163,22 @@ function clearConnections(client,sburbid){
   if(client.sburbMap.get(sburbid,"client")!="NA"&&client.sburbMap.get(sburbid,"client")!=sburbid){
     target = client.sburbMap.get(sburbid,"client");
     client.sburbMap.set(target,"NA","server");
-	try{
-    client.funcall.chanMsg(client,target,`Your server has re-registerd, leaving you without a server!`);
-	}
-	catch(e){
-	  console.log(`Unable to notify ${target} that their server has re-registered.`);
-	}
+    try{
+      client.funcall.chanMsg(client,target,`Your server has re-registerd, leaving you without a server!`);
+    }
+    catch(e){
+      console.log(`Unable to notify ${target} that their server has re-registered.`);
+    }
   }
   if(client.sburbMap.get(sburbid,"server")!="NA"&&client.sburbMap.get(sburbid,"server")!=sburbid){
       target = client.sburbMap.get(sburbid,"server");
     client.sburbMap.set(target,"NA","client");
-	try{
-    client.funcall.chanMsg(client,target,`Your client has re-registerd, leaving you without a client!`);
-	}
-	catch(e){
-	  console.log(`Unable to notify ${target} that their client has re-registered.`);
-	}
+    try{
+      client.funcall.chanMsg(client,target,`Your client has re-registerd, leaving you without a client!`);
+    }
+    catch(e){
+      console.log(`Unable to notify ${target} that their client has re-registered.`);
+    }
   }
 }
 
@@ -194,7 +195,7 @@ function chooseAspect(input,client,message){
       message.channel.send("Sorry, that aspect doesn't exist! Re-register with a valid aspect, or none at all to get a random one!");
       return;
     } else {
-    aspectChoice=input.toUpperCase();
+      aspectChoice=input.toUpperCase();
     }
   }
   //sets the aspect based on registration choice (TO BE REMOVED)
@@ -221,19 +222,23 @@ function chumCheck(client,message,userid,sburbid,chumhandle,chumtag){
       if(handleList[i][1].substring(0,chumhandle.length).toLowerCase()==chumhandle.toLowerCase()&&handleList[i][0]!=sburbid){
         handleCount++;
       }
+
       //counts every case where the new chumtag matches an existing one.
       if(handleList[i][2].substring(0,chumtag.length).toUpperCase()==chumtag&&handleList[i][0]!=sburbid){
       tagCount++;
       }
+
       //catches the index of the character when it comes by.
       if(handleList[i][0]==sburbid){
         index = i;
       }
     }
+
     //adds a number to the end of the chumhandle to avoid duplicates.
     if(handleCount>0){
       chumhandle+=handleCount;
     }
+
     //adds a number to the end of the chumtag to avoid duplicates.
     if(tagCount>0){
       chumtag+=tagCount;
@@ -246,26 +251,29 @@ function chumCheck(client,message,userid,sburbid,chumhandle,chumtag){
       handleList[index]=[sburbid,chumhandle,chumtag];
     }
 
-  //adds the character to the playerlist if they don't exist on it.
+    //adds the character to the playerlist if they don't exist on it.
     if(!playerList.includes(sburbid)){
       playerList.push(sburbid);
     }
 
-  //updates the data to the database
+    //updates the data to the database
     client.landMap.set(message.guild.id+"medium",playerList,"playerList");
     client.landMap.set(message.guild.id+"medium",handleList,"handleList");
     return[chumhandle,chumtag];
 }
+
 function charSetup(userData,sburbid,channelCheck){
   //userData.possess is the character the user is controlling, which will start as the
   //user's waking self.
   userData.possess = `w${sburbid}`;
+
   //adds both waking and sleeping selves to the speeddial, for faster DM possession.
   if(!channelCheck){
     userData.speeddial.push(`w${sburbid}`);
     userData.speeddial.push(`d${sburbid}`);
   }
 }
+
 function createGristSet(client,message){
   /*randomizes the grist for the land, based on which grists have or haven't been used
   yet in the medium. This way, 3 planets will have exactly 1 occurance of each grist
@@ -282,16 +290,17 @@ function createGristSet(client,message){
   client.landMap.set(message.guild.id+"medium",sessionGrist,"gristCounter");
   return gristSet;
 }
+
 function beginWorld(client,userData,defBedroom,armorsets,gristSet){
   //lays out occset, the chunk of data that tells the game that there is a player (true)
   //with the charid given in a room. This will start in the Bedroom.
-    var occset = [true,userData.possess];
+  var occset = [true,userData.possess];
 
- //picks a random number 0-11 for the armor the player starts with.
+  //picks a random number 0-11 for the armor the player starts with.
   var randnum = Math.floor((Math.random() * 12));
 
-//builds the room array. defBedroom had to be defined earlier, so that occset can be insterted now.
-//preItem stocks a room based on it's loot table and the land's grist type.
+  //builds the room array. defBedroom had to be defined earlier, so that occset can be insterted now.
+  //preItem stocks a room based on it's loot table and the land's grist type.
   const def = [[[5,7,[
      [[],[],"BEDROOM",false,[occset],defBedroom],
      [[],[],"LIVING ROOM",false,[],client.funcall.preItem(client,"living",7,[],gristSet)],
@@ -303,50 +312,53 @@ function beginWorld(client,userData,defBedroom,armorsets,gristSet){
    ]]]];
    return [randnum,def];
 }
+
 function dreamPlace(client,message,userData,sburbid,lunarSway,repDef,towerLocal,defBedroom){
   //gets the list of players in the dream moon towers
-    var prospitList = client.landMap.get(message.guild.id+"medium","prospitList");
-    var derseList = client.landMap.get(message.guild.id+"medium","derseList");
+  var prospitList = client.landMap.get(message.guild.id+"medium","prospitList");
+  var derseList = client.landMap.get(message.guild.id+"medium","derseList");
 
-    var roomIndex = -1;
+  var roomIndex = -1;
   //if the player already exists on a moon, it'll keep them there.
-    if(prospitList.includes(sburbid)){
-      lunarSway = "pm";
-      repDef=[10,-10];
-      roomIndex = prospitList.indexOf(sburbid)+1;
-    }else if(derseList.includes(sburbid)){
-      lunarSway = "dm";
-      repDef=[-10,10];
-      roomIndex = derseList.indexOf(sburbid)+1;
-    }
+  if(prospitList.includes(sburbid)){
+    lunarSway = "pm";
+    repDef=[10,-10];
+    roomIndex = prospitList.indexOf(sburbid)+1;
+  }else if(derseList.includes(sburbid)){
+    lunarSway = "dm";
+    repDef=[-10,10];
+    roomIndex = derseList.indexOf(sburbid)+1;
+  }
+
   //if the player isn't on either moon, it puts them on the one with less people, or a
   //random one if they are both equal.
-    else if(prospitList.length==derseList.length){
-      if(!Math.floor(Math.random()*2)){
-        lunarSway="dm";
-        repDef=[-10,10]
-        derseList.push(sburbid);
-      } else {
-        lunarSway="pm";
-        repDef=[10,-10]
-        prospitList.push(sburbid);
-      }
-    }else if(prospitList.length>derseList.length){
+  else if(prospitList.length==derseList.length){
+    if(!Math.floor(Math.random()*2)){
       lunarSway="dm";
       repDef=[-10,10]
       derseList.push(sburbid);
-    }else{
+    } else {
       lunarSway="pm";
       repDef=[10,-10]
       prospitList.push(sburbid);
     }
-  //pushes the player lists back into the medium database.
-    client.landMap.set(message.guild.id+"medium",prospitList,"prospitList");
-    client.landMap.set(message.guild.id+"medium",derseList,"derseList");
+  }else if(prospitList.length>derseList.length){
+    lunarSway="dm";
+    repDef=[-10,10]
+    derseList.push(sburbid);
+  }else{
+    lunarSway="pm";
+    repDef=[10,-10]
+    prospitList.push(sburbid);
+  }
 
-    var moonMap = client.landMap.get(message.guild.id+"medium",lunarSway);
-   //if the character had a room before, this puts them there. Otherwise, it's added on to the end.
-   var towerRoom;
+  //pushes the player lists back into the medium database.
+  client.landMap.set(message.guild.id+"medium",prospitList,"prospitList");
+  client.landMap.set(message.guild.id+"medium",derseList,"derseList");
+
+  var moonMap = client.landMap.get(message.guild.id+"medium",lunarSway);
+  //if the character had a room before, this puts them there. Otherwise, it's added on to the end.
+  var towerRoom;
   if(roomIndex==-1){
     towerRoom = moonMap[towerLocal[0]][towerLocal[1]][2].length;
     moonMap[towerLocal[0]][towerLocal[1]][2].push([[],[],`${userData.name.toUpperCase()}'S DREAM TOWER`,false,[
@@ -356,10 +368,12 @@ function dreamPlace(client,message,userData,sburbid,lunarSway,repDef,towerLocal,
     moonMap[towerLocal[0]][towerLocal[1]][2][roomIndex] = [[],[],`${userData.name.toUpperCase()}'S DREAM TOWER`,false,[
       [true,`d${sburbid}`]],defBedroom];
   }
+
   //pushes the new data to the moon again.
-    client.landMap.set(message.guild.id+"medium",moonMap,lunarSway);
-    return [towerRoom,lunarSway];
+  client.landMap.set(message.guild.id+"medium",moonMap,lunarSway);
+  return [towerRoom,lunarSway];
 }
+
 function createSheets(client,message,userid,sburbid,userData,armorsets,randnum,moonData,towerLocal,channels,chumData,repDef){
     var wakingSheet = {
       control:[userid],
@@ -470,12 +484,13 @@ function createSheets(client,message,userid,sburbid,userData,armorsets,randnum,m
     godtier:false,
     sleepTimer:0,
     spriteID:""
-  }
+  };
   //pushes all playerdata to the proper databases.
   client.playerMap.set(`w${sburbid}`,wakingSheet);
   client.playerMap.set(`d${sburbid}`,dreamSheet);
   client.sburbMap.set(sburbid,sburbSheet);
 }
+
 async function finishLandGen(client,message,sburbid,aspect,gristSet,def){
   //determines where all the gates on the land will be.
   var gategen = [[Math.floor((Math.random() * 11)),Math.floor((Math.random() * 11))],[Math.floor((Math.random() * 11)),Math.floor((Math.random() * 11))],[Math.floor((Math.random() * 11)),Math.floor((Math.random() * 11))],[Math.floor((Math.random() * 11)),Math.floor((Math.random() * 11))],[Math.floor((Math.random() * 11)),Math.floor((Math.random() * 11))]]
@@ -522,6 +537,7 @@ async function finishLandGen(client,message,sburbid,aspect,gristSet,def){
   //pushes the land to the database defined by the sburbid.
   client.landMap.set(sburbid,land);
 }
+
 async function generateChannels(client,message,userid,sburbid,channels){
   var chan,pesterchan;
   if(client.configcall.get(client, message, "CHANNELS")==2){
@@ -531,34 +547,36 @@ async function generateChannels(client,message,userid,sburbid,channels){
   chan = await message.guild.channels.create(`${client.sburbMap.get(sburbid,"name")}-terminal`, {
       type: "text", //This create a text channel, you can make a voice one too, by changing "text" to "voice"
       permissionOverwrites: [
-         {
+        {
            id: message.author.id,
            allow: [`VIEW_CHANNEL`, 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
-     },{
-       id: client.user.id,
-       allow: [`VIEW_CHANNEL`, 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
-     },{
-       id: message.guild.roles.everyone, //To make it be seen by a certain role, user an ID instead
-       deny: ['VIEW_CHANNEL', 'SEND_MESSAGES'], //Deny permissions
-     }
-   ]//,
-   //parent:"827335332789878814"
-    })
-    if(client.configcall.get(client, message, "CHANNELS")==1){
+        },
+        {
+          id: client.user.id,
+          allow: [`VIEW_CHANNEL`, 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
+        },{
+          id: message.guild.roles.everyone, //To make it be seen by a certain role, user an ID instead
+          deny: ['VIEW_CHANNEL', 'SEND_MESSAGES'], //Deny permissions
+        }
+      ]//,
+      //parent:"827335332789878814"
+  })
+  if(client.configcall.get(client, message, "CHANNELS")==1){
     pesterchan = await message.guild.channels.create(`${client.sburbMap.get(sburbid,"name")}-pester`, {
-        type: "text", //This create a text channel, you can make a voice one too, by changing "text" to "voice"
-        permissionOverwrites: [
-           {
-             id: message.author.id,
-             allow: [`VIEW_CHANNEL`, 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
-       },{
-         id: message.guild.roles.everyone, //To make it be seen by a certain role, user an ID instead
-         deny: ['VIEW_CHANNEL'], //Deny permissions
-       }
-     ]//,
-     //parent:"827335362124316712"
-   })
- }
+      type: "text", //This create a text channel, you can make a voice one too, by changing "text" to "voice"
+      permissionOverwrites: [
+        {
+          id: message.author.id,
+          allow: [`VIEW_CHANNEL`, 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
+        },
+        {
+          id: message.guild.roles.everyone, //To make it be seen by a certain role, user an ID instead
+          deny: ['VIEW_CHANNEL'], //Deny permissions
+        }
+      ]//,
+      //parent:"827335362124316712"
+    })
+  }
       channels[0] = chan.id;
       if(client.configcall.get(client, message, "CHANNELS")==1){
       channels[1] = pesterchan.id;
@@ -573,6 +591,7 @@ async function generateChannels(client,message,userid,sburbid,channels){
 
 return channels;
 }
+
 async function tutorStart(client,message,userData,channels){
   var dateObj = new Date();
   intromessage = `${message.guild.members.cache.get(userData.ping)} stands in their bedroom. Today is ${ dateObj.toLocaleDateString('en-US')} (probably), and you're ready to play around with Pestercord! The tutorial should be sufficient to lead you through all the essentials of the game, but don't be afraid to ask for help!`;
