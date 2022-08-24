@@ -463,7 +463,7 @@ exports.move = function(client,message,charid,local,target,mapCheck,msg,embedTit
     }
   }
 
-  let targetTile = onSomeoneEnterRoom(client, message, charid, targSec[target[1]][target[2]], target[3]);
+  let targetTile = onSomeoneEnterRoom(client, message, charid, targSec[target[1]][target[2]], target[3], target[0]);
 
   targetTile[2][target[3]][4].push(occset);
   if(targetLandID==message.guild.id+"medium" && targetTile[2][target[3]][4].length==1){
@@ -605,52 +605,95 @@ exports.dreamCheck =  function(client,target,local){
   return dreamCheck(client,target,local);
 }
 
-function onSomeoneEnterRoom(client, message, charid, tile, roomIndex){
+function onSomeoneEnterRoom(client, message, charid, tile, roomIndex, map){
   // console.log("onSomeoneEnterRoom called!");
   if(!tile[2] || !tile[2][roomIndex]){
-    console.log("onSomeoneEnterRoom called on entering a room that doesn't exist!");
-    return tile;
+	console.log("onSomeoneEnterRoom called on entering a room that doesn't exist!");
+	return tile;
   }
-
+  
   let triggers = tile[2][roomIndex][1];
   if(!triggers){
-    return tile;
+	return tile;
+  }
+  
+  tile = actOnActionList(client, message, charid, tile, roomIndex, map, triggers.any);
+  tile = actOnActionList(client, message, charid, tile, roomIndex, map, triggers.onSomeoneEnterRoom);
+  
+  return tile;
+}
+
+function actOnActionList(client, message, charid, tile, roomIndex, map, actionList){
+  if(!actionList){
+	return tile;
   }
 
-  tile = actOnActionList(client, message, charid, tile, roomIndex, triggers.any);
-  tile = actOnActionList(client, message, charid, tile, roomIndex, triggers.onSomeoneEnterRoom);
+  for(let i=actionList.length - 1; i>=0; i--){
+	let removeFromTriggers = [];
+	let functionName = actionList[i].toUpperCase();
+	switch(functionName){
+	  case "LOOT_A":{
+		let sec = getSectionFromMapName(map);
+		if(isNaN(sec)){
+			console.log(`LOOT_S trigger was unable to glean sec from designation "${map}"`);
+			break;
+		}
+		tile[2][roomIndex][5] = [client.lootcall.lootA(client, sec, client.randcall.rollXdY(2,8) - 2];
+
+		removeFromTriggers.push([tile[2][roomIndex][1].onSomeoneEnterRoom]);
+		break;
+	  }
+	  case "LOOT_B":{
+		let sec = getSectionFromMapName(map);
+		if(isNaN(sec)){
+			console.log(`LOOT_B trigger was unable to glean sec from designation "${map}"`);
+			break;
+		}
+		tile[2][roomIndex][5] = [client.lootcall.lootB(client, sec, client.randcall.rollXdY(2,8) - 2];
+
+		removeFromTriggers.push([tile[2][roomIndex][1].onSomeoneEnterRoom]);
+		break;
+	  }
+	  case "DISTINGUISH":{
+		if(roomIndex == 0){
+		  console.log("Distinguishing tile!");
+		  tile = JSON.parse(JSON.stringify(tile));
+		}
+		else{
+		  console.log("Distinguishing room!");
+		  tile[2][roomIndex] = JSON.parse(JSON.stringify(tile[2][roomIndex]));
+		}
+		removeFromTriggers.push([tile[2][roomIndex][1].any]);
+		break;
+	  }
+      default:{
+	    console.log(`actOnActionList encountered unexpected action ${actionList[i].toUpperCase()}`);
+	  }
+	}
+	for(let j=0; j<triggerArray.length; j++){
+	  triggerArray[j].splice(triggerArray[j].findIndex(name => name.toUpperCase() === functionName), 1);
+	}
+  }
 
   return tile;
 }
 
-function actOnActionList(client, message, charid, tile, roomIndex, actionList){
-  if(!actionList){
-    return tile;
-  }
 
-  for(let i=0; i<actionList.length; i++){
-    switch(actionList[i].toUpperCase()){
-      case "DISTINGUISH":{
-        if(roomIndex == 0){
-          console.log("Distinguishing tile!");
-          tile = JSON.parse(JSON.stringify(tile));
-        }
-        else{
-          console.log("Distinguishing room!");
-          tile[2][roomIndex] = JSON.parse(JSON.stringify(tile[2][roomIndex]));
-        }
-        let actionsMap = tile[2][roomIndex][1];
-        let distinguishTriggerArray = [actionsMap.any];
-        for(let j=0; j<distinguishTriggerArray.length; j++){
-          distinguishTriggerArray[j].splice(distinguishTriggerArray[j].findIndex(functionName => functionName.toUpperCase() === "DISTINGUISH"), 1);
-        }
-        break;
-      }
-      default:{
-        console.log(`actOnActionList encountered unexpected action ${actionList[i].toUpperCase()}`);
-      }
-    }
-  }
+function getSectionFromMapName(mapName){
+	switch(mapName){
+		case "s1":
+		case "s1d":
+			return 1;
+		case "s2":
+		case "s2d":
+			return 2;
+		case "s3":
+		case "s3d":
+			return 3;
+		case "s4":
+		case "s4d":
+			return 4;
+	}
 
-  return tile;
+	return undefined;
 }
