@@ -2075,10 +2075,8 @@ if(aa.includes("RANDSTATUS")){
       }
     }
 
-  } else {
-
-    //if attack misses
-
+  }
+  else {
     if(aa.includes("REFUND")){
 
       let hopeStam = client.actionList[action].cst;
@@ -2098,53 +2096,28 @@ if(aa.includes("RANDSTATUS")){
         if(client.actionList[action].cst > 1){
           hopeStam--;
         }
+      }
 
+      attUnit[STAMIN]+=hopeStam;
     }
-    else
-    {
-        //if attack misses
 
-        if(aa.includes("REFUND")){
+    if(alert.length==0){
+      alert=`NONE`;
+    }
 
-          let hopeStam = client.actionList[action].cst;
-          alert+=`ACTION IS FREE!\n`;
-
-          if(hopeStam > 3 && client.traitcall.traitCheck(client,attUnit[1],"LIGHTWEIGHT")[1]){
-            hopeStam--;
-          }
-
-          if(attUnit[STATUS].includes("DISCOUNT")){
-            if(client.actionList[action].cst>1){
-              hopeStam--;
-            }
-          }
-          //closing here
-          if(client.traitcall.traitCheck(client,attUnit[1],"MIND")[1]){
-            if(client.actionList[action].cst > 1){
-              hopeStam--;
-            }
-          }
-
-          attUnit[STAMIN]+=hopeStam;
-        }
-
-        if(alert.length==0){
-          alert=`NONE`;
-        }
-
-        let embed = new client.MessageEmbed()
-        .setTitle(`${attName.toUpperCase()} ${client.actionList[action].name}S ${targName.toUpperCase()}!`)
-    .addFields(
-      {name:'CST',value:costMsg,inline:true},
-      {name:'DMG',value:`${(dmg * dmgLvl)}`,inline:true},
-      {name:"ADDITIONAL ACTION",value:client.actionList[action].aa},
-      {name:"STRIKE",value:strikeMsg,inline:true},
-      {name:"TARGET AV",value:av.toString(),inline:true},
-      {name:"HIT",value:`MISS!`},
-      {name:"ADDITIONAL ALERTS",value:alert}
-    )
-    .setColor(client.actionList[action].col)
-    .setImage(client.actionList[action].img);
+    let embed = new client.MessageEmbed()
+      .setTitle(`${attName.toUpperCase()} ${client.actionList[action].name}S ${targName.toUpperCase()}!`)
+      .addFields(
+        {name:'CST',value:costMsg,inline:true},
+        {name:'DMG',value:`${(dmg * dmgLvl)}`,inline:true},
+        {name:"ADDITIONAL ACTION",value:client.actionList[action].aa},
+        {name:"STRIKE",value:strikeMsg,inline:true},
+        {name:"TARGET AV",value:av.toString(),inline:true},
+        {name:"HIT",value:`MISS!`},
+        {name:"ADDITIONAL ALERTS",value:alert}
+      )
+      .setColor(client.actionList[action].col)
+      .setImage(client.actionList[action].img);
 
     for(i=0;i<active.length;i++){
         client.funcall.chanMsg(client,list[active[i]][1],"NONE",embed);
@@ -2491,7 +2464,8 @@ function npcTurn(client, message, charid, local){
         setTimeout(npcTurn,2000,client,message,charid,local);
 
 
-    }else{
+    }
+	if(!turnTaken){
       setTimeout(passTurn,1000,client,charid,message,local);
     }
 }else{

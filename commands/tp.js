@@ -46,7 +46,7 @@ exports.run = (client, message, args) => {
   case "prospitcastle":
     client.funcall.move(client,message,charid,local,["pc",5,5,0,`${message.guild.id}medium`],true,`Teleporting!\nEntering a `);
     return;
-  case "dc":{
+  case "dc":
   case "dersecastle":{
     client.funcall.move(client,message,charid,local,["dc",5,5,0,`${message.guild.id}medium`],true,`Teleporting!\nEntering a `);
     return;
