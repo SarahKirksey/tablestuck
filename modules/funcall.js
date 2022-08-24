@@ -481,12 +481,11 @@ exports.move = function(client,message,charid,local,target,mapCheck,msg,embedTit
       break;
     }
   }
-  else if(targetLandID!=message.guild.id+"medium"){
-    if(targetTile[2][target[3]][4].length==1){
-      targSec =  client.strifecall.underSpawn(client,target,targSec,message.guild.id);
+    else if(target[4]!=message.guild.id+"medium"){
+      if(targetTile[2][target[3]][4].length==1){
+        targSec =  client.strifecall.underSpawn(client,target,targSec,message.guild.id);
+      }
     }
-  }
-
   //for now, NPCs won't reveal new tiles.
   if(!client.charcall.npcCheck(client,charid)&&targetTile[2][target[3]][3]==false){
     client.funcall.actionCheck(client,message,"tile")

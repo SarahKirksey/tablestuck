@@ -700,7 +700,7 @@ function dungeonGenD(client,roomCoor,sec,dungeon,message,hacky=false) {
         pathStart.push([curx,cury]);
       }
 
-      curDirection = client.randcall.getAnyExcept(genDirection, curDirection);
+      curDirection = client.randcall.getAnyExcept(genDirection, genDirection[genDirection.indexOf(curDirection) ^ 1]);
       //this iterates until the branch hits a wall.
     }
   }
