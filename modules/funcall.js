@@ -464,6 +464,7 @@ exports.move = function(client,message,charid,local,target,mapCheck,msg,embedTit
   }
 
   let targetTile = onSomeoneEnterRoom(client, message, charid, targSec[target[1]][target[2]], target[3], target[0]);
+  targSec[target[1]][target[2]] = targetTile;
 
   targetTile[2][target[3]][4].push(occset);
   if(targetLandID==message.guild.id+"medium" && targetTile[2][target[3]][4].length==1){
@@ -492,7 +493,6 @@ exports.move = function(client,message,charid,local,target,mapCheck,msg,embedTit
     targetTile[2][target[3]][3]=true;
   }
 
-  targSec[target[1]][target[2]] = targetTile;
 
   client.funcall.tick(client,message);
   client.charcall.setAnyData(client,userid,charid,target,"local");

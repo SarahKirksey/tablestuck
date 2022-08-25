@@ -34,13 +34,13 @@ exports.run = (client, message, args) => {
     client.funcall.move(client,message,charid,local,["p",5,5,0,`${message.guild.id}medium`],true,`Teleporting to Prospit!\nEntering a `);
     return;
   case "d":
-    client.funcall.move(client,message,charid,local,["p",5,5,0,`${message.guild.id}medium`],true,`Teleporting to Derse!\nEntering a `);
+    client.funcall.move(client,message,charid,local,["d",5,5,0,`${message.guild.id}medium`],true,`Teleporting to Derse!\nEntering a `);
     return;
   case "pm":
-    client.funcall.move(client,message,charid,local,["p",5,5,0,`${message.guild.id}medium`],true,`Teleporting to Prospit's moon!\nEntering a `);
+    client.funcall.move(client,message,charid,local,["pm",5,5,0,`${message.guild.id}medium`],true,`Teleporting to Prospit's moon!\nEntering a `);
     return;
   case "dm":
-    client.funcall.move(client,message,charid,local,["p",5,5,0,`${message.guild.id}medium`],true,`Teleporting to Derse's moon!\nEntering a `);
+    client.funcall.move(client,message,charid,local,["dm",5,5,0,`${message.guild.id}medium`],true,`Teleporting to Derse's moon!\nEntering a `);
     return;
   case "pc":
   case "prospitcastle":
