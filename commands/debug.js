@@ -158,25 +158,27 @@ exports.run = function(client,message,args){
     break;
 
     case "fog": {
-      if(!args[1] || !args[2])
+      if(!args[1])
       {
         message.channel.send("You must select a fog-change mode and a new state! Modes include 'map', 'walls', and 'current'. States include 'on' and 'off'.");
         return;
       }
 
-      let filterFunc;
+      let yesFunc;
+      let noFunc;
 
       switch(args[1].toLowerCase())
       {
         case "map":
-            filterFunc = isAnyTile;
+            yesFunc = isAnyTile;
             break;
         case "wall":
         case "walls":
-            filterFunc = isWallTile;
+            yesFunc = isWallTile;
             break;
         case "current":
-            filterFunc = isFogTile;
+            yesFunc = isFogTile;
+            noFunc = isExploredTile;
             break;
         default:
             message.channel.send(`That's not a valid mode!`);
@@ -185,25 +187,27 @@ exports.run = function(client,message,args){
 
       let newState;
 
-      switch(args[2].toLowerCase())
-      {
-        case "on":
-        case "true":
-            newState = false;
-            break;
-        case "off":
-        case "false":
-            newState = true;
-            break;
-        default:
-            message.channel.send(`That's not a valid new state!`);
-            return;
-      }
+      if(!args[2]){
+        newState = false;
+	  }
+	  else{
+        switch(args[2].toLowerCase())
+        {
+          case "on":
+          case "true":
+              newState = true;
+              break;
+          case "off":
+          case "false":
+              newState = false;
+              break;
+        }
+	  }
 
       let local = client.charcall.allData(client,userid,charid,"local");
       let land = local[4];
 
-      if(land == undefined){
+      if(land == undefined || local == "NONE"){
         message.channel.send(`There's something wrong with your location!`);
         return;
       }
@@ -212,9 +216,12 @@ exports.run = function(client,message,args){
 
       for(let i=0; i<sec.length; i++){
           for(let j=0; j<sec[0].length; j++){
-              if(filterFunc(sec[i][j])){
-                  sec[i][j][2][0][3] = newState;
+              if(yesFunc(sec[i][j])){
+                  sec[i][j][2][0][3] = !newState;
               }
+			  else if(numFunc && noFunc(sec[i][j])){
+				  sec[i][j][2][0][3] = newState;
+			  }
           }
       }
 
@@ -360,6 +367,10 @@ isWallTile = function(tile){
 
 isFogTile = function(tile){
     return (tile[2][0][3] === false);
+}
+
+isExploredTile = function(tile){
+    return (tile[2][0][3] === true);
 }
 
 isAnyTile = function(tile){
