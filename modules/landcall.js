@@ -1905,7 +1905,6 @@ exports.hackyMoonGen = function(client,castleLocal,towerLocal,message) {
       section[DERSE][temp[0]][temp[1]]=slums;
     }
   }
-}
 
 // SECTION 3: MOON GENERATION
 //
@@ -1983,7 +1982,7 @@ exports.hackyMoonGen = function(client,castleLocal,towerLocal,message) {
       }
     }
   }
-
+}
 
 // SECTION 4: DUNGEON GENERATION
 //
