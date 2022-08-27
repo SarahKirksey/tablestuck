@@ -18,8 +18,8 @@ exports.traitCheck = function(client,target,traitName){
   let prototype = client.charcall.charData(client,target,"prototype");
   let checklist = [];
   if(client.traitList.indexOf(traitName) == -1 && client.traitList.indexOf(traitName) == -1){
-	console.log(`Traitcall was asked to find stats on "${traitName}", which isn't a real trait!`);
-	return check;
+    console.log(`Traitcall was asked to find stats on "${traitName}", which isn't a real trait!`);
+    return check;
   }
   if(prototype!="NONE"&&prototype.length>0){
     for(let i=0;i<prototype.length;i++){
@@ -57,6 +57,52 @@ exports.traitCheck = function(client,target,traitName){
   return [false,false];
 }
 
+}
+
+exports.getTraitSet = function(client, target){
+  let retVal = {};
+
+  let specibus = client.charcall.charData(client,target,"spec");
+  let equip = client.charcall.charData(client,target,"equip");
+  let armor = client.charcall.charData(client,target,"armor");
+  let trinket = client.charcall.charData(client,target,"trinket");
+  let prototype = client.charcall.charData(client,target,"prototype");
+
+  let checklist = [];
+
+  if(prototype!="NONE"&&prototype.length>0){
+    for(let i=0;i<prototype.length;i++){
+      checklist.push(prototype[i][1]);
+    }
+  }
+
+  if(specibus.length > equip) checklist.push(specibus[equip][1]);
+  if(armor.length!=0) checklist.push(armor[0][1]);
+  if(trinket.length!=0) checklist.push(trinket[0][1]);
+
+  while(checklist.length>0){
+    capcode = checklist.pop();
+    let trait1Name = client.traitList[client.captchaCode.indexOf(capcode[2])];
+    let trait2Name = client.traitList2[client.captchaCode.indexOf(capcode[3])];
+    if(trait1Name && trait1Name != "NONE"){
+      if(retVal[trait1Name]){
+        retVal[trait1Name] += 1;
+      }
+      else{
+        retVal[trait1Name = 1];
+      }
+    }
+    if(trait2Name && trait2Name != "NONE"){
+      if(retVal[trait2Name]){
+        retVal[trait2Name] += 1;
+      }
+      else{
+        retVal[trait2Name = 1];
+      }
+    }
+  }
+
+  return retVal;
 }
 
 exports.itemTrait = function(client,item,trait){
