@@ -1427,16 +1427,16 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
   }
 
   if(client.traitcall.traitCheck(client,targUnit[1],"HEAVY")[0]){
-    fav += 1;
+    fav -= 1;
   }
   if(client.traitcall.traitCheck(client,targUnit[1],"LIGHTWEIGHT")[0]){
-    fav -= 1;
+    fav += 1;
   }
 
     let strikeCheck;
     let strikemsg;
 
-//roll to hit, similar to how stamina is handled
+    //roll to hit, similar to how stamina is handled
     let strikeRoll = [Math.floor((Math.random() * 20) + 1),Math.floor((Math.random() * 20) + 1)];
     let metaNess = client.traitcall.traitCheck(client,attUnit[1],"META");
     let lightNess = client.traitcall.traitCheck(client,attUnit[1],"LIGHT");
