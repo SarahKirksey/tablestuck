@@ -820,5 +820,19 @@
     "fav" : 0,
     "att" : false,
     "emoji": ["718242735638839376","718242735693234187","718242735693365309","718242735676719145","718242735793897564"]
+  },
+
+  "amen":{
+    "name" : "AMEN",
+    "cst"  : 3,
+    "dmg" : 0,
+    "aa": "TARGET CAN ONLY USE THEIR MOST RECENT MOVE NEXT ROUND",
+    "add":["ENCORE", "DEGRAP"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : false,
+    "fav" : 0,
+    "att" : true,
+    "emoji":[]
   }
 }
