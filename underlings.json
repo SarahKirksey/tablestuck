@@ -10,7 +10,8 @@
     "prefMove":"none",
     "xp":2,
     "drop":1,
-    "img":"https://media.discordapp.net/attachments/408119077840617493/808234217234104330/imp_base.png"
+    "img":"https://media.discordapp.net/attachments/408119077840617493/808234217234104330/imp_base.png",
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "ogre":{
     "stm":4,
@@ -23,7 +24,8 @@
     "stats":[1,1,0,0,0,0],
     "xp":8,
     "drop":5,
-    "img":"https://media.discordapp.net/attachments/408119077840617493/808234219503484928/ogre_base.png"
+    "img":"https://media.discordapp.net/attachments/408119077840617493/808234219503484928/ogre_base.png",
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "basilisk":{
     "stm":4,
@@ -36,7 +38,8 @@
     "stats":[1,1,2,2,0,1],
     "xp":32,
     "drop":25,
-    "img":"https://media.discordapp.net/attachments/408119077840617493/808234213932400654/basilisk_base.png"
+    "img":"https://media.discordapp.net/attachments/408119077840617493/808234213932400654/basilisk_base.png",
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "lich":{
     "stm":4,
@@ -49,7 +52,8 @@
     "stats":[0,0,0,3,3,3],
     "xp":128,
     "drop":125,
-    "img":"https://media.discordapp.net/attachments/408119077840617493/808234218303127573/lich_base.png"
+    "img":"https://media.discordapp.net/attachments/408119077840617493/808234218303127573/lich_base.png",
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "unicorn":{
     "stm":6,
@@ -62,7 +66,8 @@
     "stats":[0,0,0,3,3,3],
     "xp":128,
     "drop":250,
-    "img":"https://media.discordapp.net/attachments/408119077840617493/808234218303127573/lich_base.png"
+    "img":"https://media.discordapp.net/attachments/408119077840617493/808234218303127573/lich_base.png",
+    "naturalbonus":{"accuracy":0, "avChance":1, "initiative":0}
   },
   "giclopse":{
     "stm":6,
@@ -75,7 +80,8 @@
     "stats":[4,4,0,1,2,0],
     "xp":512,
     "drop":625,
-    "img":"https://cdn.discordapp.com/attachments/408119077840617493/808234216285405224/giclops.png"
+    "img":"https://cdn.discordapp.com/attachments/408119077840617493/808234216285405224/giclops.png",
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "kraken":{
     "stm":8,
@@ -88,7 +94,8 @@
     "stats":[4,4,0,1,2,0],
     "xp":512,
     "drop":1250,
-    "img":"https://cdn.discordapp.com/attachments/408119077840617493/808234216285405224/giclops.png"
+    "img":"https://cdn.discordapp.com/attachments/408119077840617493/808234216285405224/giclops.png",
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":2}
   },
   "titachnid":{
     "stm":6,
@@ -101,7 +108,8 @@
     "prefMove":"none",
     "xp":2048,
     "drop":3125,
-    "img":"https://media.discordapp.net/attachments/408119077840617493/808234220866240522/titachnid_base.png"
+    "img":"https://media.discordapp.net/attachments/408119077840617493/808234220866240522/titachnid_base.png",
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "hecatoncheires":{
     "stm":10,
@@ -114,7 +122,8 @@
     "stats":[5,5,3,5,2,1],
     "xp":2048,
     "drop":6250,
-    "img":"https://media.discordapp.net/attachments/408119077840617493/808234220866240522/titachnid_base.png"
+    "img":"https://media.discordapp.net/attachments/408119077840617493/808234220866240522/titachnid_base.png",
+    "naturalbonus":{"accuracy":3, "avChance":0, "initiative":0}
   },
   "denizen":{
     "stm":12,
@@ -127,7 +136,8 @@
     "prefMove":"none",
     "xp":6000,
     "drop":14000,
-    "img":""
+    "img":"",
+    "naturalbonus":{"accuracy":4, "avChance":4, "initiative":4}
   },
   "player":{
     "stm":8,
@@ -137,7 +147,8 @@
     "bd":[1,2],
     "act":["aggrieve","abscond"],
     "stats":[0,0,0,0,0,0],
-    "xp":0
+    "xp":0,
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "sprite":{
     "stm":8,
@@ -147,7 +158,8 @@
     "bd":[1,4],
     "act":["aggrieve","abscond"],
     "stats":[0,0,0,0,0,0],
-    "xp":0
+    "xp":0,
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "stout carapacian":{
     "stm":4,
@@ -158,7 +170,8 @@
     "bd":[1,4],
     "act":["aggrieve","abscond"],
     "stats":[0,0,0,0,0,0],
-    "xp":2
+    "xp":2,
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "medium carapacian":{
     "stm":6,
@@ -169,7 +182,8 @@
     "bd":[2,8],
     "act":["aggrieve","abscond"],
     "stats":[0,0,0,0,0,0],
-    "xp":2
+    "xp":2,
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "tall carapacian":{
     "stm":8,
@@ -180,7 +194,8 @@
     "bd":[3,12],
     "act":["aggrieve","abscond"],
     "stats":[0,0,0,0,0,0],
-    "xp":2
+    "xp":2,
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "large carapacian":{
     "stm":8,
@@ -191,7 +206,8 @@
     "bd":[4,16],
     "act":["aggrieve","abscond"],
     "stats":[0,0,0,0,0,0],
-    "xp":2
+    "xp":2,
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "arhagent":{
     "stm":10,
@@ -202,7 +218,8 @@
     "bd":[5,20],
     "act":["aggrieve","abscond"],
     "stats":[0,0,0,0,0,0],
-    "xp":2
+    "xp":2,
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
   },
   "shopkeep":{
     "stm":8,
@@ -213,6 +230,92 @@
     "bd":[4,16],
     "act":["aggrieve","abscond"],
     "stats":[0,0,0,0,0,0],
-    "xp":2
+    "xp":2,
+    "naturalbonus":{"accuracy":0, "avChance":0, "initiative":0}
+  },
+  "Courtyard Droll":{
+    "stm":10,
+    "vit":400,
+    "av":12,
+    "prefMove":"none",
+    "d":200,
+    "bd":[4,16],
+    "act":["amuse", "amble", "amen", "abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":1000,
+    "naturalbonus":{"accuracy":4, "avChance":4, "initiative":10}
+  },
+  "Draconian Dignitary":{
+    "stm":10,
+    "vit":400,
+    "av":12,
+    "prefMove":"none",
+    "d":200,
+    "bd":[4,16],
+    "act":["amnesty", "ameliorate", "amend", "abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":1000,
+    "naturalbonus":{"accuracy":4, "avChance":4, "initiative":8}
+  },
+  "Hegemonic Brute":{
+    "stm":10,
+    "vit":400,
+    "av":12,
+    "prefMove":"none",
+    "d":200,
+    "bd":[10,60],
+    "act":["amputate", "ambuscade", "amortize", "abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":1000,
+    "naturalbonus":{"accuracy":2, "avChance":4, "initiative":0}
+  },
+  "Sovereign Slayer":{
+    "stm":10,
+    "vit":400,
+    "av":12,
+    "prefMove":"none",
+    "d":200,
+    "bd":[4,48],
+    "act":["ambush", "amplify", "amount", "abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":1000,
+    "naturalbonus":{"accuracy":8, "avChance":4, "initiative":4}
+  },
+  "queen":{
+    "stm":4,
+    "vit":400,
+    "av":12,
+    "prefMove":"none",
+    "d":200,
+    "bd":[4,16],
+    "act":["amalgamate","abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":9001,
+    "naturalbonus":{"accuracy":4, "avChance":5, "initiative":10}
+  },
+  "king":{
+    "stm":4,
+    "vit":500,
+    "av":15,
+    "prefMove":"none",
+    "d":250,
+    "bd":[4,16],
+    "act":["amalgamate","abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":10230,
+    "naturalbonus":{"accuracy":6, "avChance":5, "initiative":10}
+  },
+  "bomb":{
+    "stm":4,
+    "vit":200,
+    "av":4,
+    "prefMove":"none",
+    "d":50,
+    "bd":[2,12],
+    "act":["adumbrate","address","adaunt","addle","adure","abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":256,
+    "naturalbonus":{"accuracy":12, "avChance":0, "initiative":0},
+    "scales":true
   }
 }
