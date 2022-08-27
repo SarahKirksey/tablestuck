@@ -23,6 +23,7 @@ const gristTypes = ["build","uranium","amethyst","garnet","iron","marble","chalk
 //  5: Stamina
 //  6: List of actions taken so far this turn
 //  7: List of status effects
+//  8: Special data
 const PROFILE = {
     IS_NPC: 0,
     CHARID: 1,
@@ -32,7 +33,7 @@ const PROFILE = {
     STAMIN: 5,
     ACTION: 6,
     STATUS: 7,
-	SPECIAL: 8
+    SPECIAL: 8
 }
 
 function inflict(client, message, local, list, target, chance, status, attacker){
@@ -90,7 +91,7 @@ if(client.charcall.charData(client,charid,"pos")!=init[turn][0]){
     return;
   }
 
-  //check if the character whose turn it is has any status effects
+  //check if the character whose turn it is has any of these status effects
   for(let i=(list[init[turn][0]][7].length - 1);i>=0;i--){
     switch(list[init[turn][0]][7][i]){
       case "TARGFAV":
@@ -638,6 +639,11 @@ function startTurn(client, message, local) {
   let removed;
   let stunned = false;
   let alert = ``;
+
+  if(list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL].encoreMove){
+    delete list[init[turn][0]][PROFILE.SPECIAL].encoreMove;
+  }
+
 //go through checking for status effects and applying them
 
 //CLEARSTART
@@ -667,12 +673,13 @@ function startTurn(client, message, local) {
         stunned=true;
         removed = list[init[turn][0]][7].splice(i,1);
       break;
-	  case "ENCORE":
-	    if(!list[init[turn][0]][PROFILE.SPECIAL]){
-			list[init[turn][0]][PROFILE.SPECIAL] = {};
-		}
-		list[init[turn][0]][PROFILE.SPECIAL].encoreMove = lastAction;
-	  break;
+      case "ENCORE":
+        if(!list[init[turn][0]][PROFILE.SPECIAL]){
+            list[init[turn][0]][PROFILE.SPECIAL] = {};
+        }
+        list[init[turn][0]][PROFILE.SPECIAL]["encoreMove"] = lastAction;
+        removed = list[init[turn][0]][7].splice(i,1);
+      break;
       case "ALLBD":
       case "ALLFAV":
       case "ALLUNFAV":
@@ -2386,28 +2393,40 @@ function npcTurn(client, message, charid, local){
 
   let actionSet = [];
   let tempAct;
+
+  let encoreMove = list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL].encoreMove;
+
+  // Add actions based on the weapon currently equipped, if any
   if(spec.length!=0){
     for(let i=0;i<4;i++){
       tempAct = client.action[client.codeCypher[i+4][client.captchaCode.indexOf(spec[equip][1].charAt(i+4))]];
-      if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].aa.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
-        actionSet.push(tempAct);
+      if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].add.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
+        if(!encoreMove || encoreMove == tempAct){
+          actionSet.push(tempAct);
+        }
       }
-
     }
   }
+
+  // Add actions based on prototypings affecting the creature, if any
   for(let j =0;j<prototype.length;j++){
     for(let i=0;i<4;i++){
       tempAct = client.action[client.codeCypher[i+4][client.captchaCode.indexOf(prototype[j][1].charAt(i+4))]];
-      if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].aa.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
-        actionSet.push(tempAct);
+      if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].add.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
+        if(!encoreMove || encoreMove == tempAct){
+          actionSet.push(tempAct);
+        }
       }
     }
   }
 
+  // Add actions innate to the create's type
     tempAct=client.underlings[type].act;
     for(let i=0;i<tempAct.length;i++){
-      if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].aa.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
-        actionSet.push(tempAct[i]);
+      if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].add.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
+        if(!encoreMove || encoreMove == tempAct){
+          actionSet.push(tempAct);
+        }
       }
     }
 

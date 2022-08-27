@@ -247,6 +247,11 @@ for(i=0;i<action.length;i++){
     tempbg = `#cccccc`;
   }
 
+  if(list[pos][8] && list[pos][8].encoreMove && list[pos][8].encoreMove !== (""+i+equip)){
+    tempcolor= `#6D6D6D`;
+    tempbg = `#cccccc`;
+  }
+
   //action number
   //ctx.fillRect(30,145+(130*j),40,40);
   //ctx.strokeRect(30,146+(130*j),40,40);
@@ -330,6 +335,11 @@ return;
     message.channel.send("You can't use that ACTION more than once per turn!");
     return;
   };
+  
+  if(action[select] !== "abscond" && list[pos][8] && list[pos][8].encoreMove && list[pos][8].encoreMove !== (""+select+equip)){
+    message.channel.send("You have been AMENed, and cannot use that ACTION this turn!");
+    return;
+  }
 
 //If there is no second argument, list all participants in strife and their VITALITY
   if(!args[1]){
