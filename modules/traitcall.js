@@ -90,6 +90,7 @@ exports.compTest = function(client, message, charid, room) {
         for(j=0;j<room[5][i][4].length; j++){
           if(room[5][i][4][j][1].charAt(0) == "/"&&room[5][i][4][j][0]=="SBURB DISC"){
             comp[1]=true;
+            return comp;
           }
         }
       }
@@ -102,6 +103,7 @@ exports.compTest = function(client, message, charid, room) {
         for(j=0;j<currentInv[i][4].length; j++){
           if(currentInv[i][4][j][1].charAt(0) == "/"&&currentInv[i][4][j][0]=="SBURB DISC"){
             comp[1]=true;
+            return comp;
           }
         }
       }
@@ -114,6 +116,7 @@ exports.compTest = function(client, message, charid, room) {
         for(j=0;j<specibus[i][4].length; j++){
           if(specibus[i][4][j][1].charAt(0) == "/"&&specibus[i][4][j][0]=="SBURB DISC"){
             comp[1]=true;
+            return comp;
           }
         }
       }
@@ -125,6 +128,7 @@ exports.compTest = function(client, message, charid, room) {
       for(j=0;j<armor[0][4].length; j++){
         if(armor[0][4][j][1].charAt(0) == "/"&&armor[0][4][j][0]=="SBURB DISC"){
           comp[1]=true;
+          return comp;
         }
       }
     }
@@ -135,6 +139,7 @@ exports.compTest = function(client, message, charid, room) {
       for(j=0;j<trinket[0][4].length; j++){
         if(trinket[0][4][j][1].charAt(0) == "/"&&trinket[0][4][j][0]=="SBURB DISC"){
           comp[1]=true;
+          return comp;
         }
       }
     }
