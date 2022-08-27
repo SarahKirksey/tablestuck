@@ -1072,6 +1072,7 @@ exports.underRally = function(client, message, local) {
     let grist;
     let dmg;
     let bdroll;
+    let bdTier;
     let absorb = false;
     let tarGrist;
 
@@ -1114,6 +1115,7 @@ if(specibus.length>0){
 grist = client.gristTypes[client.codeCypher[1][client.captchaCode.indexOf(specibus[equip][1].charAt(1))]];
 dmg = tierDmg[specibus[equip][2]];
 bdroll = tierBD[specibus[equip][2]];
+bdTier = specibus[equip][2];
 
 }
 else {
@@ -1131,6 +1133,7 @@ else {
   targName = client.charcall.charData(client,targUnit[1],"name");
 
   let brroll;
+  let brTier;
   let av = 0;
 
   let armor = client.charcall.charData(client,targUnit[1],"armor");
@@ -1138,6 +1141,7 @@ else {
     if(armor.length>0){
       av = tierAv[armor[0][2]];
       brroll = tierBD[armor[0][2]];
+      brTier = armor[0][2];
     } else {
       av = client.underlings[client.charcall.charData(client,targUnit[1],"type")].av;
       brroll = client.underlings[client.charcall.charData(client,targUnit[1],"type")].bd;
@@ -1485,8 +1489,7 @@ if(client.traitcall.traitCheck(client,targUnit[1],"VOID")[1]){
       strikeCheck = strikeRoll[0];
       strikeMsg = `${strikeRoll[0]}`;
     }
-    else
-    {
+    else {
       let lowRoll = Math.min(strikeRoll[0], strikeRoll[1]);
       let highRoll = Math.max(strikeRoll[0], strikeRoll[1]);
 
@@ -1786,7 +1789,7 @@ if(aa.includes("RANDSTATUS")){
           }
           let i;
           for(i=0;i<bd;i++){
-            let bddice =[Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0]), Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0])];
+            let bddice =[client.randcall.rollBonus(client, message, bdTier, bdroll), client.randcall.rollBonus(client, message, bdTier, bdroll)];
             if (bdmax){
               bddice = [bdroll[1],bdroll[1]];
             }
@@ -1829,7 +1832,7 @@ if(aa.includes("RANDSTATUS")){
       }
       let i;
       for(i=0;i<br;i++){
-        let bradd = Math.floor((Math.random() * (brroll[1] - 1)) + brroll[0]);
+        let bradd = client.randcall.rollBonus(client, message, brTier, brroll);
         bonusRes += bradd;
         damagemsg+= ` - ${bradd}`;
       }
@@ -1974,7 +1977,7 @@ if(aa.includes("RANDSTATUS")){
         if(aa.includes("SPLASHBD")){
           if(active.length>2){
             let id;
-            let splashbd= Math.floor((Math.random() * (bdroll[1] - bdroll[0])) + bdroll[0]);
+            let splashbd= client.randcall.rollBonus(client, message, bdTier, bdroll);
             alert+=`DEALT ${splashbd} DAMAGE TO ALL FOES.\n`
             for(id=0;id<active.length;id++){
               if(active[id]!=init[turn][0]&&active[id]!=target){
@@ -2028,7 +2031,7 @@ if(aa.includes("RANDSTATUS")){
     }
 
     if(client.traitcall.traitCheck(client,targUnit[1],"THORNS")[1]){
-      let thornDmg = Math.floor((Math.random() * (brroll[1] - 1)) + brroll[0]);
+      let thornDmg = client.randcall.rollBonus(client, message, brTier, brroll);
       attUnit[HEALTH]-= thornDmg;
       alert += `TOOK ${thornDmg} DAMAGE FROM TARGET THORNS!\n`;
     }

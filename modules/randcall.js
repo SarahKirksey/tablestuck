@@ -53,42 +53,51 @@ function rollXdYZTimes(x, y, z){
 	return retVal;
 }
 
-function rollBonus(client, message, tier){
-	return rollBonusWithKnownConfig(client.configcall.get(client, message, "BONUS_ROLLS"), tier);
+function rollBonus(client, message, tier, bns = null){
+	return rollBonusWithKnownConfig(client.configcall.get(client, message, "BONUS_ROLLS"), tier, bns);
 }
 
-exports.rollBonus = function(client, message, tier){
-	return rollBonus(client, message, tier);
+exports.rollBonus = function(client, message, tier, bns = null){
+	return rollBonus(client, message, tier, bns);
 }
 
-exports.rollBonusWithKnownConfig = function(config,tier){
-	return rollBonusWithKnownConfig(config, tier);
+exports.rollBonusWithKnownConfig = function(config, tier, bns = null){
+	return rollBonusWithKnownConfig(config, tier, bns);
 }
 
-function rollBonusWithKnownConfig(config, tier){
+function rollBonusWithKnownConfig(config, tier, bns = null){
 	switch(config){
-		case 0: return rollBonusUsingDice(tier);
-		case 1: return rollBonusUsingOldLabels(tier);
-		case 2: return rollBonusUsingOldMethod(tier);
+		case 0: return rollBonusUsingDice(tier, bns);
+		case 1: return rollBonusUsingOldLabels(tier, bns);
+		case 2: return rollBonusUsingOldMethod(tier, bns);
 	}
 	if(config !== "NONE"){
 		console.log(`Someone just called rollBonusWithKnownConfig with config value "${config}"/ It didn't work.`);
 	}
-	return rollBonusUsingOldMethod(tier);
+	return rollBonusUsingDice(tier, bns);
 }
 
-function rollBonusUsingOldMethod(tier){
+function rollBonusUsingOldMethod(tier, bns){
 	let bonusRoll = bonus[tier];
+	if(!tier && bns){
+		bonusRoll = bns;
+	}
 	return Math.floor((Math.random() * (bonusRoll[1] - bonusRoll[0])) + bonusRoll[0]);
 }
 
-function rollBonusUsingOldLabels(tier){
+function rollBonusUsingOldLabels(tier, bns){
 	let bonusRoll = bonus[tier];
-	return rollXdY(bonus[0], bonus[1]);
+	if(!tier && bns){
+		bonusRoll = bns;
+	}
+	return rollXdY(bonusRoll[0], bonusRoll[1]);
 }
 
-function rollBonusUsingDice(tier){
+function rollBonusUsingDice(tier, bns){
 	let bonusRoll = bonus[tier];
+	if(!tier && bns){
+		bonusRoll = bns;
+	}
 	return rollXdY(bonusRoll[0], bonusRoll[1]/bonusRoll[0]);
 }
 
