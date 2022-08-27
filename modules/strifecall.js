@@ -2483,11 +2483,16 @@ function npcTurn(client, message, charid, local){
       }
       turnTaken = true;
       setTimeout(act,1000,client,charid,message,local,action,target)
+
+      if(client.actionList[action].add.includes("SELFDESTRUCT")){
+        setTimeout(leaveStrife,2000,client,message,local,init[turn][0],false);
+      }
+      else{
         setTimeout(npcTurn,2000,client,message,charid,local);
-
-
+      }
     }
-	if(!turnTaken){
+
+    if(!turnTaken){
       setTimeout(passTurn,1000,client,charid,message,local);
     }
 }else{

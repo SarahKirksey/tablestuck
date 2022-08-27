@@ -304,5 +304,18 @@
     "stats":[0,0,0,0,0,0],
     "xp":10230,
     "naturalbonus":{"accuracy":6, "avChance":5, "initiative":10}
+  },
+  "bomb":{
+    "stm":4,
+    "vit":200,
+    "av":4,
+    "prefMove":"none",
+    "d":50,
+    "bd":[2,12],
+    "act":["adumbrate","address","adaunt","addle","adure","abscond"],
+    "stats":[0,0,0,0,0,0],
+    "xp":256,
+    "naturalbonus":{"accuracy":12, "avChance":0, "initiative":0},
+    "scales":true
   }
 }

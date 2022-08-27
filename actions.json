@@ -912,5 +912,71 @@
     "fav" : 0,
     "att" : true,
     "emoji":[]
+  },
+
+  "adumbrate":{
+    "name" : "ADUMBRATE",
+    "cst"  : 0,
+    "dmg" : 0,
+    "aa": "SMOKE BOMB!",
+    "add":["PROTECT", "SELFDESTRUCT"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : true,
+    "fav" : 0,
+    "att" : true,
+    "emoji":[]
+  },
+  "address":{
+    "name" : "ADDRESS",
+    "cst"  : 0,
+    "dmg" : 4,
+    "aa": "BOMB!",
+    "add":["SELFDESTRUCT"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : true,
+    "fav" : 0,
+    "att" : true,
+    "emoji":[],
+  },
+  "adaunt":{
+    "name" : "ADAUNT",
+    "cst"  : 0,
+    "dmg" : 1,
+    "aa": "FLASH BOMB!",
+    "add":["DAZED", "SELFDESTRUCT"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : true,
+    "fav" : 0,
+    "att" : true,
+    "emoji":[]
+  },
+  "addle":{
+    "name" : "ADDLE",
+    "cst"  : 0,
+    "dmg" : 1,
+    "aa": "FLASHBANG!",
+    "add":["STUNCHANCE", "SELFDESTRUCT"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : true,
+    "fav" : 0,
+    "att" : true,
+    "emoji":[]
+  },
+  "adure":{
+    "name" : "ADURE",
+    "cst"  : 0,
+    "dmg" : 1,
+    "aa": "FIREBOMB!",
+    "add":["BURN", "SELFDESTRUCT"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : true,
+    "fav" : 0,
+    "att" : true,
+    "emoji":[]
   }
 }
