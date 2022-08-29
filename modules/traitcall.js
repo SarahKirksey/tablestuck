@@ -89,7 +89,7 @@ exports.getTraitSet = function(client, target){
         retVal[trait1Name] += 1;
       }
       else{
-        retVal[trait1Name = 1];
+        retVal[trait1Name] = 1;
       }
     }
     if(trait2Name && trait2Name != "NONE"){
@@ -97,7 +97,7 @@ exports.getTraitSet = function(client, target){
         retVal[trait2Name] += 1;
       }
       else{
-        retVal[trait2Name = 1];
+        retVal[trait2Name] = 1;
       }
     }
   }
