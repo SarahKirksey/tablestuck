@@ -2424,8 +2424,8 @@ function npcTurn(client, message, charid, local){
     tempAct=client.underlings[type].act;
     for(let i=0;i<tempAct.length;i++){
       if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].add.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
-        if(!encoreMove || encoreMove == tempAct){
-          actionSet.push(tempAct);
+        if(!encoreMove || encoreMove == tempAct[i]){
+          actionSet.push(tempAct[i]);
         }
       }
     }
