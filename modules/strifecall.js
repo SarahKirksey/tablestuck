@@ -729,15 +729,15 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
 
     let endurance = client.traitcall.traitCheck(client,list[init[turn][0]][1],"ENDURING");
 
-	let denom = 1;
-	if(endurance[1]){
-	  denom = 4;
-	}
-	else if(endurance[0]){
-	  denom = 2;
-	}
-	
-	stamroll = [ client.randcall.rollXdY(denom, stamMax/denom), client.randcall.rollXdY(denom, stamMax/denom) ];
+    let denom = 1;
+    if(endurance[1]){
+      denom = 4;
+    }
+    else if(endurance[0]){
+      denom = 2;
+    }
+
+    stamroll = [ client.randcall.rollXdY(denom, stamMax/denom), client.randcall.rollXdY(denom, stamMax/denom) ];
 
     if(stamfav==0){
       stamina=stamroll[0];
@@ -1033,7 +1033,7 @@ exports.underRally = function(client, message, local) {
   }
 
 
-  function act(client,charid,message,local,action,target){
+function act(client,charid,message,local,action,target){
     const HEALTH = 3;
     const STAMIN = 5;
     const STATUS = 7;
@@ -1103,8 +1103,8 @@ exports.underRally = function(client, message, local) {
         dmgLvl = Math.ceil(Math.random()*3);
     }
 
-    try{
-      //retrieve target grist
+  try{
+    //retrieve target grist
     tarGrist = list[target][2];
   } catch(err) {
     console.log(list[target][1]);
@@ -1338,7 +1338,7 @@ else {
             break;
           }
           //fallthrough
-          case "ROLLOUT":
+        case "ROLLOUT":
             if(attUnit[STATUS].includes("ROLLOUT1")){
               dmgLvl=2;
               removed = attUnit[STATUS].splice(attUnit[STATUS].indexOf("ROLLOUT1"),1);
@@ -1749,10 +1749,10 @@ if(aa.includes("RANDSTATUS")){
             case "FROSTBITE":
             case "STUN":
             case "ENCORE":
-            alert+=inflict(client, message, local, list, target, 1, aa[post], init[turn][0]);
+              alert+=inflict(client, message, local, list, target, 1, aa[post], init[turn][0]);
               break;
             case "STUNCHANCE":
-            alert+=inflict(client, message, local, list, target, 4, "STUN", init[turn][0]);
+              alert+=inflict(client, message, local, list, target, 4, "STUN", init[turn][0]);
               break;
             case "BDSELFSTATUS":
               bd+=attUnit[STATUS].length;
@@ -1761,7 +1761,7 @@ if(aa.includes("RANDSTATUS")){
               bd+=targUnit[STATUS].length;
               break;
             case "DAZED":
-            alert+=inflict(client, message, local, list, target, 1, "DAZED", init[turn][0]);
+              alert+=inflict(client, message, local, list, target, 1, "DAZED", init[turn][0]);
               break;
             case "ABSORB":
               absorb = true;
@@ -2411,7 +2411,7 @@ function npcTurn(client, message, charid, local){
   if(!list[init[turn][0]][0]&&list[init[turn][0]][3]>0){
     if(client.underlings[type].ai && client.underlings[type].ai == "royal"){
       royalNpcTurn(client, message, charid, local, list, turn, init, strifelocal);
-	  return;
+      return;
     }
 
   let faction = client.charcall.charData(client,list[init[turn][0]][1],"faction");
@@ -2497,15 +2497,9 @@ function npcTurn(client, message, charid, local){
       }
 
       let lcost = client.actionList[action].cst;
-      if(lcost > 3 && client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1]){
-        lcost--;
-      }
-      if(lcost > 1 && list[init[turn][0]][7].includes("DISCOUNT")){
-        lcost--;
-      }
-      if(lcost > 1 && client.traitcall.traitCheck(client,charid,"MIND")[1]){
-        lcost--;
-      }
+      if(lcost > 3 && client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1]) { lcost--; }
+      if(lcost > 1 && list[init[turn][0]][7].includes("DISCOUNT")) { lcost--; }
+      if(lcost > 1 && client.traitcall.traitCheck(client,charid,"MIND")[1]) { lcost--; }
 
       if(lcost > list[init[turn][0]][5]){
         actionSet.splice(actionSet.indexOf(action), 1);
@@ -2530,8 +2524,8 @@ function npcTurn(client, message, charid, local){
         if(targetList.length<1){
           targetList.push(init[turn][0]);
         }
-        target = targetList[Math.floor((Math.random() * targetList.length))];
 
+        target = targetList[Math.floor((Math.random() * targetList.length))];
       }
 	  else if(client.actionList[action].att == false){
 		target = active[0];
@@ -2791,7 +2785,7 @@ function getCharHealth(client, userid, charid){
   if(gel == "NONE"){
     gel = client.underlings[client.charcall.charData(client,charid,"type")].vit;
   }
-  
+
   if(gel != undefined){
     let plushness = client.traitcall.traitCheck(client,charid,"PLUSH");
     if(plushness[0] == true){
