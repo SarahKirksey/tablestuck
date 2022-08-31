@@ -22,6 +22,7 @@ exports.run = (client, message, args) => {
   let pos = client.charcall.charData(client,charid,"pos");
   let type = client.charcall.charData(client,charid,"type");
   let spec = client.charcall.charData(client,charid,"spec");
+  let trinkets = client.charcall.charData(client,charid,"trinket")[0];
   let equip = client.charcall.charData(client,charid,"equip");
   let damage = client.underlings[client.charcall.charData(client,charid,"type")].d;
   //gets all strife data
@@ -51,6 +52,22 @@ let action = [];
 	  client.action[client.codeCypher[6][client.captchaCode.indexOf(spec[equip][1].charAt(6))]],
 	  client.action[client.codeCypher[7][client.captchaCode.indexOf(spec[equip][1].charAt(7))]]];
   }
+
+  // Add actions based on whether the creature has received the boost of Royal Power.
+  if(list[pos][8] && list[pos][8]["royal"] == true){
+    if(type == "king"){
+      action.push("amenage");
+    }
+    action.push("amaze");
+    action.push("amass");
+  }
+  // If not yet possessing Royal Power, but still having the Queen's Ring equipped.
+  else{
+    if(trinket && trinket[1] == "UNKNOWN" && trinket[0].substring(0,13) == "RING OF ORBS " && trinket[6] && trinket[6]["trueCode"] == "vℚ𝕟𝕤®𝚒𝚗𝚐"){
+      action.push("amalgamate");
+    }
+  }
+
   //adds default actions based on character type.
   action=action.concat(client.underlings[type].act);
 

@@ -444,6 +444,7 @@ function leaveStrife(client,message,local,pos,leavemsg = true){
   let active = client.strifeMap.get(strifeLocal,"active");
   let sec = client.landMap.get(local[4],local[0]);
 
+
 //if it's an npc without a controller leaving, it will be deleted from the room.
 if((userid=="NONE"||userid.length<1)&&!list[pos][0]){
 let removed = [active.splice(active.indexOf(pos),1),sec[local[1]][local[2]][2][local[3]][4].splice(sec[local[1]][local[2]][2][local[3]][4].findIndex(occpos => occpos[1] === list[pos][1]),1)];
@@ -454,6 +455,9 @@ if(init[turn][0] == pos){
 }
 return;
 } else {
+  if(active[list[pos]][PROFILE.SPECIAL] && active[list[pos]][PROFILE.SPECIAL]["oldProto"] !== undefined){
+    client.charcall.setAnyData(client,userid[0],charid,active[list[pos]][PROFILE.SPECIAL]["oldProto"],"prototype");
+  }
   players=[];
   for(let i=0;i<active.length;i++){
     if(client.charcall.controlCheck(client,list[active[i]][1])){
@@ -623,7 +627,7 @@ function startTurn(client, message, local) {
   list[init[turn][0]][6]=[];
 
   let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
-  let innateBonus = getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type")["avChance"] || 0;
+  let innateBonus = getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type"))["avChance"] || 0;
   if(trinketBonus[1] === "avChance" && trinketBonus[0] > innateBonus){
     innateBonus = trinketBonus[0];
   }
@@ -998,7 +1002,7 @@ exports.underRally = function(client, message, local) {
       let init = client.strifeMap.get(strifeLocal,"init");
       let active = client.strifeMap.get(strifeLocal,"active");
       let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
-      let initBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,occList[i][1],"type"))["initiative"]) || 0;
+      let initBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,occList[i][1],"type"))["initiative"] || 0;
 
       var pos = list.length;
       client.charcall.setAnyData(client,'-',occList[i][1],pos,"pos");
@@ -1044,6 +1048,9 @@ function act(client,charid,message,local,action,target){
     const HEALTH = 3;
     const STAMIN = 5;
     const STATUS = 7;
+
+    const TRAIT_BONUS_MINIMUM = 1;
+    const SET_BONUS_MINIMUM = 3;
 
     let strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
     //if strife database does not exist, cancel code
@@ -1145,6 +1152,9 @@ else {
 
   attName = client.charcall.charData(client,attUnit[1],"name");
   targName = client.charcall.charData(client,targUnit[1],"name");
+
+  let attTraits = client.traitcall.getTraitSet(client, attUnit[1]);
+  let targTraits = client.traitcall.getTraitSet(client, targUnit[1]);
 
   let brroll;
   let brTier;
@@ -1330,8 +1340,43 @@ else {
           break;
         }
 
-        case "STATUSDROP":
+        case "AMASS": {
+          let scaleFactor = attUnit[PROFILE.SPECIAL]["scaleFactor"]
+          let faction = client.charcall.charData(attUnit[PROFILE.CHARID],"faction");
+          for(let unit = 0; unit<list.length; unit++){
+            if(client.charcall.charData(list[unit][PROFILE.CHARID],"faction") != faction){
+              continue;
+            }
+        
+            if(!list[unit][PROFILE.SPECIAL]){
+              list[unit][PROFILE.SPECIAL] = {};
+            }
+        
+            if(!list[unit][PROFILE.SPECIAL]["royal"]){
+              list[unit][PROFILE.SPECIAL]["royal"] = true;
+              list[unit][PROFILE.SPECIAL]["scaleFactor"] = scaleFactor;
+              list[unit][PROFILE.HEALTH] = list[unit][PROFILE.HEALTH] << scaleFactor;
+            }
+          }
+          break;
+        }
 
+        case "PROTOTYPE": {
+          if(!attUnit[PROFILE.SPECIAL]){
+            attUnit[PROFILE.SPECIAL] = {};
+          }
+        
+          // Save the character's original prototype set, and replace it with the complete prototype set for the entire session
+          attUnit[PROFILE.SPECIAL]["oldProto"] = client.charcall.charData(client, attUnit[PROFILE.CHARID], "prototype");
+          client.charcall.setAnyData(client, message.author.id, attUnit[PROFILE.CHARID], client.landMap.get(sessionID+"medium","prototype"), "prototype");
+          // Activate Royal Power
+          let scaleFactor = client.landMap.get(message.guild.id+"medium","playerList").length;
+          attUnit[PROFILE.SPECIAL]["royal"] = true;
+          attUnit[PROFILE.SPECIAL]["scaleFactor"] = scaleFactor;
+          break;
+        }
+
+        case "STATUSDROP":
           removed = attUnit[STATUS].splice(Math.floor(Math.random()*attUnit[STATUS].length),1);
           alert+=`REMOVED THE ${removed} STATUS EFFECT\n`;
 
@@ -2484,15 +2529,17 @@ function npcTurn(client, message, charid, local){
     }
   }
 
-  // Add actions innate to the create's type
-    tempAct=client.underlings[type].act;
-    for(let i=0;i<tempAct.length;i++){
-      if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].add.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
-        if(!encoreMove || encoreMove == tempAct[i]){
+  // Add actions innate to the creature's type
+  tempAct=client.underlings[type].act;
+  for(let i=0;i<tempAct.length;i++){
+    if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].add.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
+      if(!encoreMove || encoreMove == tempAct[i]){
+        if(tempAct[i] != "amalgamate" || (list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL]["royal"] == true)){
           actionSet.push(tempAct[i]);
-        }
+		}
       }
     }
+  }
 
     let turnTaken = false;
     while(!turnTaken&&actionSet.length>0&&targetList.length>0){
@@ -2603,15 +2650,27 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
 	
 	let actionSet = [];
 	let tempAct;
-	
+	let royalPower = (strifeList[strifePos][PROFILE.SPECIAL] && strifeList[strifePos][PROFILE.SPECIAL]["royal"] == true);
+
 	let encoreMove = list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL].encoreMove;
-	
+
+	// Add actions based on whether the creature has received the boost of Royal Power.
+	if(royalPower){
+		if(type == "king" && !list[init[turn][0]][6].includes("amenage")){
+			actionSet.push("amenage");
+		}
+		actionSet.push("amaze");
+		actionSet.push("amass");
+	}
+
 	// Add actions innate to the creature's type
 	tempAct=client.underlings[type].act;
 	for(let i=0;i<tempAct.length;i++){
 		if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].add.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
 			if(!encoreMove || encoreMove == tempAct[i]){
-				actionSet.push(tempAct[i]);
+				if(!royalPower || tempAct[i] != "amalgamate"){
+					actionSet.push(tempAct[i]);
+				}
 			}
 		}
 	}
@@ -2814,6 +2873,42 @@ function getCharHealth(client, userid, charid){
         gelDiff = Math.floor(gel / 4);
         vit += gelDiff;
         gel += gelDiff;
+      }
+    }
+  }
+
+  let local = client.charcall.allData(client, userid, charid, "local");
+  if(client.underlings[client.charcall.charData(client,charid,"type")].scales == true){
+    let scaleFactor = 0;
+
+    // Passive (out-of-combat) scaling only works on Prospit, Derse, and the Battlefield.
+    if(local[4].includes("medium")){
+      scaleFactor = client.landMap.get(local[4],"playerList").length;
+    }
+
+    vit = vit << scaleFactor;
+    gel = gel << scaleFactor;
+    gelDiff = gelDiff << scaleFactor;
+  }
+
+  if(local && local != "NONE" && client.charcall.charData(client,charid,"strife")==true){
+    let strifeKey = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
+    if(client.strifeMap.has(strifeKey)){
+      let strifeList = client.strifeMap.get(strifeKey, "list");
+      let strifePos;
+      for(let i=0; i<strifeList.length;i++){
+        if(strifeList[i][PROFILE.CHARID] == charid){
+          strifePos = i;
+          vit = strifeList[i][PROFILE.HEALTH];
+          break;
+        }
+      }
+      if(!isNaN(strifePos) && !(client.underlings[client.charcall.charData(client,charid,"type")].scales==true)){
+        if(strifeList[strifePos][PROFILE.SPECIAL] && strifeList[strifePos][PROFILE.SPECIAL]["royal"] == true){
+          let scaleFactor = strifeList[strifePos][PROFILE.SPECIAL]["scaleFactor"];
+          gel = gel << scaleFactor;
+          gelDiff = gelDiff << scaleFactor;
+        }
       }
     }
   }
