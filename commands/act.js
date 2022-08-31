@@ -45,7 +45,11 @@ let action = [];
 
   //as long as the equipped weapon exists, all actions are added to the character's action pool.
   if(equip<spec.length){
-    action =[client.action[client.codeCypher[4][client.captchaCode.indexOf(spec[equip][1].charAt(4))]],client.action[client.codeCypher[5][client.captchaCode.indexOf(spec[equip][1].charAt(5))]],client.action[client.codeCypher[6][client.captchaCode.indexOf(spec[equip][1].charAt(6))]],client.action[client.codeCypher[7][client.captchaCode.indexOf(spec[equip][1].charAt(7))]]];
+    action =[
+	  client.action[client.codeCypher[4][client.captchaCode.indexOf(spec[equip][1].charAt(4))]],
+	  client.action[client.codeCypher[5][client.captchaCode.indexOf(spec[equip][1].charAt(5))]],
+	  client.action[client.codeCypher[6][client.captchaCode.indexOf(spec[equip][1].charAt(6))]],
+	  client.action[client.codeCypher[7][client.captchaCode.indexOf(spec[equip][1].charAt(7))]]];
   }
   //adds default actions based on character type.
   action=action.concat(client.underlings[type].act);

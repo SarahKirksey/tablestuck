@@ -1,5 +1,3 @@
-
-
 //generic room structure: [AREA TYPE,NUMBER OF ROOMS,[[[roomShopPool],{triggerName:[functions]},roomName,roomVisited,[occ],[roomInv]],[room2]]];
 //default empty = [0,1,[[],{},"CLEARING",false,[underlings],[items]]];
 
@@ -19,26 +17,11 @@ const defaultFreeLoot =  [ 0,1,[[[],{"any":["DISTINGUISH"],"onSomeoneEnterRoom":
 const dungeonBossRoom =  [ 8,1,[[[],{"any":["DISTINGUISH"],"onSomeoneEnterRoom":["LOOT_A"]},"BOSS ROOM",false,[],[["BOSS CHEST","y!3IXhgi",1,1,[]]]]]];
 const dungeonRoomLoot =  [10,1,[[[],{"any":["DISTINGUISH"],"onSomeoneEnterRoom":["LOOT_B"]},"DUNGEON ROOM",false,[],[["CHEST","y03wX2Ze",1,1,[]]]]]];
 
-
-
-
-
-
-
 const transportalizerImage = "https://cdn.discordapp.com/attachments/808757312520585227/814690784209010738/TRANSPORTALIZER.png";
-
 
 //lists current bosses and their names in the order they appear.
 const bossList = ["unicorn","kraken","hecatoncheires"];
 const support = ["basilisk","basilisk","basilisk"];
-
-
-
-
-
-
-
-
 
 //this function for rolling 2dx feels like it should be replaced by one function.
 function dubs(x){
