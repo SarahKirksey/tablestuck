@@ -1330,8 +1330,43 @@ else {
           break;
         }
 
-        case "STATUSDROP":
+        case "AMASS": {
+          let scaleFactor = attUnit[PROFILE.SPECIAL]["scaleFactor"]
+          let faction = client.charcall.charData(attUnit[PROFILE.CHARID],"faction");
+          for(let unit = 0; unit<list.length; unit++){
+            if(client.charcall.charData(list[unit][PROFILE.CHARID],"faction") != faction){
+              continue;
+            }
+        
+            if(!list[unit][PROFILE.SPECIAL]){
+              list[unit][PROFILE.SPECIAL] = {};
+            }
+        
+            if(!list[unit][PROFILE.SPECIAL]["royal"]){
+              list[unit][PROFILE.SPECIAL]["royal"] = true;
+              list[unit][PROFILE.SPECIAL]["scaleFactor"] = scaleFactor;
+              list[unit][PROFILE.HEALTH] = list[unit][PROFILE.HEALTH] << scaleFactor;
+            }
+          }
+          break;
+        }
 
+        case "PROTOTYPE": {
+          if(!attUnit[PROFILE.SPECIAL]){
+            attUnit[PROFILE.SPECIAL] = {};
+          }
+        
+          // Save the character's original prototype set, and replace it with the complete prototype set for the entire session
+          attUnit[PROFILE.SPECIAL]["oldProto"] = client.charcall.charData(client, attUnit[PROFILE.CHARID], "prototype");
+          client.charcall.setAnyData(client, message.author.id, attUnit[PROFILE.CHARID], client.landMap.get(sessionID+"medium","prototype"), "prototype");
+          // Activate Royal Power
+          let scaleFactor = client.landMap.get(message.guild.id+"medium","playerList").length;
+          attUnit[PROFILE.SPECIAL]["royal"] = true;
+          attUnit[PROFILE.SPECIAL]["scaleFactor"] = scaleFactor;
+          break;
+        }
+
+        case "STATUSDROP":
           removed = attUnit[STATUS].splice(Math.floor(Math.random()*attUnit[STATUS].length),1);
           alert+=`REMOVED THE ${removed} STATUS EFFECT\n`;
 
@@ -2484,15 +2519,17 @@ function npcTurn(client, message, charid, local){
     }
   }
 
-  // Add actions innate to the create's type
-    tempAct=client.underlings[type].act;
-    for(let i=0;i<tempAct.length;i++){
-      if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].add.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
-        if(!encoreMove || encoreMove == tempAct[i]){
+  // Add actions innate to the creature's type
+  tempAct=client.underlings[type].act;
+  for(let i=0;i<tempAct.length;i++){
+    if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].add.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
+      if(!encoreMove || encoreMove == tempAct[i]){
+        if(tempAct[i] != "amalgamate" || (list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL]["royal"] == true)){
           actionSet.push(tempAct[i]);
-        }
+		}
       }
     }
+  }
 
     let turnTaken = false;
     while(!turnTaken&&actionSet.length>0&&targetList.length>0){
@@ -2603,15 +2640,27 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
 	
 	let actionSet = [];
 	let tempAct;
-	
+	let royalPower = (strifeList[strifePos][PROFILE.SPECIAL] && strifeList[strifePos][PROFILE.SPECIAL]["royal"] == true);
+
 	let encoreMove = list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL].encoreMove;
-	
+
+	// Add actions based on whether the creature has received the boost of Royal Power.
+	if(royalPower){
+		if(type == "king" && !list[init[turn][0]][6].includes("amenage")){
+			actionSet.push("amenage");
+		}
+		actionSet.push("amaze");
+		actionSet.push("amass");
+	}
+
 	// Add actions innate to the creature's type
 	tempAct=client.underlings[type].act;
 	for(let i=0;i<tempAct.length;i++){
 		if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].add.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
 			if(!encoreMove || encoreMove == tempAct[i]){
-				actionSet.push(tempAct[i]);
+				if(!royalPower || tempAct[i] != "amalgamate"){
+					actionSet.push(tempAct[i]);
+				}
 			}
 		}
 	}
@@ -2814,6 +2863,42 @@ function getCharHealth(client, userid, charid){
         gelDiff = Math.floor(gel / 4);
         vit += gelDiff;
         gel += gelDiff;
+      }
+    }
+  }
+
+  let local = client.charcall.allData(client, userid, charid, "local");
+  if(client.underlings[client.charcall.charData(client,charid,"type")].scales == true){
+    let scaleFactor = 0;
+
+    // Passive (out-of-combat) scaling only works on Prospit, Derse, and the Battlefield.
+    if(local[4].includes("medium")){
+      scaleFactor = client.landMap.get(local[4],"playerList").length;
+    }
+
+    vit = vit << scaleFactor;
+    gel = gel << scaleFactor;
+    gelDiff = gelDiff << scaleFactor;
+  }
+
+  if(local && local != "NONE" && client.charcall.charData(client,charid,"strife")==true){
+    let strifeKey = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
+    if(client.strifeMap.has(strifeKey)){
+      let strifeList = client.strifeMap.get(strifeKey, "list");
+      let strifePos;
+      for(let i=0; i<strifeList.length;i++){
+        if(strifeList[i][PROFILE.CHARID] == charid){
+          strifePos = i;
+          vit = strifeList[i][PROFILE.HEALTH];
+          break;
+        }
+      }
+      if(!isNaN(strifePos) && !(client.underlings[client.charcall.charData(client,charid,"type")].scales==true)){
+        if(strifeList[strifePos][PROFILE.SPECIAL] && strifeList[strifePos][PROFILE.SPECIAL]["royal"] == true){
+          let scaleFactor = strifeList[strifePos][PROFILE.SPECIAL]["scaleFactor"];
+          gel = gel << scaleFactor;
+          gelDiff = gelDiff << scaleFactor;
+        }
       }
     }
   }
