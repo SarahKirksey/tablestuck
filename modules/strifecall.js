@@ -1307,6 +1307,20 @@ else {
           strifeEjected = true;
           break;
 
+        case "BOMB": {
+          let npcCount = client.landMap.get(message.guild.id+"medium","npcCount");
+          let newBomb = underSpawn(client, local, "bomb", message.guild.id, npcCount, "royal");
+          let bombProfile = [newBomb[0], newBomb[1], "royal", client.underlings["bomb"].vit, 0, 1, [], []];
+          init.push([list.length,1]);
+          active.push(list.length);
+          list.push(bombProfile);
+
+          client.strifeMap.set(strifeLocal,list,"list");
+          client.strifeMap.set(strifeLocal,init,"init");
+          client.strifeMap.set(strifeLocal,active,"active");
+          break;
+        }
+
         case "STATUSDROP":
 
           removed = attUnit[STATUS].splice(Math.floor(Math.random()*attUnit[STATUS].length),1);
@@ -2328,8 +2342,11 @@ exports.spawn = function(client,message,underling,pregrist = false){
     for(i=0;i<prototype.length;i++){
       undername += prototype[i][0]+` `;
     }
+	if(grist.toUpperCase() != "ROYAL"){
+	  undername = `${grist.toUpperCase()} ${undername}${underling.toUpperCase()}`
+	}
     let npcSet = {
-      name: `${grist.toUpperCase()} ${undername}${underling.toUpperCase()}`,
+      name: undername,
       control:[],
       type: underling,
       faction: "underling",

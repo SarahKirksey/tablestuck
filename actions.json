@@ -836,6 +836,20 @@
     "emoji":[],
     "trans":"AMBUSHES"
   },
+  "amble":{
+    "name" : "AMBLE",
+    "cst"  : 2,
+    "dmg" : 0,
+    "aa": "?!?",
+    "add":["BOMB", "TARGFAV"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : false,
+    "fav" : 0,
+    "att" : true,
+    "emoji":[],
+    "trans":"AMBLES TOWARD"
+  },
   "amplify":{
     "name" : "AMPLIFY",
     "cst"  : 1,
@@ -874,6 +888,19 @@
     "BD"  : false,
     "fav" : 0,
     "att" : true,
+    "emoji":[]
+  },
+  "amuse":{
+    "name" : "AMUSE",
+    "cst"  : 3,
+    "dmg" : 0,
+    "aa": "?!?",
+    "add":["BOMB", "ALLUNFAV"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : false,
+    "fav" : 0,
+    "att" : false,
     "emoji":[]
   },
   "ameliorate":{
