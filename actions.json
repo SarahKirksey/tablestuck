@@ -863,6 +863,19 @@
     "att" : false,
     "emoji":[]
   },
+  "amputate":{
+    "name" : "AMPUTATE",
+    "cst"  : 3,
+    "dmg" : 4,
+    "aa": "REUSE",
+    "add":["REUSE"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : false,
+    "fav" : 0,
+    "att" : true,
+    "emoji":[]
+  },
   "ameliorate":{
     "name" : "AMELIORATE",
     "cst"  : 4,
