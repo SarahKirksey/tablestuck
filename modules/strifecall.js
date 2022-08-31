@@ -19,9 +19,9 @@ const gristTypes = ["build","uranium","amethyst","garnet","iron","marble","chalk
 //  1: The character ID of the unit,
 //  2: The grist type of the unit's armor (or nature, for underlings)
 //  3: Vitality
-//  4: "Baseline" favorability (from what I can see, this is never changed to anything but zero)
+//  4: "Baseline" favorability (from what I can see, this never changed to anything but zero)
 //  5: Stamina
-//  6: List of actions taken so far this turn: Identified by action name for NPCs, and by weapon + index for players.
+//  6: List of actions taken so far this turn
 //  7: List of status effects
 //  8: Special data
 const PROFILE = {
@@ -444,6 +444,7 @@ function leaveStrife(client,message,local,pos,leavemsg = true){
   let active = client.strifeMap.get(strifeLocal,"active");
   let sec = client.landMap.get(local[4],local[0]);
 
+
 //if it's an npc without a controller leaving, it will be deleted from the room.
 if((userid=="NONE"||userid.length<1)&&!list[pos][0]){
 let removed = [active.splice(active.indexOf(pos),1),sec[local[1]][local[2]][2][local[3]][4].splice(sec[local[1]][local[2]][2][local[3]][4].findIndex(occpos => occpos[1] === list[pos][1]),1)];
@@ -454,6 +455,9 @@ if(init[turn][0] == pos){
 }
 return;
 } else {
+  if(active[list[pos]][PROFILE.SPECIAL] && active[list[pos]][PROFILE.SPECIAL]["oldProto"] !== undefined){
+    client.charcall.setAnyData(client,userid[0],charid,active[list[pos]][PROFILE.SPECIAL]["oldProto"],"prototype");
+  }
   players=[];
   for(let i=0;i<active.length;i++){
     if(client.charcall.controlCheck(client,list[active[i]][1])){
@@ -623,7 +627,7 @@ function startTurn(client, message, local) {
   list[init[turn][0]][6]=[];
 
   let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
-  let innateBonus = getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type")["avChance"] || 0;
+  let innateBonus = getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type"))["avChance"] || 0;
   if(trinketBonus[1] === "avChance" && trinketBonus[0] > innateBonus){
     innateBonus = trinketBonus[0];
   }
@@ -998,7 +1002,7 @@ exports.underRally = function(client, message, local) {
       let init = client.strifeMap.get(strifeLocal,"init");
       let active = client.strifeMap.get(strifeLocal,"active");
       let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
-      let initBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,occList[i][1],"type"))["initiative"]) || 0;
+      let initBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,occList[i][1],"type"))["initiative"] || 0;
 
       var pos = list.length;
       client.charcall.setAnyData(client,'-',occList[i][1],pos,"pos");
@@ -1045,6 +1049,9 @@ function act(client,charid,message,local,action,target){
     const STAMIN = 5;
     const STATUS = 7;
 
+    const TRAIT_BONUS_MINIMUM = 1;
+    const SET_BONUS_MINIMUM = 3;
+
     let strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
     //if strife database does not exist, cancel code
     if(!client.strifeMap.has(strifeLocal)){
@@ -1065,7 +1072,6 @@ function act(client,charid,message,local,action,target){
       console.log("stopped an action from a creature out of turn!");
       return;
     }
-
     if(action=="arbitrate"){
       action = actionList[Math.floor(Math.random()*actionList.length)];
     }
@@ -1115,7 +1121,7 @@ function act(client,charid,message,local,action,target){
     //retrieve target grist
     tarGrist = list[target][2];
   } catch(err) {
-    console.log(list[target]);
+    console.log(list[target][1]);
     console.log("THIS IS THE GUY, TAKE HIM OUT");
   }
     let targName = "Target"
@@ -1146,6 +1152,9 @@ else {
 
   attName = client.charcall.charData(client,attUnit[1],"name");
   targName = client.charcall.charData(client,targUnit[1],"name");
+
+  let attTraits = client.traitcall.getTraitSet(client, attUnit[1]);
+  let targTraits = client.traitcall.getTraitSet(client, targUnit[1]);
 
   let brroll;
   let brTier;
@@ -1239,6 +1248,16 @@ else {
     let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
     let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
 
+
+    // Action tags I need to program:
+    //  AMASS
+    //  BOMB
+    //  ENCORE
+    //  PROTOTYPE
+    //  STRIFEEJECT
+    //  BOONLOSS    ?
+    //
+
     let strifeEjected = false;
 
     //check for each action tag that is NONCOMBATIVE
@@ -1262,7 +1281,7 @@ else {
           break;
 
         case "STAMADD":
-          newStam = Math.floor(Math.random() * 4)+1;
+          newStam = Math.ceil(Math.random() * 4);
           attUnit[STAMIN]+= newStam;
           let p;
           for(p=0;p<active.length;p++){
@@ -1271,8 +1290,8 @@ else {
             }
           }
           break;
-        case "STAMADD+":
-          newStam = Math.floor(Math.random() * 8)+1;
+          case "STAMADD+":
+          newStam = Math.ceil(Math.random() * 8);
             attUnit[STAMIN]+= newStam;
             let j;
             for(j=0;j<active.length;j++){
@@ -1375,7 +1394,6 @@ else {
             dmgLvl=2;
           }
           break;
-
         case "ROLLOUT0":
           if(attUnit[STATUS].includes("ROLLOUT0")){
             dmgLvl=1;
@@ -2478,7 +2496,9 @@ function npcTurn(client, message, charid, local){
       targetList.push(active[i]);
     }
   }
-  }
+}
+//randomly decide target from list
+  let target = targetList[Math.floor((Math.random() * targetList.length))];
 
   let actionSet = [];
   let tempAct;
@@ -2594,205 +2614,203 @@ function npcTurn(client, message, charid, local){
 }
 
 function royalNpcTurn(client, message, charid, local, list, turn, init, strifelocal) {
-  let active = client.strifeMap.get(strifeLocal,"active")
-  let type = client.charcall.charData(client,list[init[turn][0]][1],"type");
-  let faction = client.charcall.charData(client,list[init[turn][0]][1],"faction");
-  let spec = client.charcall.charData(client,list[init[turn][0]][1],"spec");
-  let equip = client.charcall.charData(client,list[init[turn][0]][1],"equip");
-  let prototype = client.charcall.charData(client,list[init[turn][0]][1],"prototype");
-  let prefTarg = client.charcall.charData(client,list[init[turn][0]][1],"prefTarg");
-  
-  let prefMove = client.underlings[type].prefMove;
-  
-  let targetList = [];
-  let grappledTargetList = [];
-  let degrappledTargetList = [];
-  let ungrappledTargetList = [];
-  
-  //create a list of targets based on faction reputation.
-  
-  if(prefTarg.length>0&&active.includes(prefTarg[0])){
-    targetList=prefTarg;
-  }
-  else{
-    for(let i=0;i<active.length;i++){
-      if(client.charcall.allData(client,"-",list[active[i]][1],`${faction}Rep`)<0){
-        targetList.push(active[i]);
-        if(list[init[turn][0]][PROFILE.STATUS].contains("GRAPPLE")){
-          grappledTargetList.push(active[i]);
-        }
-        // Don't include any DEGRAP people in the list.
-        else if (!list[init[turn][0]][PROFILE.STATUS].contains("DEGRAP")){
-          ungrappledTargetList.push(active[i]);
-        }
-      }
-    }
-  }
+	let active = client.strifeMap.get(strifeLocal,"active")
+	let type = client.charcall.charData(client,list[init[turn][0]][1],"type");
+	let faction = client.charcall.charData(client,list[init[turn][0]][1],"faction");
+	let spec = client.charcall.charData(client,list[init[turn][0]][1],"spec");
+	let equip = client.charcall.charData(client,list[init[turn][0]][1],"equip");
+	let prototype = client.charcall.charData(client,list[init[turn][0]][1],"prototype");
+	let prefTarg = client.charcall.charData(client,list[init[turn][0]][1],"prefTarg");
+	
+	let prefMove = client.underlings[type].prefMove;
+	
+	let targetList = [];
+	let grappledTargetList = [];
+	let degrappledTargetList = [];
+	let ungrappledTargetList = [];
+	
+	//create a list of targets based on faction reputation.
+	
+	if(prefTarg.length>0&&active.includes(prefTarg[0])){
+		targetList=prefTarg;
+	}
+	else{
+		for(let i=0;i<active.length;i++){
+		if(client.charcall.allData(client,"-",list[active[i]][1],`${faction}Rep`)<0){
+			targetList.push(active[i]);
+			if(list[init[turn][0]][PROFILE.STATUS].contains("GRAPPLE")){
+				grappledTargetList.push(active[i]);
+			}
+			// Don't include any DEGRAP people in the list.
+			else if (!list[init[turn][0]][PROFILE.STATUS].contains("DEGRAP")){
+				ungrappledTargetList.push(active[i]);
+			}
+		}
+	}
+	
+	let actionSet = [];
+	let tempAct;
+	let royalPower = (strifeList[strifePos][PROFILE.SPECIAL] && strifeList[strifePos][PROFILE.SPECIAL]["royal"] == true);
 
-  let actionSet = [];
-  let tempAct;
-  let royalPower = (strifeList[strifePos][PROFILE.SPECIAL] && strifeList[strifePos][PROFILE.SPECIAL]["royal"] == true);
+	let encoreMove = list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL].encoreMove;
 
-  let encoreMove = list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL].encoreMove;
+	// Add actions based on whether the creature has received the boost of Royal Power.
+	if(royalPower){
+		if(type == "king" && !list[init[turn][0]][6].includes("amenage")){
+			actionSet.push("amenage");
+		}
+		actionSet.push("amaze");
+		actionSet.push("amass");
+	}
 
-  // Add actions based on whether the creature has received the boost of Royal Power.
-  if(royalPower){
-    if(type == "king" && !list[init[turn][0]][6].includes("amenage")){
-      actionSet.push("amenage");
-    }
-    actionSet.push("amaze");
-    actionSet.push("amass");
-  }
+	// Add actions innate to the creature's type
+	tempAct=client.underlings[type].act;
+	for(let i=0;i<tempAct.length;i++){
+		if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].add.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
+			if(!encoreMove || encoreMove == tempAct[i]){
+				if(!royalPower || tempAct[i] != "amalgamate"){
+					actionSet.push(tempAct[i]);
+				}
+			}
+		}
+	}
 
-  // Add actions innate to the creature's type
-  tempAct=client.underlings[type].act;
-  for(let i=0;i<tempAct.length;i++){
-    if((!list[init[turn][0]][6].includes(tempAct[i])||(client.actionList[tempAct[i]].add.includes("REUSE")))&&tempAct[i]!="no action"&&tempAct[i]!="abscond"){
-      if(!encoreMove || encoreMove == tempAct[i]){
-        if(!royalPower || tempAct[i] != "amalgamate"){
-          actionSet.push(tempAct[i]);
-        }
-      }
-    }
-  }
+	// Add actions based on the weapon currently equipped, if any
+	if(spec.length>0){
+		for(let i=0;i<4;i++){
+			tempAct = client.action[client.codeCypher[i+4][client.captchaCode.indexOf(spec[equip][1].charAt(i+4))]];
+			if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].add.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
+				if(!encoreMove || encoreMove == tempAct){
+					actionSet.push(tempAct);
+				}
+			}
+		}
+	}
 
-  // Add actions based on the weapon currently equipped, if any
-  if(spec.length>0){
-    for(let i=0;i<4;i++){
-      tempAct = client.action[client.codeCypher[i+4][client.captchaCode.indexOf(spec[equip][1].charAt(i+4))]];
-      if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].add.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
-        if(!encoreMove || encoreMove == tempAct){
-          actionSet.push(tempAct);
-        }
-      }
-    }
-  }
+	// Add actions based on prototypings affecting the creature, if any
+	for(let j =0;j<prototype.length;j++){
+		for(let i=0;i<4;i++){
+			tempAct = client.action[client.codeCypher[i+4][client.captchaCode.indexOf(prototype[j][1].charAt(i+4))]];
+			if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].add.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
+				if(!encoreMove || encoreMove == tempAct){
+					actionSet.push(tempAct);
+				}
+			}
+		}
+	}
 
-  // Add actions based on prototypings affecting the creature, if any
-  for(let j =0;j<prototype.length;j++){
-    for(let i=0;i<4;i++){
-      tempAct = client.action[client.codeCypher[i+4][client.captchaCode.indexOf(prototype[j][1].charAt(i+4))]];
-      if((!list[init[turn][0]][6].includes(tempAct)||(client.actionList[tempAct].add.includes("REUSE")))&&tempAct!="no action"&&tempAct!="abscond"){
-        if(!encoreMove || encoreMove == tempAct){
-          actionSet.push(tempAct);
-        }
-      }
-    }
-  }
+	let turnTaken = false;
+	while(!turnTaken&&actionSet.length>0&&targetList.length>0){
+		if(actionSet.includes(prefMove)){
+			let prefAction=prefMove;
+			let prefActionCost = client.actionList[action].cst;
+			
+			let weightDiscount = client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1] ? 1 : 0;
+			let normalDiscount = (list[init[turn][0]][7].includes("DISCOUNT") ? 1 : 0) + (client.traitcall.traitCheck(client,charid,"MIND")[1] ? 1 : 0);
+			
+			prefActionCost = prefActionCost > 3 ? prefActionCost - weightDiscount : prefActionCost;
+			prefActionCost = Math.max(prefActionCost - normalDiscount, 1);
+			if(prefActionCost > list[init[turn][0]][5]){
+				// Pass the turn.
+				break;
+			}
+			
+			for(let i=0; i<actionSet.indexOf(prefMove); i++){
+				let lcost = client.actionList[action].cst;
+				lcost = lcost > 3 ? lcost - weightDiscount : lcost;
+				lcost = Math.max(lcost - normalDiscount, 1);
+				prefActionCost += lcost;
+				if(prefActionCost > list[init[turn][0]][5]){
+					turnTaken = true;
+					setTimeout(act,1000,client,charid,message,local,action,target);
+					setTimeout(npcTurn,2000,client,message,charid,local);
+					break;
+				}
+			}
+			
+			if(turnTaken){
+				break;
+			}
+			// If we reach this point, that means the royal has enough stamina to perform all the actions up to their preferred move, in order.
+			// Thus, we simply allow the rest of the function to run as normal.
+		}
+	
+		let canUseFirst = list[init[turn][0]][6].length==0 && !(list[turn][6].length == 1 && list[turn][6][0].substring(0,3) === "HAT");
 
-  let turnTaken = false;
-  while(!turnTaken&&actionSet.length>0&&targetList.length>0){
-    if(actionSet.includes(prefMove)){
-      let prefAction=prefMove;
-      let prefActionCost = client.actionList[action].cst;
-      
-      let weightDiscount = client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1] ? 1 : 0;
-      let normalDiscount = (list[init[turn][0]][7].includes("DISCOUNT") ? 1 : 0) + (client.traitcall.traitCheck(client,charid,"MIND")[1] ? 1 : 0);
-      
-      prefActionCost = prefActionCost > 3 ? prefActionCost - weightDiscount : prefActionCost;
-      prefActionCost = Math.max(prefActionCost - normalDiscount, 1);
-      if(prefActionCost > list[init[turn][0]][5]){
-        // Pass the turn.
-        break;
-      }
-      
-      for(let i=0; i<actionSet.indexOf(prefMove); i++){
-        let lcost = client.actionList[action].cst;
-        lcost = lcost > 3 ? lcost - weightDiscount : lcost;
-        lcost = Math.max(lcost - normalDiscount, 1);
-        prefActionCost += lcost;
-        if(prefActionCost > list[init[turn][0]][5]){
-          turnTaken = true;
-          setTimeout(act,1000,client,charid,message,local,action,target);
-          setTimeout(npcTurn,2000,client,message,charid,local);
-          break;
-        }
-      }
-      
-      if(turnTaken){
-        break;
-      }
-      // If we reach this point, that means the royal has enough stamina to perform all the actions up to their preferred move, in order.
-      // Thus, we simply allow the rest of the function to run as normal.
-    }
-  
-    let canUseFirst = list[init[turn][0]][6].length==0 && !(list[turn][6].length == 1 && list[turn][6][0].substring(0,3) === "HAT");
+		let action = actionSet[0];
+	
+		if(actionSet.includes("arrive") || actionSet.includes("ambuscade") || actionSet.includes("ambush")){
+			if(canUseFirst){
+				if(actionSet.includes("ambush")){
+					action = "ambush";
+				}
+				else if(actionSet.includes("ambuscade")){
+					action = "ambuscade";
+				}
+				else{
+					action = "arrive";
+				}
+			}
+			else {
+				while(client.actionList[action].add.includes("FIRST")){
+					actionSet.splice(actionSet.indexOf(action), 1);
+					action = actionSet[0];
+				}
+			}
+		}
+	
+		let lcost = client.actionList[action].cst;
+		if(lcost > 3 && client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1]) { lcost--; }
+		if(lcost > 1 && list[init[turn][0]][7].includes("DISCOUNT")) { lcost--; }
+		if(lcost > 1 && client.traitcall.traitCheck(client,charid,"MIND")[1]) { lcost--; }
+	
+		if(lcost > list[init[turn][0]][5]){
+			actionSet.splice(actionSet.indexOf(action), 1);
+			continue;
+		}
+	
+		list[init[turn][0]][5]-=lcost;
+		list[init[turn][0]][6].push(action);
+		client.strifeMap.set(strifeLocal,list,"list");
+	
+		// Change the target list for actions that are beneficial to teammates.
+		if(action=="arf" || action=="amuse" || action=="ameliorate" || action=="amend" || action=="adumbrate"){
+			targetList=[];
+			grappledTargetList=[];
+			ungrappledTargetList=[];
+			for(let i=0;i<active.length;i++){
+				if(client.charcall.allData(client,"-",list[active[i]][1],`${faction}Rep`)>=0){
+					targetList.push(active[i]);
+				}
+			}
 
-    let action = actionSet[0];
+			if(targetList.length<1){
+				targetList.push(init[turn][0]);
+			}
+		
+			target = targetList[Math.floor((Math.random() * targetList.length))];
+		}
+		
+		if(client.actionList[action].add.includes("GRAPPLE") && ungrappledTargetList.length > 0){
+			targetList = ungrappledTargetList;
+		}
+		else if(!client.actionList[action].add.includes("GRAPPLE") && grappledTargetList.length > 0){
+			targetList = grappledTargetList;
+		}
 
-    if(actionSet.includes("arrive") || actionSet.includes("ambuscade") || actionSet.includes("ambush")){
-      if(canUseFirst){
-        if(actionSet.includes("ambush")){
-          action = "ambush";
-        }
-        else if(actionSet.includes("ambuscade")){
-          action = "ambuscade";
-        }
-        else{
-          action = "arrive";
-        }
-      }
-      else {
-        while(client.actionList[action].add.includes("FIRST")){
-          actionSet.splice(actionSet.indexOf(action), 1);
-          action = actionSet[0];
-        }
-      }
-    }
-  
-    let lcost = client.actionList[action].cst;
-    if(lcost > 3 && client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1]) { lcost--; }
-    if(lcost > 1 && list[init[turn][0]][7].includes("DISCOUNT")) { lcost--; }
-    if(lcost > 1 && client.traitcall.traitCheck(client,charid,"MIND")[1]) { lcost--; }
-  
-    if(lcost > list[init[turn][0]][5]){
-      actionSet.splice(actionSet.indexOf(action), 1);
-      continue;
-    }
-  
-    list[init[turn][0]][5]-=lcost;
-    list[init[turn][0]][6].push(action);
-    client.strifeMap.set(strifeLocal,list,"list");
-  
-    // Change the target list for actions that are beneficial to teammates.
-    if(action=="arf" || action=="amuse" || action=="ameliorate" || action=="amend" || action=="adumbrate"){
-      targetList=[];
-      grappledTargetList=[];
-      ungrappledTargetList=[];
-      for(let i=0;i<active.length;i++){
-        if(client.charcall.allData(client,"-",list[active[i]][1],`${faction}Rep`)>=0){
-          targetList.push(active[i]);
-        }
-      }
+		// Randomly choose a target from the list
+		let target = targetList[Math.floor((Math.random() * targetList.length))];
 
-      if(targetList.length<1){
-        targetList.push(init[turn][0]);
-      }
-    
-      target = targetList[Math.floor((Math.random() * targetList.length))];
-    }
-    // Prioritize grappling people who aren't already grappled
-    else if(client.actionList[action].add.includes("GRAPPLE") && ungrappledTargetList.length > 0){
-      targetList = ungrappledTargetList;
-    }
-    // Prioritize attacking people who ARE grappled
-    else if(!client.actionList[action].add.includes("GRAPPLE") && grappledTargetList.length > 0){
-      targetList = grappledTargetList;
-    }
-
-    // Randomly choose a target from the list
-    let target = targetList[Math.floor((Math.random() * targetList.length))];
-
-    turnTaken = true;
-    setTimeout(act,1000,client,charid,message,local,action,target);
-  }
-  
-  if(turnTaken){
-    setTimeout(npcTurn,2000,client,message,charid,local);
-  }
-  else{
-    setTimeout(passTurn,1000,client,charid,message,local);
-  }
+		turnTaken = true;
+		setTimeout(act,1000,client,charid,message,local,action,target);
+	}
+	
+	if(turnTaken){
+		setTimeout(npcTurn,2000,client,message,charid,local);
+	}
+	else{
+		setTimeout(passTurn,1000,client,charid,message,local);
+	}
 }
 
 function strifeList(client,local,active,list,turn,init,charid,page,title){
