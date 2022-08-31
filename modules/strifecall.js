@@ -1316,6 +1316,7 @@ else {
 
         case "DEGRAP":
           list[init[turn][0]][7].push("DEGRAP");
+          break;
 
         // ABJURE
         case "SCALEDMG":
