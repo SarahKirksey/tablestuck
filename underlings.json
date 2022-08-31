@@ -255,7 +255,8 @@
     "act":["amnesty", "ameliorate", "amend", "abscond"],
     "stats":[0,0,0,0,0,0],
     "xp":1000,
-    "naturalbonus":{"accuracy":4, "avChance":4, "initiative":8}
+    "naturalbonus":{"accuracy":4, "avChance":4, "initiative":8},
+    "ai":"royal"
   },
   "Hegemonic Brute":{
     "stm":10,
@@ -264,22 +265,24 @@
     "prefMove":"none",
     "d":200,
     "bd":[10,60],
-    "act":["amputate", "ambuscade", "amortize", "abscond"],
+    "act":["ambuscade", "amortize", "amputate", "abscond"],
     "stats":[0,0,0,0,0,0],
     "xp":1000,
-    "naturalbonus":{"accuracy":2, "avChance":4, "initiative":0}
+    "naturalbonus":{"accuracy":2, "avChance":4, "initiative":0},
+    "ai":"royal"
   },
   "Sovereign Slayer":{
     "stm":10,
     "vit":400,
     "av":12,
-    "prefMove":"none",
+    "prefMove":"amount",
     "d":200,
     "bd":[4,48],
-    "act":["ambush", "amplify", "amount", "abscond"],
+    "act":["ambush", "amount", "amplify", "abscond"],
     "stats":[0,0,0,0,0,0],
     "xp":1000,
-    "naturalbonus":{"accuracy":8, "avChance":4, "initiative":4}
+    "naturalbonus":{"accuracy":8, "avChance":4, "initiative":4},
+    "ai":"royal"
   },
   "queen":{
     "stm":4,
@@ -291,7 +294,9 @@
     "act":["amalgamate","abscond"],
     "stats":[0,0,0,0,0,0],
     "xp":9001,
-    "naturalbonus":{"accuracy":4, "avChance":5, "initiative":10}
+    "naturalbonus":{"accuracy":4, "avChance":5, "initiative":10},
+    "ai":"royal",
+    "scales":true
   },
   "king":{
     "stm":4,
@@ -303,7 +308,9 @@
     "act":["amalgamate","abscond"],
     "stats":[0,0,0,0,0,0],
     "xp":10230,
-    "naturalbonus":{"accuracy":6, "avChance":5, "initiative":10}
+    "naturalbonus":{"accuracy":6, "avChance":5, "initiative":10},
+    "ai":"royal",
+    "scales":true
   },
   "bomb":{
     "stm":4,
