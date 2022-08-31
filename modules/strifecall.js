@@ -2064,20 +2064,28 @@ if(aa.includes("RANDSTATUS")){
         if(alert.length==0){
           alert=`NONE`;
         }
+        
+        let embedTitle = `${attName.toUpperCase()} `;
+        if(client.actionList[action].trans){
+          embedTitle += `${client.actionList[action].trans} ${targName.toUpperCase()}!`;
+        }
+        else{
+          embedTitle += `${client.actionList[action].name}S ${targName.toUpperCase()}!`;
+        }
         let embed = new client.MessageEmbed()
-        .setTitle(`${attName.toUpperCase()} ${client.actionList[action].name}S ${targName.toUpperCase()}!`)
-    .addFields(
-      {name:'CST',value:costMsg,inline:true},
-      {name:'DMG',value:`${(dmg * dmgLvl)}`,inline:true},
-      {name:"ADDITIONAL ACTION",value:client.actionList[action].aa},
-      {name:"STRIKE",value:strikeMsg,inline:true},
-      {name:"TARGET AV",value:av.toString(),inline:true},
-      {name:"HIT",value:`${effective}`},
-      {name:"DAMAGE",value:damagemsg,inline:true},
-      {name:"ADDITIONAL ALERTS",value:alert}
-    )
-        .setColor(client.actionList[action].col)
-        .setImage(client.actionList[action].img);
+          .setTitle(embedTitle)
+          .addFields(
+            {name:'CST',value:costMsg,inline:true},
+            {name:'DMG',value:`${(dmg * dmgLvl)}`,inline:true},
+            {name:"ADDITIONAL ACTION",value:client.actionList[action].aa},
+            {name:"STRIKE",value:strikeMsg,inline:true},
+            {name:"TARGET AV",value:av.toString(),inline:true},
+            {name:"HIT",value:`${effective}`},
+            {name:"DAMAGE",value:damagemsg,inline:true},
+            {name:"ADDITIONAL ALERTS",value:alert}
+          )
+          .setColor(client.actionList[action].col)
+          .setImage(client.actionList[action].img);
 
     for(i=0;i<active.length;i++){
       if(client.charcall.controlCheck(client,list[active[i]][0])){
@@ -2115,8 +2123,15 @@ if(aa.includes("RANDSTATUS")){
       alert=`NONE`;
     }
 
+    let embedTitle = `${attName.toUpperCase()} `;
+    if(client.actionList[action].trans){
+      embedTitle += `${client.actionList[action].trans} ${targName.toUpperCase()}!`;
+    }
+    else{
+      embedTitle += `${client.actionList[action].name}S ${targName.toUpperCase()}!`;
+    }
     let embed = new client.MessageEmbed()
-      .setTitle(`${attName.toUpperCase()} ${client.actionList[action].name}S ${targName.toUpperCase()}!`)
+      .setTitle(embedTitle)
       .addFields(
         {name:'CST',value:costMsg,inline:true},
         {name:'DMG',value:`${(dmg * dmgLvl)}`,inline:true},
@@ -2142,8 +2157,15 @@ else {
       alert=`NONE`;
     }
 
+    let embedTitle = `${attName.toUpperCase()} `;
+    if(client.actionList[action].trans){
+      embedTitle += `${client.actionList[action].trans} ${targName.toUpperCase()}!`;
+    }
+    else{
+      embedTitle += `${client.actionList[action].name}S ${targName.toUpperCase()}!`;
+    }
     let embed = new client.MessageEmbed()
-    .setTitle(`${attName.toUpperCase()} ${client.actionList[action].name}S ${targName.toUpperCase()}!`)
+    .setTitle(embedTitle)
     .addFields(
       {name:'CST',value:costMsg,inline:true},
       {name:'DMG',value:`${(dmg * dmgLvl)}`,inline:true},
