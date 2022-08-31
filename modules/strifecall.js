@@ -623,9 +623,13 @@ function startTurn(client, message, local) {
   list[init[turn][0]][6]=[];
 
   let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
+  let innateBonus = getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type")["avChance"] || 0;
+  if(trinketBonus[1] === "avChance" && trinketBonus[0] > innateBonus){
+    innateBonus = trinketBonus[0];
+  }
   // 50% chance for the bonus AV to trigger for the round.
-  if(trinketBonus[1] === "avChance" && Math.random() < 0.5){
-      list[init[turn][0]][PROFILE.ACTION].push(`HAT${trinketBonus[0]}`);
+  if(innateBonus > 0 && Math.random() < 0.5){
+      list[init[turn][0]][PROFILE.ACTION].push(`HAT${innateBonus}`);
   }
 
   let stamina;
@@ -994,13 +998,16 @@ exports.underRally = function(client, message, local) {
       let init = client.strifeMap.get(strifeLocal,"init");
       let active = client.strifeMap.get(strifeLocal,"active");
       let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
+      let initBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,occList[i][1],"type"))["initiative"]) || 0;
 
       var pos = list.length;
       client.charcall.setAnyData(client,'-',occList[i][1],pos,"pos");
+
       let initRoll = [pos, Math.floor((Math.random() * 20) + 1)];
-      if(trinketBonus[1] === "initiative"){
-        initRoll += trinketBonus[0];
+      if(trinketBonus[1] === "initiative" && trinketBonus[0] > initBonus){
+        initBonus = trinketBonus[0];
       }
+      initRoll += initBonus;
 
       list.push(profile);
       active.push(pos);
@@ -1222,9 +1229,11 @@ else {
 }
 
     let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client,attUnit[1],"trinket")[0]);
-    if(trinketBonus[1] === "accuracy"){
-        strikeBonus += trinketBonus[0];
+    let underBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,attUnit[1],"type"))["accuracy"] || 0;
+    if(trinketBonus[1] === "accuracy" && trinketBonus[0] > underBonus){
+      underBonus = trinketBonus[0];
     }
+    strikeBonus += trinketBonus[0];
 
     let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
     let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
@@ -2275,26 +2284,15 @@ exports.getBonusFromTrinket = function(client, message, trinket){
     return getBonusFromTrinket(client, message, trinket);
 }
 
+function getBonusFromUnderling(client, message, type){
+    let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
-/*
-            if(list[target][7].includes("BURN")){
-              setTimeout(act,3000,client,message,local,"astound",target);
-              setTimeout(act,6000,client,message,local,"absorb",target);
-              setTimeout(passTurn,9000,client,message,local);
-            } else {
-              setTimeout(act,3000,client,message,local,"arsonate",target);
-              setTimeout(act,6000,client,message,local,"astound",target);
-              setTimeout(passTurn,9000,client,message,local);
-            }
-            break;
-          }
-        break;
+    if(trinketSetting !== 0 && trinketSetting != "NONE"){
+        return client.underlings[type].naturalbonus;
     }
-  } catch(err){
 
-  }
-}*/
-
+    return {"accuracy":0, "avChance":0, "initiative":0};
+}
 
 exports.spawn = function(client,message,underling,pregrist = false){
   let charid = client.userMap.get(message.guild.id.concat(message.author.id),"possess");
