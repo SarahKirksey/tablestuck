@@ -834,6 +834,7 @@
     "fav" : 0,
     "att" : true,
     "emoji":[],
+    "trans":"AMBUSHES"
   },
   "amplify":{
     "name" : "AMPLIFY",
@@ -847,6 +848,7 @@
     "fav" : 0,
     "att" : true,
     "emoji":[],
+    "trans":"AMPLIFIES"
   },
   "amount":{
     "name" : "AMOUNT",
@@ -939,6 +941,7 @@
     "fav" : 0,
     "att" : true,
     "emoji":[],
+    "trans":"ADDRESSES"
   },
   "adaunt":{
     "name" : "ADAUNT",
