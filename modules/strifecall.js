@@ -1115,7 +1115,7 @@ function act(client,charid,message,local,action,target){
     //retrieve target grist
     tarGrist = list[target][2];
   } catch(err) {
-    console.log(list[target][1]);
+    console.log(list[target]);
     console.log("THIS IS THE GUY, TAKE HIM OUT");
   }
     let targName = "Target"
@@ -1262,7 +1262,7 @@ else {
           break;
 
         case "STAMADD":
-          newStam = Math.ceil(Math.random() * 4);
+          newStam = Math.floor(Math.random() * 4)+1;
           attUnit[STAMIN]+= newStam;
           let p;
           for(p=0;p<active.length;p++){
@@ -1271,8 +1271,8 @@ else {
             }
           }
           break;
-          case "STAMADD+":
-          newStam = Math.ceil(Math.random() * 8);
+        case "STAMADD+":
+          newStam = Math.floor(Math.random() * 8)+1;
             attUnit[STAMIN]+= newStam;
             let j;
             for(j=0;j<active.length;j++){
