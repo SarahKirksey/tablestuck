@@ -23,6 +23,9 @@ exports.run = (client, message, args) => {
   return;
   }
   case "bf": {
+    if(!client.landMap.get(`${message.guild.id}medium`)["bf"]){
+      client.landMap.set(`${message.guild.id}medium`, "bf", client.landcall.battlefieldGen(client,message));
+    }
     if(!occset[0]&&args[1]!="confirm"){
       message.channel.send(`Careful, NPCs can't come back from the battlefield easily right now! do ${client.auth.prefix}tp bf confirm to go there anyways!`);
       return;
