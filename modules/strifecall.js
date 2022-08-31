@@ -1239,6 +1239,8 @@ else {
     //  BOONLOSS    ?
     //
 
+    let strifeEjected = false;
+
     //check for each action tag that is NONCOMBATIVE
     //PRE-ROLL ACT
     let pre;
@@ -1299,6 +1301,10 @@ else {
 
         case "CLEARSTATUS":
           targUnit[STATUS]=[];
+          break;
+
+        case "STRIFEEJECT":
+          strifeEjected = true;
           break;
 
         case "STATUSDROP":
@@ -1542,6 +1548,16 @@ if(strikeBonus<0){
 
 
   if((strikeCheck+strikeBonus)>av){
+
+    // Target is being hit with AMENAGE
+    if(strifeEjected && aa.includes("TELEPORT")){
+      setTimeout(leaveStrife,1000,client,message,local,target,false);
+	  let targLocal = local.slice();
+	  targLocal[1] = client.randcall.randLessThan(11);
+	  targLocal[2] = client.randcall.randLessThan(11);
+      setTimeout(client.funcall.move,1500,client,message,targUnit[PROFILE.CHARID],local,targLocal,true,"","suddenly in");
+	  // Don't return early because AMENAGE still deals damage.
+    }
 
     if(aa.includes("AUTOCRIT")){
       strikeCheck=20;
@@ -2154,8 +2170,12 @@ if(aa.includes("RANDSTATUS")){
   }
 
 }
+//if att is false
 else {
-    //if att is false
+    // Target was hit by AMNESTY
+    if(strifeEjected){
+      setTimeout(leaveStrife,1000,client,message,local,target,true);
+    }
 
     if(alert.length==0){
       alert=`NONE`;

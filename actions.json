@@ -915,6 +915,33 @@
     "att" : true,
     "emoji":[]
   },
+  "amnesty":{
+    "name" : "AMNESTY",
+    "cst"  : 6,
+    "dmg" : 0,
+    "aa": "REMOVES TARGET FROM STRIFE.",
+    "add":["STRIFEEJECT"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : false,
+    "fav" : 0,
+    "att" : false,
+    "emoji":[],
+    "trans":"AMNESTIES"
+  },
+  "amenage":{
+    "name" : "AMENAGE",
+    "cst"  : 4,
+    "dmg" : 3,
+    "aa": "STRIKES THE TARGET WITH SKAIA ITSELF!",
+    "add":["STRIFEEJECT", "TELEPORT"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : false,
+    "fav" : 0,
+    "att" : true,
+    "emoji":[]
+  },
   "amen":{
     "name" : "AMEN",
     "cst"  : 3,
