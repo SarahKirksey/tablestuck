@@ -19,9 +19,9 @@ const gristTypes = ["build","uranium","amethyst","garnet","iron","marble","chalk
 //  1: The character ID of the unit,
 //  2: The grist type of the unit's armor (or nature, for underlings)
 //  3: Vitality
-//  4: "Baseline" favorability (from what I can see, this never changed to anything but zero)
+//  4: "Baseline" favorability (from what I can see, this is never changed to anything but zero)
 //  5: Stamina
-//  6: List of actions taken so far this turn
+//  6: List of actions taken so far this turn: Identified by action name for NPCs, and by weapon + index for players.
 //  7: List of status effects
 //  8: Special data
 const PROFILE = {
@@ -1238,16 +1238,6 @@ else {
 
     let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
     let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
-
-
-    // Action tags I need to program:
-    //  AMASS
-    //  BOMB
-    //  ENCORE
-    //  PROTOTYPE
-    //  STRIFEEJECT
-    //  BOONLOSS    ?
-    //
 
     let strifeEjected = false;
 
@@ -2488,9 +2478,7 @@ function npcTurn(client, message, charid, local){
       targetList.push(active[i]);
     }
   }
-}
-//randomly decide target from list
-  let target = targetList[Math.floor((Math.random() * targetList.length))];
+  }
 
   let actionSet = [];
   let tempAct;
