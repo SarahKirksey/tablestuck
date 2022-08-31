@@ -863,12 +863,38 @@
     "att" : false,
     "emoji":[]
   },
+  "ameliorate":{
+    "name" : "AMELIORATE",
+    "cst"  : 4,
+    "dmg" : 0,
+    "aa": "?!?",
+    "add":["BLOCK", "STATUSIMMUNE"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : false,
+    "fav" : 0,
+    "att" : false,
+    "emoji":[]
+  },
   "ambuscade":{
     "name" : "AMBUSCADE",
     "cst"  : 2,
     "dmg" : 0,
     "aa": "MUST BE FIRST ACTION USED ON TURN, FAVORABLE, GRAPPLE TARGET",
     "add":["FIRST","GRAPPLE","FAV"],
+    "col": "0xAD3232",
+    "img" : "",
+    "BD"  : false,
+    "fav" : 1,
+    "att" : true,
+    "emoji":[]
+  },
+  "amend":{
+    "name" : "AMEND",
+    "cst"  : 6,
+    "dmg" : 2,
+    "aa": "CLEAR ALL STATUS EFFECTS AND HEAL TARGET",
+    "add":["CLEARSTATUS", "HEAL", "FAV"],
     "col": "0xAD3232",
     "img" : "",
     "BD"  : false,

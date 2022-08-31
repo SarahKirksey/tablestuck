@@ -1254,7 +1254,6 @@ else {
         case "CARRY":
         case "ALLBD":
         case "ALLFAV":
-        case "ALLUNFAV":
         case "NEXTFAV":
         case "STAMFAV":
           attUnit[STATUS].push(aa[pre]);
@@ -1280,23 +1279,28 @@ else {
               }
             }
             break;
+
+        case "ALLUNFAV":
+        case "BLOCK":
         case "PROTECT":
-          targUnit[STATUS].push("PROTECT");
+          targUnit[STATUS].push(aa[pre]);
           break;
+
         case "DISCOUNT":
         case "STATUSIMMUNE":
         case "NEXTBD":
         case "AV":
         case "DEFLECT":
         case "DEFROST":
-        case "BLOCK":
         case "GRISTINVERT":
         case "DEGRAP":
           attUnit[STATUS].push(aa[pre]);
           break;
+
         case "CLEARSTATUS":
-          attUnit[STATUS]=[];
+          targUnit[STATUS]=[];
           break;
+
         case "STATUSDROP":
 
           removed = attUnit[STATUS].splice(Math.floor(Math.random()*attUnit[STATUS].length),1);
@@ -2209,7 +2213,6 @@ if(list[active[ik]][3] < 1){
   }
 
 
-
 function getBonusFromTrinket(client, message, trinket){
     let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
@@ -2232,7 +2235,6 @@ function getBonusFromTrinket(client, message, trinket){
     }
     return [0, "none"];
 }
-
 
 exports.getBonusFromTrinket = function(client, message, trinket){
     return getBonusFromTrinket(client, message, trinket);
@@ -2493,20 +2495,26 @@ function npcTurn(client, message, charid, local){
       list[init[turn][0]][6].push(action);
       client.strifeMap.set(strifeLocal,list,"list");
 
-      if(action=="arf"){
+      //randomly decide target from list
+      let target = targetList[Math.floor((Math.random() * targetList.length))];
+
+      if(action=="arf" || action=="amuse" || action=="ameliorate" || action=="amend" || action=="adumbrate"){
         targetList=[];
         for(let i=0;i<active.length;i++){
           if(client.charcall.allData(client,"-",list[active[i]][1],`${faction}Rep`)>=0){
             targetList.push(active[i]);
           }
-
         }
+
         if(targetList.length<1){
           targetList.push(init[turn][0]);
         }
         target = targetList[Math.floor((Math.random() * targetList.length))];
 
       }
+	  else if(client.actionList[action].att == false){
+		target = active[0];
+	  }
       turnTaken = true;
       setTimeout(act,1000,client,charid,message,local,action,target)
 
