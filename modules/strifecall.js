@@ -455,8 +455,8 @@ if(init[turn][0] == pos){
 }
 return;
 } else {
-  if(active[list[pos]][PROFILE.SPECIAL] && active[list[pos]][PROFILE.SPECIAL]["oldProto"] !== undefined){
-    client.charcall.setAnyData(client,userid[0],charid,active[list[pos]][PROFILE.SPECIAL]["oldProto"],"prototype");
+  if(list[pos][PROFILE.SPECIAL] && list[pos][PROFILE.SPECIAL]["oldProto"] !== undefined){
+    client.charcall.setAnyData(client,userid[0],charid,list[pos][PROFILE.SPECIAL]["oldProto"],"prototype");
   }
   players=[];
   for(let i=0;i<active.length;i++){
@@ -627,7 +627,10 @@ function startTurn(client, message, local) {
   list[init[turn][0]][6]=[];
 
   let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
-  let innateBonus = getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type"))["avChance"] || 0;
+  let innateBonus = parseInt(getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type"))["avChance"], 10) || 0;
+  if(isNaN(trinketBonus[0])){
+    trinketBonus[0] = parseInt(trinketBonus[0], 10) || 0;
+  }
   if(trinketBonus[1] === "avChance" && trinketBonus[0] > innateBonus){
     innateBonus = trinketBonus[0];
   }
@@ -1002,16 +1005,21 @@ exports.underRally = function(client, message, local) {
       let init = client.strifeMap.get(strifeLocal,"init");
       let active = client.strifeMap.get(strifeLocal,"active");
       let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
-      let initBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,occList[i][1],"type"))["initiative"] || 0;
+      let initBonus = parseInt(getBonusFromUnderling(client, message, client.charcall.charData(client,occList[i][1],"type"))["initiative"], 10) || 0;
 
       var pos = list.length;
       client.charcall.setAnyData(client,'-',occList[i][1],pos,"pos");
 
       let initRoll = [pos, Math.floor((Math.random() * 20) + 1)];
-      if(trinketBonus[1] === "initiative" && trinketBonus[0] > initBonus){
+      if(isNaN(initBonus)){
+        initBonus = 0;
+      }
+      if(trinketBonus[1] === "initiative" && !isNaN(trinketBonus[0]) && trinketBonus[0] > initBonus){
         initBonus = trinketBonus[0];
       }
-      initRoll += initBonus;
+      if(!isNaN(initBonus) && initBonus > 0){
+        initRoll += initBonus;
+      }
 
       list.push(profile);
       active.push(pos);
@@ -1240,11 +1248,14 @@ else {
 }
 
     let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client,attUnit[1],"trinket")[0]);
-    let underBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,attUnit[1],"type"))["accuracy"] || 0;
+    let underBonus = parseInt(getBonusFromUnderling(client, message, client.charcall.charData(client,attUnit[1],"type"))["accuracy"], 10) || 0;
+    if(isNaN(trinketBonus[0])){
+      trinketBonus[0] = parseInt(trinketBonus[0], 10) || 0;
+    }
     if(trinketBonus[1] === "accuracy" && trinketBonus[0] > underBonus){
       underBonus = trinketBonus[0];
     }
-    strikeBonus += trinketBonus[0];
+    strikeBonus += underBonus;
 
     let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
     let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
@@ -1613,11 +1624,11 @@ if(strikeBonus<0){
     // Target is being hit with AMENAGE
     if(strifeEjected && aa.includes("TELEPORT")){
       setTimeout(leaveStrife,1000,client,message,local,target,false);
-	  let targLocal = local.slice();
-	  targLocal[1] = client.randcall.randLessThan(11);
-	  targLocal[2] = client.randcall.randLessThan(11);
+      let targLocal = local.slice();
+      targLocal[1] = client.randcall.randLessThan(11);
+      targLocal[2] = client.randcall.randLessThan(11);
       setTimeout(client.funcall.move,1500,client,message,targUnit[PROFILE.CHARID],local,targLocal,true,"","suddenly in");
-	  // Don't return early because AMENAGE still deals damage.
+      // Don't return early because AMENAGE still deals damage.
     }
 
     if(aa.includes("AUTOCRIT")){
@@ -2377,9 +2388,9 @@ exports.spawn = function(client,message,underling,pregrist = false){
     for(i=0;i<prototype.length;i++){
       undername += prototype[i][0]+` `;
     }
-	if(grist.toUpperCase() != "ROYAL"){
-	  undername = `${grist.toUpperCase()} ${undername}${underling.toUpperCase()}`
-	}
+    if(grist.toUpperCase() != "ROYAL"){
+      undername = `${grist.toUpperCase()} ${undername}${underling.toUpperCase()}`
+    }
     let npcSet = {
       name: undername,
       control:[],
@@ -2461,6 +2472,7 @@ function npcTurn(client, message, charid, local){
   let init = client.strifeMap.get(strifeLocal,"init")
 
   if(!list[init[turn][0]][0]&&list[init[turn][0]][3]>0){
+  let type = client.charcall.charData(client,list[init[turn][0]][1],"type");
     if(client.underlings[type].ai && client.underlings[type].ai == "royal"){
       royalNpcTurn(client, message, charid, local, list, turn, init, strifelocal);
       return;
@@ -2469,7 +2481,6 @@ function npcTurn(client, message, charid, local){
   let faction = client.charcall.charData(client,list[init[turn][0]][1],"faction");
   let spec = client.charcall.charData(client,list[init[turn][0]][1],"spec");
   let equip = client.charcall.charData(client,list[init[turn][0]][1],"equip");
-  let type = client.charcall.charData(client,list[init[turn][0]][1],"type");
   let prototype = client.charcall.charData(client,list[init[turn][0]][1],"prototype");
   let prefTarg = client.charcall.charData(client,list[init[turn][0]][1],"prefTarg");
 
@@ -2526,7 +2537,7 @@ function npcTurn(client, message, charid, local){
       if(!encoreMove || encoreMove == tempAct[i]){
         if(tempAct[i] != "amalgamate" || (list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL]["royal"] == true)){
           actionSet.push(tempAct[i]);
-		}
+        }
       }
     }
   }
@@ -2579,9 +2590,9 @@ function npcTurn(client, message, charid, local){
 
         target = targetList[Math.floor((Math.random() * targetList.length))];
       }
-	  else if(client.actionList[action].att == false){
-		target = active[0];
-	  }
+      else if(client.actionList[action].att == false){
+        target = active[0];
+      }
       turnTaken = true;
       setTimeout(act,1000,client,charid,message,local,action,target)
 
