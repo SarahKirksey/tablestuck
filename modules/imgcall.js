@@ -568,7 +568,7 @@ exports.alchCheck = async function (client, message, page, args, sdex, priceSet 
   let scheme = ["#992445","#0c6137","#992ae1","#484848","#245cb2"];
   let typeList = ["sylladex","strife specibus","container","room inventory"];
   let cardList = ["captchalogue cards","strife cards","storage space","room space"]
-  let maxPage = Math.floor(cards/10);
+  let maxPage = Math.ceil(cards/10)-1;
   let type = 3;
 
 //set background
@@ -726,7 +726,7 @@ exports.alchCheckFiltered = async function (client, message, page, args, sdex, p
   let scheme = ["#992445","#0c6137","#992ae1","#484848","#245cb2"];
   let typeList = ["sylladex","strife specibus","container","room inventory"];
   let cardList = ["captchalogue cards","strife cards","storage space","room space"]
-  let maxPage = Math.floor(numbers.length/ITEMS_PER_PAGE);
+  let maxPage = Math.ceil(numbers.length/ITEMS_PER_PAGE)-1;
   let type = 3;
 
 //set background
