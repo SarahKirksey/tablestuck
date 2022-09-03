@@ -22,7 +22,7 @@ exports.run = (client, message, args) => {
   let pos = client.charcall.charData(client,charid,"pos");
   let type = client.charcall.charData(client,charid,"type");
   let spec = client.charcall.charData(client,charid,"spec");
-  let trinkets = client.charcall.charData(client,charid,"trinket")[0];
+  let trinket = client.charcall.charData(client,charid,"trinket")[0];
   let equip = client.charcall.charData(client,charid,"equip");
   let damage = client.underlings[client.charcall.charData(client,charid,"type")].d;
   //gets all strife data
