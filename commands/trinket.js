@@ -19,12 +19,11 @@ exports.run = (client, message, args) => {
   if(!args[0] || args[0].toLowerCase() == "inspect"){
 
     let msg1;
-    let msg2;
+    let msg;
 
     if(trinket.length==0){
 
       let weaponkind = "N/A";
-      let gristType = "artifact";
       let trait1 = "NONE";
       let trait2 = "NONE";
 
@@ -35,27 +34,31 @@ exports.run = (client, message, args) => {
       inspectItem = new client.MessageEmbed()
       .setTitle(`**NO TRINKET EQUIPPED**`)
 
-    } else {
-
-      let weaponkind = client.kind[client.codeCypher[0][client.captchaCode.indexOf(trinket[0][1].charAt(0))]];
-      let gristType = client.gristTypes[client.codeCypher[1][client.captchaCode.indexOf(trinket[0][1].charAt(1))]];
-      let trait1 = client.traitList[client.captchaCode.indexOf(trinket[0][1].charAt(2))];
-      let trait2 = client.traitList2[client.captchaCode.indexOf(trinket[0][1].charAt(3))];
-
-      msg = `**TIER -** ${trinket[0][2]}  **  QTY -** ${trinket[0][3]}\n**KIND - **${weaponkind.toUpperCase()}`
-
-      msg1 = `**TRAIT 1 -** ${trait1}\n\n**TRAIT 2 -** ${trait2}`;
-
-      inspectItem = new client.MessageEmbed()
-      .setTitle(`**${trinket[0][0]}**`)
-
     }
-    inspectItem.addFields(
-        {name:`**ITEM INFORMATION**`,value:msg},
-        {name:`**ITEM TRAITS**`,value:msg1}
-    );
-    message.channel.send({embeds:[inspectItem]});
-    return;
+    else{
+      if(client.invcall.isItemQueenRing(trinket[0])){
+        msg = `**TIER -** ??  **  QTY -** ${trinket[0][3]}\n**KIND - **RINGKIND`;
+        msg1 = `**TRAIT 1 -** ROYAL\n\n**TRAIT 2 -** ROYAL`;
+      }
+      else {
+
+        let weaponkind = client.kind[client.codeCypher[0][client.captchaCode.indexOf(trinket[0][1].charAt(0))]];
+        let trait1 = client.traitList[client.captchaCode.indexOf(trinket[0][1].charAt(2))];
+        let trait2 = client.traitList2[client.captchaCode.indexOf(trinket[0][1].charAt(3))];
+
+        msg = `**TIER -** ${trinket[0][2]}  **  QTY -** ${trinket[0][3]}\n**KIND - **${weaponkind.toUpperCase()}`
+        msg1 = `**TRAIT 1 -** ${trait1}\n\n**TRAIT 2 -** ${trait2}`;
+
+      }
+
+      inspectItem = new client.MessageEmbed().setTitle(`**${trinket[0][0]}**`);
+      inspectItem.addFields(
+          {name:`**ITEM INFORMATION**`,value:msg},
+          {name:`**ITEM TRAITS**`,value:msg1}
+      );
+      message.channel.send({embeds:[inspectItem]});
+      return;
+    }
   }
 
   args[0] = args[0].toLowerCase();
@@ -154,7 +157,7 @@ exports.run = (client, message, args) => {
 
     //if selected item is not trinketkind, cancel command
 
-      let weaponkind = client.kind[client.codeCypher[0][client.captchaCode.indexOf(sdex[selectDex][1].charAt(0)) /*-1*/  ]];
+      let weaponkind = client.kind[client.codeCypher[0][client.captchaCode.indexOf(client.invcall.getTrueCodeFromItem(sdex[selectDex]).charAt(0)) /*-1*/  ]];
 
       if(weaponkind != "hatkind" && weaponkind != "shoekind" && weaponkind != "glasseskind") {
         message.channel.send(`You can only equip HATKIND, GLASSESKIND, or SHOEKIND items as trinkets!`);

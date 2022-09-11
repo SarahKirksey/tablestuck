@@ -151,7 +151,7 @@ exports.run = (client, message, args) => {
 
     //if selected item is not armorkind, cancel command
 
-      let weaponkind = client.kind[client.codeCypher[0][client.captchaCode.indexOf(sdex[selectDex][1].charAt(0)) /*-1*/  ]];
+      let weaponkind = client.kind[client.codeCypher[0][client.captchaCode.indexOf(client.invcall.getTrueCodeFromItem(sdex[selectDex]).charAt(0)) /*-1*/  ]];
 
       if(weaponkind !== "armorkind") {
         message.channel.send(`You can only equip ARMORKIND items as ARMOR!`);

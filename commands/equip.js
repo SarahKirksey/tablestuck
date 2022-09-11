@@ -67,7 +67,7 @@ exports.run = (client, message, args) => {
 
   //check selected itemkind is allocated to strife specibus
 
-  let weaponkind = client.kind[client.codeCypher[0][client.captchaCode.indexOf(sdex[selectDex][1].charAt(0)) /*-1*/  ]];
+  let weaponkind = client.kind[client.codeCypher[0][client.captchaCode.indexOf(client.invcall.getTrueCodeFromItem(sdex[selectDex]).charAt(0)) /*-1*/  ]];
 
   if(!kinds.includes(weaponkind)) {
     message.channel.send(`Your STRIFE SPECIBUS is allocated to ${kinds}, you can only ${client.auth.prefix}equip ${kinds} weapons!`);
@@ -86,7 +86,8 @@ exports.run = (client, message, args) => {
   if (sdex[selectDex][3] == 1) {
     equipItem = sdex.splice(selectDex,1)[0];
   } else {
-    equipItem = [sdex[selectDex][0], sdex[selectDex][1], sdex[selectDex][2], 1, sdex[selectDex][4]];
+    equipItem = sdex.slice(selectDex,1)[0];
+	equipItem[3] = 1;
     sdex[selectDex][3]--;
   }
 

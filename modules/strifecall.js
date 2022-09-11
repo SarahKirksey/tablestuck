@@ -469,21 +469,25 @@ return;
       client.charcall.setAnyData(client,userid[0],list[active[i]][1],false,"strife");
     }
     client.strifeMap.delete(strifeLocal);
-    let vit = Math.max(list[pos][3] - getCharHealth(client,userid[0],charid)[2], 1);
-    client.charcall.setAnyData(client,userid[0],charid,vit,"vit");
-
-  }else{
+  }
+  else{
     //remove player from list of active characters
     let removed = [active.splice(active.indexOf(pos),1)];
     client.strifeMap.set(strifeLocal,active,"active");
     client.landMap.set(local[4],sec,local[0]);
     client.charcall.setAnyData(client,userid[0],charid,false,"strife");
-    let vit = Math.max(list[pos][3] - getCharHealth(client,userid[0],charid)[2], 1);
-    client.charcall.setAnyData(client,userid[0],charid,vit,"vit");
     if(init[turn][0] == pos){
       setTimeout(passTurn,1500,client,charid,message,local);
     }
   }
+  let vit = list[pos][3];
+  if(vit > 0){
+    vit = Math.max(vit - getCharHealth(client,userid[0],charid)[2], 1);
+    if(list[pos][PROFILE.SPECIAL] && list[pos][PROFILE.SPECIAL]["royal"] == true && list[pos][PROFILE.SPECIAL]["scaleFactor"] > 0){
+      vit = Math.max(vit >> list[pos][PROFILE.SPECIAL]["scaleFactor"], 1);
+    }
+  }
+  client.charcall.setAnyData(client,userid[0],charid,vit,"vit");
 }
 
 
@@ -1344,22 +1348,23 @@ else {
 
         case "AMASS": {
           let scaleFactor = attUnit[PROFILE.SPECIAL]["scaleFactor"]
-          let faction = client.charcall.charData(attUnit[PROFILE.CHARID],"faction");
+          let faction = client.charcall.charData(client, attUnit[PROFILE.CHARID],"faction");
           for(let unit = 0; unit<list.length; unit++){
-            if(client.charcall.charData(list[unit][PROFILE.CHARID],"faction") != faction){
+            if(client.charcall.charData(client, list[unit][PROFILE.CHARID],"faction") != faction){
               continue;
             }
-        
+
             if(!list[unit][PROFILE.SPECIAL]){
               list[unit][PROFILE.SPECIAL] = {};
             }
-        
+
             if(!list[unit][PROFILE.SPECIAL]["royal"]){
               list[unit][PROFILE.SPECIAL]["royal"] = true;
               list[unit][PROFILE.SPECIAL]["scaleFactor"] = scaleFactor;
               list[unit][PROFILE.HEALTH] = list[unit][PROFILE.HEALTH] << scaleFactor;
             }
           }
+          alert+=`All ${faction}S have gained royal power!\n`
           break;
         }
 
@@ -1370,11 +1375,16 @@ else {
         
           // Save the character's original prototype set, and replace it with the complete prototype set for the entire session
           attUnit[PROFILE.SPECIAL]["oldProto"] = client.charcall.charData(client, attUnit[PROFILE.CHARID], "prototype");
-          client.charcall.setAnyData(client, message.author.id, attUnit[PROFILE.CHARID], client.landMap.get(sessionID+"medium","prototype"), "prototype");
+		  let sessionProto = client.landMap.get(message.guild.id+"medium",`prototype`);
+		  console.log(attUnit[PROFILE.CHARID]);
+		  console.log(sessionProto);
+          client.charcall.setAnyData(client, `${message.guild.id}${message.author.id}`, attUnit[PROFILE.CHARID], sessionProto, "prototype");
           // Activate Royal Power
           let scaleFactor = client.landMap.get(message.guild.id+"medium","playerList").length;
           attUnit[PROFILE.SPECIAL]["royal"] = true;
           attUnit[PROFILE.SPECIAL]["scaleFactor"] = scaleFactor;
+          attUnit[PROFILE.HEALTH] = attUnit[PROFILE.HEALTH] << scaleFactor;
+          alert+=`${attName} has donned the ring and gained royal power! They now have ${attUnit[PROFILE.HEALTH]} vitality!\n`;
           break;
         }
 
