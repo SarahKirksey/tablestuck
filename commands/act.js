@@ -63,7 +63,7 @@ let action = [];
   }
   // If not yet possessing Royal Power, but still having the Queen's Ring equipped.
   else{
-    if(trinket && trinket[1] == "UNKNOWN" && trinket[0].substring(0,13) == "RING OF ORBS " && trinket[6] && trinket[6]["trueCode"] == "vℚ𝕟𝕤®𝚒𝚗𝚐"){
+    if(client.invcall.isItemQueenRing(trinket)){
       action.push("amalgamate");
     }
   }
