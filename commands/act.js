@@ -74,11 +74,14 @@ let action = [];
   //checks if the character has a prototyping, or several, attached.
   if(client.charcall.hasData(client,charid,"prototype")){
     let prototype = client.charcall.charData(client,charid,"prototype");
+    if(list[pos][8] && list[pos][8]["prototypes"]){
+      prototype = list[pos][8]["prototypes"];
+    }
+
     //adds every action given by prototypes
     for(let j =0;j<prototype.length;j++){
       for(let i=0;i<4;i++){
         action.push(client.action[client.codeCypher[i+4][client.captchaCode.indexOf(prototype[j][1].charAt(i+4))]]);
-
       }
     }
   }

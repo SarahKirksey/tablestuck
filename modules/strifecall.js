@@ -455,9 +455,6 @@ if(init[turn][0] == pos){
 }
 return;
 } else {
-  if(list[pos][PROFILE.SPECIAL] && list[pos][PROFILE.SPECIAL]["oldProto"] !== undefined){
-    client.charcall.setAnyData(client,userid[0],charid,list[pos][PROFILE.SPECIAL]["oldProto"],"prototype");
-  }
   players=[];
   for(let i=0;i<active.length;i++){
     if(client.charcall.controlCheck(client,list[active[i]][1])){
@@ -1364,7 +1361,7 @@ else {
               list[unit][PROFILE.HEALTH] = list[unit][PROFILE.HEALTH] << scaleFactor;
             }
           }
-          alert+=`All ${faction}S have gained royal power!\n`
+          alert+=`All ${faction.toUpperCase()}S have gained royal power!\n`
           break;
         }
 
@@ -1372,13 +1369,12 @@ else {
           if(!attUnit[PROFILE.SPECIAL]){
             attUnit[PROFILE.SPECIAL] = {};
           }
-        
-          // Save the character's original prototype set, and replace it with the complete prototype set for the entire session
-          attUnit[PROFILE.SPECIAL]["oldProto"] = client.charcall.charData(client, attUnit[PROFILE.CHARID], "prototype");
+
+          // Create a temporary prototype list to give the user access to the session's prototyped actions and traits.
 		  let sessionProto = client.landMap.get(message.guild.id+"medium",`prototype`);
-		  console.log(attUnit[PROFILE.CHARID]);
 		  console.log(sessionProto);
-          client.charcall.setAnyData(client, `${message.guild.id}${message.author.id}`, attUnit[PROFILE.CHARID], sessionProto, "prototype");
+          attUnit[PROFILE.SPECIAL]["prototypes"] = sessionProto;
+
           // Activate Royal Power
           let scaleFactor = client.landMap.get(message.guild.id+"medium","playerList").length;
           attUnit[PROFILE.SPECIAL]["royal"] = true;
@@ -1413,7 +1409,7 @@ else {
             removed = attUnit[STATUS].splice(attUnit[STATUS].indexOf("ROLLOUT0"),1);
             attUnit[STATUS].push("ROLLOUT1");
             break;
-          }
+		  }
           else if(!attUnit[STATUS].includes("ROLLOUT1") && !attUnit[STATUS].includes("ROLLOUT2")){
             attUnit[STATUS].push("ROLLOUT0");
             break;
@@ -2166,7 +2162,7 @@ if(aa.includes("RANDSTATUS")){
         if(alert.length==0){
           alert=`NONE`;
         }
-        
+
         let embedTitle = `${attName.toUpperCase()} `;
         if(client.actionList[action].trans){
           embedTitle += `${client.actionList[action].trans} ${targName.toUpperCase()}!`;
@@ -2390,7 +2386,8 @@ exports.spawn = function(client,message,underling,pregrist = false){
     let protoCount = Math.floor(Math.random()*4);
     if(sessionProto.length<protoCount){
       prototype = sessionProto;
-    } else {
+    }
+    else {
       for(i=0;i<protoCount;i++){
         prototype.push(sessionProto[protoCheck.splice(Math.floor(Math.random()*protoCheck.length),1)]);
       }
@@ -2401,6 +2398,10 @@ exports.spawn = function(client,message,underling,pregrist = false){
     if(grist.toUpperCase() != "ROYAL"){
       undername = `${grist.toUpperCase()} ${undername}${underling.toUpperCase()}`
     }
+	else{
+      undername = `${undername}${underling.toUpperCase()}`
+	}
+
     let npcSet = {
       name: undername,
       control:[],
@@ -2493,6 +2494,10 @@ function npcTurn(client, message, charid, local){
   let equip = client.charcall.charData(client,list[init[turn][0]][1],"equip");
   let prototype = client.charcall.charData(client,list[init[turn][0]][1],"prototype");
   let prefTarg = client.charcall.charData(client,list[init[turn][0]][1],"prefTarg");
+
+  if(list[init[turn][0]][8] && list[init[turn][0]][8]["prototypes"]){
+    prototype = list[init[turn][0]][8]["prototypes"];
+  }
 
   let prefMove = client.underlings[type].prefMove;
 
@@ -2632,16 +2637,20 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
   let equip = client.charcall.charData(client,list[init[turn][0]][1],"equip");
   let prototype = client.charcall.charData(client,list[init[turn][0]][1],"prototype");
   let prefTarg = client.charcall.charData(client,list[init[turn][0]][1],"prefTarg");
-  
+
+  if(list[init[turn][0]][8] && list[init[turn][0]][8]["prototypes"]){
+    prototype = list[init[turn][0]][8]["prototypes"];
+  }
+
   let prefMove = client.underlings[type].prefMove;
-  
+
   let targetList = [];
   let grappledTargetList = [];
   let degrappledTargetList = [];
   let ungrappledTargetList = [];
-  
+
   //create a list of targets based on faction reputation.
-  
+
   if(prefTarg.length>0&&active.includes(prefTarg[0])){
     targetList=prefTarg;
   }
@@ -2716,17 +2725,17 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
     if(actionSet.includes(prefMove)){
       let prefAction=prefMove;
       let prefActionCost = client.actionList[action].cst;
-      
+
       let weightDiscount = client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1] ? 1 : 0;
       let normalDiscount = (list[init[turn][0]][7].includes("DISCOUNT") ? 1 : 0) + (client.traitcall.traitCheck(client,charid,"MIND")[1] ? 1 : 0);
-      
+
       prefActionCost = prefActionCost > 3 ? prefActionCost - weightDiscount : prefActionCost;
       prefActionCost = Math.max(prefActionCost - normalDiscount, 1);
       if(prefActionCost > list[init[turn][0]][5]){
         // Pass the turn.
         break;
       }
-      
+
       for(let i=0; i<actionSet.indexOf(prefMove); i++){
         let lcost = client.actionList[action].cst;
         lcost = lcost > 3 ? lcost - weightDiscount : lcost;
@@ -2739,14 +2748,14 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
           break;
         }
       }
-      
+
       if(turnTaken){
         break;
       }
       // If we reach this point, that means the royal has enough stamina to perform all the actions up to their preferred move, in order.
       // Thus, we simply allow the rest of the function to run as normal.
     }
-  
+
     let canUseFirst = list[init[turn][0]][6].length==0 && !(list[turn][6].length == 1 && list[turn][6][0].substring(0,3) === "HAT");
 
     let action = actionSet[0];
@@ -2770,21 +2779,21 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
         }
       }
     }
-  
+
     let lcost = client.actionList[action].cst;
     if(lcost > 3 && client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1]) { lcost--; }
     if(lcost > 1 && list[init[turn][0]][7].includes("DISCOUNT")) { lcost--; }
     if(lcost > 1 && client.traitcall.traitCheck(client,charid,"MIND")[1]) { lcost--; }
-  
+
     if(lcost > list[init[turn][0]][5]){
       actionSet.splice(actionSet.indexOf(action), 1);
       continue;
     }
-  
+
     list[init[turn][0]][5]-=lcost;
     list[init[turn][0]][6].push(action);
     client.strifeMap.set(strifeLocal,list,"list");
-  
+
     // Change the target list for actions that are beneficial to teammates.
     if(action=="arf" || action=="amuse" || action=="ameliorate" || action=="amend" || action=="adumbrate"){
       targetList=[];
@@ -2799,7 +2808,7 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
       if(targetList.length<1){
         targetList.push(init[turn][0]);
       }
-    
+
       target = targetList[Math.floor((Math.random() * targetList.length))];
     }
     // Prioritize grappling people who aren't already grappled
@@ -2817,7 +2826,7 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
     turnTaken = true;
     setTimeout(act,1000,client,charid,message,local,action,target);
   }
-  
+
   if(turnTaken){
     setTimeout(npcTurn,2000,client,message,charid,local);
   }
