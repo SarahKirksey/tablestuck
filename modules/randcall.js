@@ -6,8 +6,31 @@ exports.randLessThan = function(upperLimit){
 	return randLessThan(upperLimit);
 }
 
+exports.spliceRandom = function(list){
+	return spliceRandom(list);
+}
+
+exports.getAnyExcept = function(list, forbidden){
+	let index = randLessThan(list.length - 1);
+	if(index >= list.indexOf(forbidden)){
+		index++;
+	}
+	return list[index];
+}
+
+function spliceRandom(list){
+	let number = randLessThan(list.length);
+	return list.splice(number, 1)[0];
+}
+
+// Note: upperLimit does not need to be an integer.
+// Giving it (1.5) is the same as calling Math.floor((Math.random() * 6) / 4), for example.
 function randLessThan(upperLimit){
 	return Math.floor((Math.random() * upperLimit));
+}
+
+exports.rollXdY = function(x,y){
+	return rollXdY(x, y);
 }
 
 function rollXdY(x, y){
@@ -30,18 +53,53 @@ function rollXdYZTimes(x, y, z){
 	return retVal;
 }
 
-exports.rollBonusUsingOldMethod = function(tier){
+function rollBonus(client, message, tier, bns = null){
+	return rollBonusWithKnownConfig(client.configcall.get(client, message, "BONUS_ROLLS"), tier, bns);
+}
+
+exports.rollBonus = function(client, message, tier, bns = null){
+	return rollBonus(client, message, tier, bns);
+}
+
+exports.rollBonusWithKnownConfig = function(config, tier, bns = null){
+	return rollBonusWithKnownConfig(config, tier, bns);
+}
+
+function rollBonusWithKnownConfig(config, tier, bns = null){
+	config = parseInt(config, 10);
+	switch(config){
+		case 0: return rollBonusUsingDice(tier, bns);
+		case 1: return rollBonusUsingOldLabels(tier, bns);
+		case 2: return rollBonusUsingOldMethod(tier, bns);
+	}
+	if(config !== "NONE"){
+		console.log(`Someone just called rollBonusWithKnownConfig with config value "${config}". It didn't work.`);
+	}
+	return rollBonusUsingDice(tier, bns);
+}
+
+function rollBonusUsingOldMethod(tier, bns){
 	let bonusRoll = bonus[tier];
+	if(!tier && bns){
+		bonusRoll = bns;
+	}
 	return Math.floor((Math.random() * (bonusRoll[1] - bonusRoll[0])) + bonusRoll[0]);
 }
 
-exports.rollBonusUsingDice = function(tier){
+function rollBonusUsingOldLabels(tier, bns){
 	let bonusRoll = bonus[tier];
-	return rollXdY(bonusRoll[0], bonusRoll[1]/bonusRoll[0]);
+	if(!tier && bns){
+		bonusRoll = bns;
+	}
+	return rollXdY(bonusRoll[0], bonusRoll[1]);
 }
 
-exports.rollXdY = function(x,y){
-	return rollXdY(x, y);
+function rollBonusUsingDice(tier, bns){
+	let bonusRoll = bonus[tier];
+	if(!tier && bns){
+		bonusRoll = bns;
+	}
+	return rollXdY(bonusRoll[0], bonusRoll[1]/bonusRoll[0]);
 }
 
 // Note: Math.ceil(Math.random() * x) is not sufficient.
@@ -60,7 +118,4 @@ exports.rollToHit = function(noirBonus = false, refinedBonus = false, scienceBon
 		}
 	}
 	return retVal;
-}
-
-exports.tileToLocal = function(client,message,tile){
 }

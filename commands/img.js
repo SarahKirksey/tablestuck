@@ -16,7 +16,7 @@ for(i=0;args[i];i++){
 }
 client.Canvas.registerFont("./miscsprites/fontstuck.ttf",{family:`FONTSTUCK`});
 const canvas = client.Canvas.createCanvas(230,50);
-	const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
   function applyText(canvas, msg, width){
   let fontsize = 24
   ctx.font = `bold ${fontsize}px FONTSTUCK`;

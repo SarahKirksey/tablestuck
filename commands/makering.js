@@ -69,15 +69,16 @@ exports.run = (client, message, args) => {
 	let ring = [
 		ringName,
 		"UNKNOWN",
-		orbs * orbs,
+		orbs * orbs, // The tier is the number of orbs squared, meaning that the trinket bonus equals the number of orbs.
 		1,
 		[],
-		images[orbs],
+		images[orbs], // For any entry not in the array, this will evaluate to "undefined".
 		{
+			// "v" because the ring should, on the back end, be treated as a pair of glasses.
 			"trueCode": "vℚ𝕟𝕤®𝚒𝚗𝚐",
 			"orbs": orbs <= 12 ? orbs : undefined
 		}
-	]
+	];
 
 	dex.unshift(ring);
 	cards += 1;

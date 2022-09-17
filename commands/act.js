@@ -260,6 +260,14 @@ for(i=0;i<action.length;i++){
     tempbg=`#ffb3cc`;
   }
 
+  // Note: this special case assumes that the player ALWAYS has a weapon equipped.
+  // This really isn't a valid assumption because the player might be unarmed or might be possessing something with innate actions.
+  // TODO: Fix that?
+  let actionListName = ""+i+equip;
+  if(i >= 4){
+    actionListName = "innate" + i;
+  }
+
   if(!client.actionList[action[i]].add.includes("REUSE") && list[pos][6].includes(""+i+equip)){
     tempcolor= `#6D6D6D`;
     tempbg = `#cccccc`;
@@ -347,14 +355,20 @@ return;
     }
   }
 
-//Check to see if action has reuse, and if not check if action has been used this turn
+  //Check to see if action has reuse, and if not check if action has been used this turn
 
-  if(!client.actionList[action[select]].add.includes("REUSE") && list[pos][6].includes(""+select+equip)){
+  // The action isn't based on the weapon, so swapping weapons shouldn't cause the system to consider it a "different" action.
+  let actionListName = ""+select+equip;
+  if(select >= 4){
+    actionListName = "innate" + select;
+  }
+
+  if(!client.actionList[action[select]].add.includes("REUSE") && list[pos][6].includes(actionListName)){
     message.channel.send("You can't use that ACTION more than once per turn!");
     return;
   };
   
-  if(action[select] !== "abscond" && list[pos][8] && list[pos][8].encoreMove && list[pos][8].encoreMove !== (""+select+equip)){
+  if(action[select] !== "abscond" && list[pos][8] && list[pos][8].encoreMove && list[pos][8].encoreMove !== (actionListName)){
     message.channel.send("You have been AMENed, and cannot use that ACTION this turn!");
     return;
   }
@@ -407,12 +421,14 @@ return;
   if(action[select] == "abscond"){
     client.strifecall.leaveStrife(client,message,local,pos);
     message.channel.send("Absconding!");
-  } else {
+  }
+  else {
   list[pos][5] -= cost;
   if(list[pos][5]<0){
     list[pos][5]=0;
   }
-  list[pos][6].push(""+select+equip);
+
+  list[pos][6].push(actionListName);
   client.strifeMap.set(strifeLocal,list,"list")
   client.strifecall.act(client,charid,message,local,action[select],active[target]);
   client.tutorcall.progressCheck(client,message,35);
