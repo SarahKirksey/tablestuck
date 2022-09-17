@@ -72,7 +72,7 @@ exports.run = (client, message, args) => {
 		orbs * orbs, // The tier is the number of orbs squared, meaning that the trinket bonus equals the number of orbs.
 		1,
 		[],
-		images[orbs], // For any entry not in the array, this will evaluate to "undefined".
+		images[orbs], // For any entry not in the array, this will evaluate to "undefined". It will then default to the "ringkind" artwork.
 		{
 			// "v" because the ring should, on the back end, be treated as a pair of glasses.
 			"trueCode": "vℚ𝕟𝕤®𝚒𝚗𝚐",
