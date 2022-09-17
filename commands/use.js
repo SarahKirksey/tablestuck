@@ -5,6 +5,10 @@ exports.type = "sylladex";
 exports.desc = "Uses an item from your Sylladex";
 exports.use = `">use [number]" will use an item with no target. This includes items like Boondollars, Strife and Sylladex cards, Strife Specibi, and certain lootable grists.
 ">use [number] [number]" is for items that require targets, with the second number being the target. Installing your game disk into your computer, putting totems into a totem lathe, and punching cards in the punch designatrix all require this targeting.`;
+
+const tierCost = [0,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072];
+const gristTypes = ["build","uranium","amethyst","garnet","iron","marble","chalk","shale","cobalt","ruby","caulk","tar","amber","artifact","zillium","diamond"];
+
 exports.run = (client, message, args) => {
 
   var userid = message.guild.id.concat(message.author.id);
@@ -104,7 +108,7 @@ exports.run = (client, message, args) => {
           var firstCardContents = ["PERFECTLY GENERIC OBJECT", "00000000", 1, 1, []];
           var secondCardContents = ["PERFECTLY GENERIC OBJECT", "00000000", 1, 1, []];
           var prepunched = room[5][selectRoom][4][0][4].length == 1;
-          
+
           switch (room[5][selectRoom][4][0][4].length) { // If the first card has two items in it, we need to combine them with alchemy
             case 1:
               firstCardContents = room[5][selectRoom][4][0][4][0];
@@ -172,6 +176,10 @@ exports.run = (client, message, args) => {
               return;
             }
 
+            // We don't actually want to include this data in the atheneum.
+            item[3] = 1;
+            item[4] = [];
+
             registry.unshift(item);
 
             client.charcall.setAnyData(client,userid,charid,registry,"registry");
@@ -191,7 +199,18 @@ exports.run = (client, message, args) => {
             message.channel.send("You can only place CARVED TOTEMS on the ALCHEMITER");
           }
 
-      } else if(room[5][selectRoom][0] == "PUNCH DESIGNIX"){
+      }
+      else if(room[5][selectRoom][0] == "PUNCH DESIGNIX"){
+        if(selectCode.length != 8){
+          if(selectCode == "UNKNOWN") {
+              message.channel.send("You can't read the code on this card!");
+          }
+          else {
+              message.channel.send("The PUNCH DESIGNIX only accepts eight-character codes!");
+          }
+          return;
+        }
+
         if(room[5][selectRoom][4].length==0){
           if(selectCode == "11111111"){
             client.tutorcall.progressCheck(client,message,43,["text",`Inserted the ${sdex[selectDex][0]} into the CARD SLOT on the PUNCH DESIGNIX`]);
@@ -204,7 +223,8 @@ exports.run = (client, message, args) => {
           } else {
             message.channel.send("Before you can use the PUNCH DESIGNIX, you must first load a CAPTCHALOGUE CARD into it!")
           }
-        } else {
+        }
+        else {
           if(room[5][selectRoom][4][0][4].length<2){
             client.tutorcall.progressCheck(client,message,44,["text",`Punched the code for the ${sdex[selectDex][0]} onto the PUNCHED CARD`]);
             let targetItem = sdex[selectDex];
@@ -232,9 +252,86 @@ exports.run = (client, message, args) => {
           }
         }
       }
+      else if(room[5][selectRoom][0] == "GRISTWIDGET 9000"){
+        if((sdex[selectDex][4].length > 0) || (selectCode.charAt(0) == "/" && (sdex[selectDex][0] == "SBURB DISC"))){
+          message.channel.send("Don't put that in the widget, ya idgit!");
+          return;
+        }
+        else if(sdex[2] == 0){
+          message.channel.send("That item has no value, and can't be widgeted for grist.");
+          return;
+        }
+        else{
+          let playerBoons = client.charcall.allData(client, userid, charid, "b");
+          if(playerBoons == "NONE" || playerBoons < 1){
+            message.channel.send("You need a PORKHOLLOW to use the GRISTWIDGET 9000!");
+            return;
+          }
+
+          let playerGrist = client.charcall.allData(client, userid, charid, "grist");
+          if(playerGrist == "NONE")
+          {
+            message.channel.send(`You need GRIST to use the GRISTWIDGET 9000!`);
+            return;
+          }
+
+
+          let tier = sdex[2];
+          let quantity = sdex[3];
+          let build = tierCost[tier];
+          let second = [tierCost[tier - 1], 1];
+
+          let gristType = client.codeCypher[1][client.captchaCode.indexOf(selectCode[1])];
+          // If gristType is 0, for Artifact, or somehow undefined:
+          if(!gristType) {
+            message.channel.send("The GRISTWIDGET 9000 whirs and thuds for a few seconds, and then jams. After a few minutes of wrestling with it, you at least have your item back.\nMaybe it doesn't work so well with ARTIFICT-GRIST ITEMS.");
+            return;
+          }
+
+          switch(client.gristTypes[gristType]){
+            case "diamond": {
+              build *= 2;
+              second[0] *= 2;
+              second[1] = 4;
+            }
+            case "zillium": {
+              second *= 5;
+            }
+            case "build": {
+              break;
+            }
+            case "artifact":
+            case "rainbow": {
+              message.channel.send("I don't even know how you did that, but please don't ask the poor widget to deal with that.");
+              console.log(`Someone just tried to widget an item whose grist type is ${client.gristTypes[gristType]}?!? Code is ${selectCode}`);
+              return;
+            }
+            default:{
+              second *= 2;
+              break;
+            }
+          }
+
+          let boonCost = Math.max(1, Math.floor(Math.pow((build + second[0] * second[1]) * quantity, 2/3)));
+          if(playerBoons >= boonCost){
+            playerBoons -= boonCost;
+            playerGrist[0] += build * quantity;
+            playerGrist[gristType] += second[0];
+            client.charcall.setAnyData(client, userid, charid, playerGrist, "grist");
+            client.charcall.setAnyData(client, userid, charid, playerBoons, "b");
+            return;
+          }
+          else {
+            message.channel.send(`You need ${boonCost} BOONDOLLARS to widget that item, and you only have ${playerBoons}.`);
+            return;
+          }
+        }
+      }
+      return;
     }
-    //if only 1 argument
-  } else {
+  }
+  //if only 1 argument
+  else {
     if(sdex[selectDex][0]=="CAPTCHALOGUE CARD" && sdex[selectDex][1]=="11111111"){
       client.tutorcall.progressCheck(client,message,14,["text",`Added ${sdex[selectDex][3]} CAPTCHALOGUE CARDS to your SYLLADEX`]);
 
@@ -335,11 +432,18 @@ exports.run = (client, message, args) => {
           message.channel.send("You need grist to use Rainbow Grist!");
           return;
         }
-        for(let i=0;i<12;i++){
-          grist[i+1]+=sdex[selectDex][3];
+
+        let amount = sdex[selectDex][3];
+        if((client.configcall.get(client, message, "DOUBLE_RAINBOW") === "true") && client.traitcall.traitCheck(client,charid,"META")[1])
+        {
+            amount *= 2;
         }
 
-        message.channel.send(`Added ${sdex[selectDex][3]} grist of all PRIMARY grist types!`);
+        for(let i=0;i<12;i++){
+          grist[i+1]+=amount;
+        }
+
+        message.channel.send(`Added ${amount} grist of all PRIMARY grist types!`);
         client.charcall.setAnyData(client,userid,charid,grist,"grist");
         let targetItem = sdex.splice(selectDex,1);
       client.charcall.setAnyData(client,userid,charid,sdex,"sdex");
@@ -365,29 +469,29 @@ exports.run = (client, message, args) => {
         return;
       }
     }
-	  else if(sdex[selectDex][3] > 1) {
-		  if(sdex.length == client.charcall.charData(client,charid,"cards"))
-		  {
-			message.channel.send(`You don't have any available cards, so you can't split that stack!`);
-			return;
-		  }
-		  let newStackSize = Math.floor(sdex[selectDex][3] / 2);
-		  sdex[selectDex][3] -= newStackSize;
-		  
-		  let newItem = [];
-		  for(let i=0;i<sdex[selectDex].length;i++){
-			if(i==3){
-			  newItem.push(newStackSize);
-			}else{
-			  newItem.push(sdex[selectDex][i]);
-			}
-		  }
-		  sdex.unshift(newItem);
-		  client.charcall.setAnyData(client,userid,charid,sdex,"sdex");
-		  message.channel.send(`You have split your **${newItem[0].toUpperCase()}** stack in half!`);
-		  return;
-	  }
-	  else {
+      else if(sdex[selectDex][3] > 1) {
+          if(sdex.length == client.charcall.charData(client,charid,"cards"))
+          {
+            message.channel.send(`You don't have any available cards, so you can't split that stack!`);
+            return;
+          }
+          let newStackSize = Math.floor(sdex[selectDex][3] / 2);
+          sdex[selectDex][3] -= newStackSize;
+
+          let newItem = [];
+          for(let i=0;i<sdex[selectDex].length;i++){
+            if(i==3){
+              newItem.push(newStackSize);
+            }else{
+              newItem.push(sdex[selectDex][i]);
+            }
+          }
+          sdex.unshift(newItem);
+          client.charcall.setAnyData(client,userid,charid,sdex,"sdex");
+          message.channel.send(`You have split your **${newItem[0].toUpperCase()}** stack in half!`);
+          return;
+      }
+      else {
       message.channel.send("You can't use that item!");
       return;
     }
