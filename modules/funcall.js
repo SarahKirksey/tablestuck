@@ -644,6 +644,7 @@ function actOnActionList(client, message, charid, tile, roomIndex, map, actionLi
         removeFromTriggers.push(tile[2][roomIndex][1].onSomeoneEnterRoom);
         break;
       }
+
       case "LOOT_B":{
         let sec = getSectionFromMapName(map);
         if(isNaN(sec)){
@@ -655,6 +656,7 @@ function actOnActionList(client, message, charid, tile, roomIndex, map, actionLi
         removeFromTriggers.push(tile[2][roomIndex][1].onSomeoneEnterRoom);
         break;
       }
+
       case "DISTINGUISH":{
         if(roomIndex == 0){
           tile = JSON.parse(JSON.stringify(tile));
@@ -665,9 +667,17 @@ function actOnActionList(client, message, charid, tile, roomIndex, map, actionLi
         removeFromTriggers.push(tile[2][roomIndex][1].any);
         break;
       }
+
+      case "populateNewHouseRoomLoot":{
+        if(tile[2][roomIndex][2] === "FINAL ROOFTOP"){
+          tile[2][roomIndex][5][0] = [["GRIST RIG", "//jG0000", 0, 1, [], undefined]];
+        }
+        removeFromTriggers.push(tile[2][roomIndex][1].onSomeoneEnterRoom);
+      }
+
       default:{
         console.log(`actOnActionList encountered unexpected action ${actionList[i].toUpperCase()}`);
-		break;
+        break;
       }
     }
 
@@ -678,7 +688,6 @@ function actOnActionList(client, message, charid, tile, roomIndex, map, actionLi
 
   return tile;
 }
-
 
 function getSectionFromMapName(mapName){
   switch(mapName){

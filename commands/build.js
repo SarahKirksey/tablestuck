@@ -10,7 +10,7 @@ exports.use = `">build" tells you how much grist has been expended on your clien
 const gateReq = [100,200,400,800,1600,3200,6400,12800];
 const MAX_HEIGHT_INDEX = 7;
 
-const ROOM_NAMES = ["SECOND ROOFTOP", "THIRD ROOFTOP", "FOURTH ROOFTOP", "FIFTH ROOFTOP", "SIXTH ROOFTOP", "SEVENTH ROOFTOP", "EIGHTH ROOFTOP", "FINAL ROOFTOP"];
+const ROOM_NAMES = ["FINAL ROOFTOP"];
 const ROOMS_BEFORE = 7;
 const GATES_PER_ROOM = 8;
 
@@ -179,7 +179,7 @@ function addRoomToHouse(client, message, house, index){
     console.log(`House has ${house[1]} rooms; addRoomToHouse told to push room to index ${index}!`);
   }
 
-  let room = [[],{"onSomeoneEnterRoom": "populateNewHouseRoomLoot"},ROOM_NAMES[index],false,[],[]];
+  let room = [[],{"onSomeoneEnterRoom": "populateNewHouseRoomLoot"},ROOM_NAMES[index - ROOMS_BEFORE],false,[],[]];
   house[2].push(room);
   house[1] = house[1] + 1;
 
