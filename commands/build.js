@@ -5,16 +5,18 @@ exports.type = "sburb";
 exports.desc = "Build your client's house up";
 exports.use = `">build" tells you how much grist has been expended on your client's house, and how much it takes to reach the next gate.
 ">build [number]" expends the given number of build grist from the client to build up their house.`;
+
+//define variables to determine required grist to reach each gate
+const gateReq = [100,200,400,800,1600,3200,6400,12800];
+const MAX_HEIGHT_INDEX = 7;
+
+const ROOM_NAMES = ["SECOND ROOFTOP", "THIRD ROOFTOP", "FOURTH ROOFTOP", "FIFTH ROOFTOP", "SIXTH ROOFTOP", "SEVENTH ROOFTOP", "EIGHTH ROOFTOP", "FINAL ROOFTOP"];
+const ROOMS_BEFORE = 7;
+const GATES_PER_ROOM = 8;
+
 exports.run = (client, message, args) => {
 
-  //define variables to determine required grist to reach each gate
 
-  const gateReq = [100,200,400,800,1600,3200,6400,12800];
-  const MAX_HEIGHT_INDEX = 7;
-
-  const ROOM_NAMES = ["SECOND ROOFTOP", "THIRD ROOFTOP", "FOURTH ROOFTOP", "FIFTH ROOFTOP", "SIXTH ROOFTOP", "SEVENTH ROOFTOP", "EIGHTH ROOFTOP", "FINAL ROOFTOP"];
-  const ROOMS_BEFORE = 7;
-  const GATES_PER_ROOM = 8;
 
   //retrieve player location
 
@@ -152,19 +154,24 @@ exports.run = (client, message, args) => {
 
 }
 
-function addRoomsToHouse(client, message, targsburb, currGate, house){
+function addRoomsToHouse(client, message, targsburb, currGate, houseMap){
+  let house = houseMap[0][0];
   let currentRooms = house[1];
   let desiredRooms = Math.floor(currGate / GATES_PER_ROOM) + ROOMS_BEFORE;
+  console.log(`Rooms before: ${currentRooms}/${desiredRooms}`);
   let did = false;
   for(let i=currentRooms; i<desiredRooms; i++){
-    house[0][0] = addRoomToHouse(client, message, house[0][0], i);
+    house = addRoomToHouse(client, message, house, i);
 	did = true;
   }
+
+  houseMap[0][0] = house;
+
   if(did){
-    client.landMap.set(targsburb,house,"h");
+    client.landMap.set(targsburb,houseMap,"h");
   }
 
-  return house;
+  return houseMap;
 }
 
 function addRoomToHouse(client, message, house, index){
