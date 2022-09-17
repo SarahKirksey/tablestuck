@@ -66,13 +66,14 @@ exports.rollBonusWithKnownConfig = function(config, tier, bns = null){
 }
 
 function rollBonusWithKnownConfig(config, tier, bns = null){
+	config = parseInt(config, 10);
 	switch(config){
 		case 0: return rollBonusUsingDice(tier, bns);
 		case 1: return rollBonusUsingOldLabels(tier, bns);
 		case 2: return rollBonusUsingOldMethod(tier, bns);
 	}
 	if(config !== "NONE"){
-		console.log(`Someone just called rollBonusWithKnownConfig with config value "${config}"/ It didn't work.`);
+		console.log(`Someone just called rollBonusWithKnownConfig with config value "${config}". It didn't work.`);
 	}
 	return rollBonusUsingDice(tier, bns);
 }
