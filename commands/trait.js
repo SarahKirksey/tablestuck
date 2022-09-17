@@ -5,47 +5,40 @@ exports.use = `">trait" will display any currently active traits and your progre
 exports.run = (client, message, args) => {
 
   if(!args[0]){
-
     var userid = message.guild.id.concat(message.author.id);
     var charid = client.userMap.get(userid,"possess");
-    let traits = [];
-    let traitCount = [];
-    let specibus = client.charcall.charData(client,charid,"spec");
-    let equip = client.charcall.charData(client,charid,"equip");
-    let armor = client.charcall.charData(client,charid,"armor");
-    let trinket = client.charcall.charData(client,charid,"trinket");
-    let prototype = client.charcall.charData(client,charid,"prototype");
-    let checklist = [];
-    if(prototype!="NONE"&&prototype.length>0){
-      for(let i=0;i<prototype.length;i++){
-        checklist.push(prototype[i][1]);
-      }
-    }
-    if(specibus.length != 0) checklist.push(specibus[equip][1]);
-    if(armor.length!=0) checklist.push(armor[0][1]);
-    if(trinket.length!=0) checklist.push(trinket[0][1]);
-    while(checklist.length>0){
-      capcode = checklist.pop();
-      if(traits.includes(client.traitList[client.captchaCode.indexOf(capcode.charAt(2))])){
-        traitCount[traits.indexOf(client.traitList[client.captchaCode.indexOf(capcode.charAt(2))])]++
-      } else {
-        traits.push(client.traitList[client.captchaCode.indexOf(capcode.charAt(2))]);
-        traitCount.push(1);
-      }
+    let allTraits;
 
-      if(traits.includes(client.traitList2[client.captchaCode.indexOf(capcode.charAt(3))])){
-        traitCount[traits.indexOf(client.traitList2[client.captchaCode.indexOf(capcode.charAt(3))])]++
-      } else {
-        traits.push(client.traitList2[client.captchaCode.indexOf(capcode.charAt(3))]);
-        traitCount.push(1);
+    // Special check for the temporary prototypings that can be gained from using the AMALGAMATE action during strife
+    let prototypes;
+    let local = client.charcall.allData(client, userid, charid, "local");
+    if(local && local != "NONE" && client.charcall.charData(client,charid,"strife")==true){
+      let strifeKey = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
+      if(client.strifeMap.has(strifeKey)){
+        let special;
+        let strifeList = client.strifeMap.get(strifeKey, "list");
+        for(let i=0; i<strifeList.length;i++){
+          if(strifeList[i][1] == charid){
+            special = strifeList[i][8];
+            break;
+          }
+        }
+        if(special && special["prototypes"]){
+          prototypes = special["prototypes"];
+        }
       }
     }
+
+    if(!prototypes){
+      prototypes = undefined;
+    }
+
+    allTraits = client.traitcall.getTraitSet(client, charid, prototypes);
+
     let msg = ``;
-    for(let i=0; i<traits.length; i++){
-      if(traits[i]!="NONE"){
-
-        msg+=`**${traits[i]}**\nTrait Bonus - *${client.traitDesc[traits[i]].trait}*\n\nSet Bonus ${traitCount[i]}/3 ${(traitCount[i]>=3?`ACTIVE - `:`INACTIVE - `)} *${client.traitDesc[traits[i]].set}*\n\n`;
-
+    for (key in allTraits) {
+      if(key != "NONE"){
+        msg+=`**${key}**\nTrait Bonus - *${client.traitDesc[key].trait}*\n\nSet Bonus ${allTraits[key]}/3 ${(allTraits[key]>=3?`ACTIVE - `:`INACTIVE - `)} *${client.traitDesc[key].set}*\n\n`;
       }
     }
 

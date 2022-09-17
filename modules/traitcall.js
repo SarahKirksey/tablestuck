@@ -6,6 +6,31 @@ const CODE = 1;
 const CODE_TRAIT_ONE = 2;
 const CODE_TRAIT_TWO = 3;
 
+function getTraitSetFromCodeList(client, checklist, retVal = {}){
+  while(checklist.length>0){
+    capcode = checklist.pop();
+    let trait1Name = client.traitList[client.captchaCode.indexOf(capcode[CODE_TRAIT_ONE])];
+    let trait2Name = client.traitList2[client.captchaCode.indexOf(capcode[CODE_TRAIT_TWO])];
+    if(trait1Name && trait1Name != "NONE"){
+      if(retVal[trait1Name]){
+        retVal[trait1Name] += 1;
+      }
+      else{
+        retVal[trait1Name] = 1;
+      }
+    }
+    if(trait2Name && trait2Name != "NONE"){
+      if(retVal[trait2Name]){
+        retVal[trait2Name] += 1;
+      }
+      else{
+        retVal[trait2Name] = 1;
+      }
+    }
+  }
+  return retVal;
+}
+
 exports.traitCheck = function(client,target,traitName){
   try{
   let check = [false,false];
@@ -28,7 +53,14 @@ exports.traitCheck = function(client,target,traitName){
   }
   if(specibus.length > equip) checklist.push(specibus[equip][1]);
   if(armor.length!=0) checklist.push(armor[0][1]);
-  if(trinket.length!=0) checklist.push(trinket[0][1]);
+  if(trinket.length!=0) {
+    if(client.invcall.isItemQueenRing(trinket[0])) {
+      traitCount += (traitName == "ROYAL" ? 2 : 0);
+    }
+    else {
+      checklist.push(trinket[0][1]);
+    }
+  }
 
     while(checklist.length>0){
       capcode = checklist.pop();
@@ -59,55 +91,47 @@ exports.traitCheck = function(client,target,traitName){
 
 }
 
-exports.getTraitSet = function(client, target){
+exports.getTraitSet = function(client, target, amalgamated = undefined){
   let retVal = {};
 
   let specibus = client.charcall.charData(client,target,"spec");
   let equip = client.charcall.charData(client,target,"equip");
   let armor = client.charcall.charData(client,target,"armor");
   let trinket = client.charcall.charData(client,target,"trinket");
-  let prototype = client.charcall.charData(client,target,"prototype");
+  if(amalgamated == undefined){
+    amalgamated = client.charcall.charData(client,target,"prototype");
+  }
 
   let checklist = [];
 
-  if(prototype!="NONE"&&prototype.length>0){
-    for(let i=0;i<prototype.length;i++){
-      checklist.push(prototype[i][1]);
+  if(amalgamated!="NONE" && amalgamated.length>0){
+    for(let i=0;i<amalgamated.length;i++){
+      checklist.push(client.invcall.getTrueCodeFromItem(amalgamated[i]));
     }
   }
 
   if(specibus.length > equip) checklist.push(specibus[equip][1]);
   if(armor.length!=0) checklist.push(armor[0][1]);
-  if(trinket.length!=0) checklist.push(trinket[0][1]);
-
-  while(checklist.length>0){
-    capcode = checklist.pop();
-    let trait1Name = client.traitList[client.captchaCode.indexOf(capcode[2])];
-    let trait2Name = client.traitList2[client.captchaCode.indexOf(capcode[3])];
-    if(trait1Name && trait1Name != "NONE"){
-      if(retVal[trait1Name]){
-        retVal[trait1Name] += 1;
-      }
-      else{
-        retVal[trait1Name] = 1;
-      }
+  if(trinket.length!=0) {
+    if(client.invcall.isItemQueenRing(trinket[0])) {
+      retVal["ROYAL"] = 2;
     }
-    if(trait2Name && trait2Name != "NONE"){
-      if(retVal[trait2Name]){
-        retVal[trait2Name] += 1;
-      }
-      else{
-        retVal[trait2Name] = 1;
-      }
+    else {
+      checklist.push(trinket[0][1]);
     }
   }
+
+  retVal = getTraitSetFromCodeList(client, checklist, retVal);
 
   return retVal;
 }
 
 exports.itemTrait = function(client,item,trait){
-
-  if(client.traitList[client.captchaCode.indexOf(item[1].charAt(2))]==trait||client.traitList2[client.captchaCode.indexOf(item[1].charAt(3))]==trait){
+  if(trait == "ROYAL"){
+    return (client.invcall.isItemQueenRing(item) === true);
+  }
+  if(client.traitList[client.captchaCode.indexOf(item[1].charAt(CODE_TRAIT_ONE))]==trait
+    ||client.traitList2[client.captchaCode.indexOf(item[1].charAt(CODE_TRAIT_TWO))]==trait){
     return true;
   } else {
     return false;
@@ -122,14 +146,18 @@ exports.compTest = function(client, message, charid, room) {
   let armor = client.charcall.charData(client,charid,"armor");
   let trinket = client.charcall.charData(client,charid,"trinket")
 
+  let compIndex1 = client.traitList.indexOf("COMPUTER");
+  let compIndex2 = client.traitList2.indexOf("COMPUTER");
+  let compCode1 = client.captchaCode[compIndex1];
+  let compCode2 = client.captchaCode[compIndex2];
+
     let i;
     //if first value in array is true, it means there is a computer, if both are true, it means the computer has sburbed installed
     let comp = [false,false];
 
 
     for(i=0; i < room[5].length; i++) {
-
-      if(client.traitList[client.captchaCode.indexOf(room[5][i][1].charAt(2))] == "COMPUTER" || client.traitList2[client.captchaCode.indexOf(room[5][i][1].charAt(3))] == "COMPUTER") {
+      if(room[5][i][1].charAt(2) == compCode1 || room[5][i][1].charAt(3) == compCode2) {
         comp[0]=true;
 
         let j;
@@ -142,7 +170,7 @@ exports.compTest = function(client, message, charid, room) {
       }
     }
     for(i=0; i < currentInv.length; i++) {
-      if(client.traitList[client.captchaCode.indexOf(currentInv[i][1].charAt(2))] == "COMPUTER" || client.traitList2[client.captchaCode.indexOf(currentInv[i][1].charAt(3))] == "COMPUTER"){
+      if(currentInv[i][1].charAt(2) == compCode1 || currentInv[i][1].charAt(3) == compCode2){
         comp[0]=true;
 
         let j;
@@ -178,14 +206,18 @@ exports.compTest = function(client, message, charid, room) {
         }
       }
     }
-    if(trinket.length>0 && (client.traitList[client.captchaCode.indexOf(trinket[0][1].charAt(2))] == "COMPUTER" || client.traitList2[client.captchaCode.indexOf(trinket[0][1].charAt(3))] == "COMPUTER")){
-      comp[0]=true;
 
-      let j;
-      for(j=0;j<trinket[0][4].length; j++){
-        if(trinket[0][4][j][1].charAt(0) == "/"&&trinket[0][4][j][0]=="SBURB DISC"){
-          comp[1]=true;
-          return comp;
+    if(trinket.length>0){
+      trinket[0][1] = client.invcall.getTrueCodeFromItem(trinket[0]);
+      if(trinket[0][1].charAt(2) == compCode1 || trinket[0][1].charAt(3) == compCode2){
+        comp[0]=true;
+
+        let j;
+        for(j=0;j<trinket[0][4].length; j++){
+          if(trinket[0][4][j][1].charAt(0) == "/"&&trinket[0][4][j][0]=="SBURB DISC"){
+            comp[1]=true;
+            return comp;
+          }
         }
       }
     }
