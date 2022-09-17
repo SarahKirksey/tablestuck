@@ -712,8 +712,6 @@ function startTurn(client, message, local) {
       break;
     }
   }
-//roll player stamina
-  stamMax = client.underlings[type].stm;
 
 if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"CHARLATAN")[0]){
 
@@ -739,6 +737,15 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
   stamfav++;
 }
 
+  //roll stamina
+  stamMax = client.underlings[type].stm;
+  let stamMult = 1;
+  if(client.underlings[type].scales && list[init[turn][0]][PROFILE.SPECIAL]){
+    if(list[init[turn][0]][PROFILE.SPECIAL].stmMult && list[init[turn][0]][PROFILE.SPECIAL].stmMult > 0){
+      stamMult = list[init[turn][0]][PROFILE.SPECIAL].stmMult;
+    }
+  }
+
     let endurance = client.traitcall.traitCheck(client,list[init[turn][0]][1],"ENDURING");
 
     let denom = 1;
@@ -749,7 +756,7 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
       denom = 2;
     }
 
-    stamroll = [ client.randcall.rollXdY(denom, stamMax/denom), client.randcall.rollXdY(denom, stamMax/denom) ];
+    stamroll = [ client.randcall.rollXdY(denom * stamMult, stamMax/denom), client.randcall.rollXdY(denom * stamMult, stamMax/denom) ];
 
     if(stamfav==0){
       stamina=stamroll[0];
@@ -995,18 +1002,19 @@ exports.underRally = function(client, message, local) {
   let strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`
 
   let i;
+  let scaleFactor = client.landMap.get(`${message.guild.id}medium`,"playerList").length;
 
   for(i=0;i<occList.length;i++){
 
     if(occList[i][0]==false&&client.charcall.charData(client,occList[i][1],"control").length===0&&client.charcall.charData(client,occList[i][1],"alive")){
-
-      let profile = [false,occList[i][1],client.charcall.charData(client,occList[i][1],"gristtype"),client.charcall.charData(client,occList[i][1],"vit"),0,0,[],[]]
+      let type = client.charcall.charData(client,occList[i][1],"type");
+      let profile = [false,occList[i][1],client.charcall.charData(client,occList[i][1],"gristtype"),getCharHealth(client,"-",occList[i][1])[1],0,0,[],[]];
       client.charcall.setAnyData(client,'-',occList[i][1],true,"strife");
       let list = client.strifeMap.get(strifeLocal,"list");
       let init = client.strifeMap.get(strifeLocal,"init");
       let active = client.strifeMap.get(strifeLocal,"active");
       let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
-      let initBonus = parseInt(getBonusFromUnderling(client, message, client.charcall.charData(client,occList[i][1],"type"))["initiative"], 10) || 0;
+      let initBonus = parseInt(getBonusFromUnderling(client, message, type)["initiative"], 10) || 0;
 
       var pos = list.length;
       client.charcall.setAnyData(client,'-',occList[i][1],pos,"pos");
@@ -1020,6 +1028,14 @@ exports.underRally = function(client, message, local) {
       }
       if(!isNaN(initBonus) && initBonus > 0){
         initRoll += initBonus;
+      }
+
+      if(client.underlings[type].scales){
+        let special = {};
+        special["dmgMult"] = scaleFactor + 1;
+        special["stmMult"] = scaleFactor + 1;
+        special["avBoost"] = scaleFactor;
+        profile.push(special);
       }
 
       list.push(profile);
@@ -1155,6 +1171,11 @@ else {
   bdroll = client.underlings[underling].bd;
   grist = list[init[turn][0]][2];
 
+  if(client.underlings[underling].scales){
+    dmg *= list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
+    bdroll[0] *= list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
+    bdroll[1] *= list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
+  }
 }
 
   let attUnit = list[init[turn][0]];
@@ -1172,15 +1193,21 @@ else {
 
   let armor = client.charcall.charData(client,targUnit[1],"armor");
 
-    if(armor.length>0){
-      av = tierAv[armor[0][2]];
-      brroll = tierBD[armor[0][2]];
-      brTier = armor[0][2];
-    } else {
-      av = client.underlings[client.charcall.charData(client,targUnit[1],"type")].av;
-      brroll = client.underlings[client.charcall.charData(client,targUnit[1],"type")].bd;
+  if(armor.length>0){
+    av = tierAv[armor[0][2]];
+    brroll = tierBD[armor[0][2]];
+    brTier = armor[0][2];
+  } else {
+    let underling = client.charcall.charData(client,targUnit[1],"type");
+    av = client.underlings[underling].av;
+    brroll = client.underlings[underling].bd;
+    if(client.underlings[underling].scales){
+      av += list[init[turn][0]][PROFILE.SPECIAL]["avBoost"];
+      brroll[0] *= list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
+      brroll[1] *= list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
     }
-    let effective = "HIT!"
+  }
+  let effective = "HIT!"
 
   try{
     let attackEfficacy = 0;
@@ -1371,8 +1398,7 @@ else {
           }
 
           // Create a temporary prototype list to give the user access to the session's prototyped actions and traits.
-		  let sessionProto = client.landMap.get(message.guild.id+"medium",`prototype`);
-		  console.log(sessionProto);
+          let sessionProto = client.landMap.get(message.guild.id+"medium",`prototype`);
           attUnit[PROFILE.SPECIAL]["prototypes"] = sessionProto;
 
           // Activate Royal Power
@@ -1409,7 +1435,7 @@ else {
             removed = attUnit[STATUS].splice(attUnit[STATUS].indexOf("ROLLOUT0"),1);
             attUnit[STATUS].push("ROLLOUT1");
             break;
-		  }
+          }
           else if(!attUnit[STATUS].includes("ROLLOUT1") && !attUnit[STATUS].includes("ROLLOUT2")){
             attUnit[STATUS].push("ROLLOUT0");
             break;
@@ -2341,7 +2367,7 @@ exports.getBonusFromTrinket = function(client, message, trinket){
 function getBonusFromUnderling(client, message, type){
     let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
-    if(trinketSetting !== 0 && trinketSetting != "NONE"){
+    if(trinketSetting !== 0 && trinketSetting !== "0" && trinketSetting != "NONE"){
         return client.underlings[type].naturalbonus;
     }
 
@@ -2398,9 +2424,9 @@ exports.spawn = function(client,message,underling,pregrist = false){
     if(grist.toUpperCase() != "ROYAL"){
       undername = `${grist.toUpperCase()} ${undername}${underling.toUpperCase()}`
     }
-	else{
+    else{
       undername = `${undername}${underling.toUpperCase()}`
-	}
+    }
 
     let npcSet = {
       name: undername,
@@ -2925,6 +2951,8 @@ function getCharHealth(client, userid, charid){
           break;
         }
       }
+
+      // We ensure the creature doesn't innately scale, so that they don't scale their health twice.
       if(!isNaN(strifePos) && !(client.underlings[client.charcall.charData(client,charid,"type")].scales==true)){
         if(strifeList[strifePos][PROFILE.SPECIAL] && strifeList[strifePos][PROFILE.SPECIAL]["royal"] == true){
           let scaleFactor = strifeList[strifePos][PROFILE.SPECIAL]["scaleFactor"];
