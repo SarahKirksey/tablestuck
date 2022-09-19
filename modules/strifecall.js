@@ -628,10 +628,7 @@ function startTurn(client, message, local) {
   list[init[turn][0]][6]=[];
 
   let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
-  let innateBonus = parseInt(getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type"))["avChance"], 10) || 0;
-  if(isNaN(trinketBonus[0])){
-    trinketBonus[0] = parseInt(trinketBonus[0], 10) || 0;
-  }
+  let innateBonus = getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type"))["avChance"];
   if(trinketBonus[1] === "avChance" && trinketBonus[0] > innateBonus){
     innateBonus = trinketBonus[0];
   }
@@ -1015,16 +1012,14 @@ exports.underRally = function(client, message, local) {
       let init = client.strifeMap.get(strifeLocal,"init");
       let active = client.strifeMap.get(strifeLocal,"active");
       let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
-      let initBonus = parseInt(getBonusFromUnderling(client, message, type)["initiative"], 10) || 0;
+      let initBonus = getBonusFromUnderling(client, message, type)["initiative"];
 
       var pos = list.length;
       client.charcall.setAnyData(client,'-',occList[i][1],pos,"pos");
 
       let initRoll = [pos, Math.floor((Math.random() * 20) + 1)];
-      if(isNaN(initBonus)){
-        initBonus = 0;
-      }
-      if(trinketBonus[1] === "initiative" && !isNaN(trinketBonus[0]) && trinketBonus[0] > initBonus){
+      if(trinketBonus[1] === "initiative" && trinketBonus[0] > initBonus){
+        console.log(`Changing initBonus for ${type} from ${initBonus} to ${trinketBonus[0]}`);
         initBonus = trinketBonus[0];
       }
       if(!isNaN(initBonus) && initBonus > 0){
@@ -1173,10 +1168,12 @@ else {
   grist = list[init[turn][0]][2];
 
   if(client.underlings[underling].scales){
-    let dmgMult = parseInt(list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"],10);
-    dmg *= dmgMult;
-    bdroll[0] *= dmgMult;
-    bdroll[1] *= dmgMult;
+    let dmgMult = list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
+    if(dmgMult){
+      dmg *= dmgMult;
+      bdroll[0] *= dmgMult;
+      bdroll[1] *= dmgMult;
+    }
   }
 }
 
@@ -1204,11 +1201,16 @@ else {
     av = client.underlings[underling].av;
     brroll = client.underlings[underling].bd;
     if(client.underlings[underling].scales){
-      let dmgMult = parseInt(targUnit[PROFILE.SPECIAL]["dmgMult"],10);
-      let avBoost = parseInt(targUnit[PROFILE.SPECIAL]["avBoost"],10);
-      av += avBoost || 0;
-      brroll[0] *= dmgMult || 1;
-      brroll[1] *= dmgMult || 1;
+      let dmgMult = targUnit[PROFILE.SPECIAL]["dmgMult"];
+      let avBoost = targUnit[PROFILE.SPECIAL]["avBoost"];
+      if(avBoost){
+        av += avBoost;
+      }
+
+      if(dmgMult){
+        brroll[0] *= dmgMult;
+        brroll[1] *= dmgMult;
+      }
     }
   }
   let effective = "HIT!"
@@ -1280,14 +1282,12 @@ else {
 }
 
     let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client,attUnit[1],"trinket")[0]);
-    let underBonus = parseInt(getBonusFromUnderling(client, message, client.charcall.charData(client,attUnit[1],"type"))["accuracy"], 10) || 0;
-    if(isNaN(trinketBonus[0])){
-      trinketBonus[0] = parseInt(trinketBonus[0], 10) || 0;
+    let underBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,attUnit[1],"type"))["accuracy"];
+    if(trinketBonus[1] !== "accuracy" || trinketBonus[0] < underBonus){
+      console.log(`Changing accuracy bonus from ${trinketBonus[0]} to ${underBonus}`);
+      trinketBonus[0] = underBonus;
     }
-    if(trinketBonus[1] === "accuracy" && trinketBonus[0] > underBonus){
-      underBonus = trinketBonus[0];
-    }
-    strikeBonus += underBonus;
+    strikeBonus += trinketBonus[0];
 
     let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
     let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
@@ -2344,16 +2344,16 @@ if(list[active[ik]][3] < 1){
 function getBonusFromTrinket(client, message, trinket){
     let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
-    if(trinketSetting == 0 || trinketSetting == "NONE" || trinket == undefined || trinket[1] == undefined){
+    if(trinketSetting == 0 || trinketSetting == "0" || trinketSetting == "NONE" || trinket == undefined || trinket[1] == undefined){
         return [0, "none"];
     }
     let tier = trinket[2];
-    let kind = trinket[1][0];
+    let kind = getTrueCodeFromItem(trinket[1])[0];
     let bonus = Math.floor(Math.sqrt(tier));
-    if(trinketSetting == 1){
+    if(trinketSetting == 1 || trinketSetting == "1"){
         return [bonus, "accuracy"];
     }
-    else if(trinketSetting == 2){
+    else if(trinketSetting == 2 || trinketSetting == "2"){
         switch(kind){
             case "t":   return [bonus, "initiative"];
             case "u":   return [bonus, "avChance"];
@@ -2372,7 +2372,8 @@ function getBonusFromUnderling(client, message, type){
     let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
     if(trinketSetting !== 0 && trinketSetting !== "0" && trinketSetting != "NONE"){
-        return client.underlings[type].naturalbonus;
+		let jsonResult = client.underlings[type].naturalbonus;
+        return {"accuracy": jsonResult["accuracy"], "avChance": jsonResult["avChance"], "initiative": jsonResult["initiative"]};
     }
 
     return {"accuracy":0, "avChance":0, "initiative":0};
