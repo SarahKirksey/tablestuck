@@ -668,11 +668,12 @@ function actOnActionList(client, message, charid, tile, roomIndex, map, actionLi
         break;
       }
 
-      case "populateNewHouseRoomLoot":{
+      case "POPULATENEWHOUSEROOMLOOT":{
         if(tile[2][roomIndex][2] === "FINAL ROOFTOP"){
-          tile[2][roomIndex][5][0] = [["GRIST RIG", "//jG0000", 0, 1, [], undefined]];
+          tile[2][roomIndex][5][0] = ["GRIST RIG", "//jG0000", 0, 1, [], "https://cdn.discordapp.com/attachments/678740864222363649/1021103484776484984/grist_rig_96x.png"];
         }
         removeFromTriggers.push(tile[2][roomIndex][1].onSomeoneEnterRoom);
+		break;
       }
 
       default:{

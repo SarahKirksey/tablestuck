@@ -179,7 +179,7 @@ function addRoomToHouse(client, message, house, index){
     console.log(`House has ${house[1]} rooms; addRoomToHouse told to push room to index ${index}!`);
   }
 
-  let room = [[],{"onSomeoneEnterRoom": "populateNewHouseRoomLoot"},ROOM_NAMES[index - ROOMS_BEFORE],false,[],[]];
+  let room = [[],{"onSomeoneEnterRoom": ["populateNewHouseRoomLoot"]},ROOM_NAMES[index - ROOMS_BEFORE],false,[],[]];
   house[2].push(room);
   house[1] = house[1] + 1;
 
