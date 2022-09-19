@@ -17,10 +17,14 @@ return;
 args[0] = args[0].toLowerCase();
 
 switch(args[0]){
-  case "ss": args[1] = "royal", args[0] = "Sovereign Slayer"; break;
-  case "dd": args[1] = "royal", args[0] = "Draconian Dignitary"; break;
-  case "hb": args[1] = "royal", args[0] = "Hegemonic Brute"; break;
-  case "cd": args[1] = "royal", args[0] = "Courtyard Droll"; break;
+  case "ss": args[1] = "royal"; args[0] = "Sovereign Slayer"; break;
+  case "dd": args[1] = "royal"; args[0] = "Draconian Dignitary"; break;
+  case "hb": args[1] = "royal"; args[0] = "Hegemonic Brute"; break;
+  case "cd": args[1] = "royal"; args[0] = "Courtyard Droll"; break;
+  case "queen": args[1] = "royal"; break;
+  case "king": args[1] = "royal"; break;
+  case "bq": args[1] = "royal"; args[0] = "queen"; break;
+  case "bk": args[1] = "royal"; args[0] = "king"; break;
 }
 
 let spawnList = ["imp","ogre","basilisk","lich","giclopse","titachnid","denizen","queen","king", "Draconian Dignitary", "Sovereign Slayer", "Hegemonic Brute", "Courtyard Droll"];
@@ -32,10 +36,10 @@ for(let i=0;i<spawnList.length;i++){
 message.channel.send(msg);
 return;
 }
-let gristList = ["uranium","amethyst","garnet","iron","marble","chalk","shale","cobalt","ruby","caulk","tar","amber"];
+let gristList = ["uranium","amethyst","garnet","iron","marble","chalk","shale","cobalt","ruby","caulk","tar","amber","royal"];
 if(args[1]&&!gristList.includes(args[1].toLowerCase())){
  let msg = `Sorry, that's not a valid grist type. The availible grist types are:\n`;
- for (let i=0;i<gristList.length;i++){
+ for (let i=0;i<gristList.length-1;i++){
    msg+=`${gristList[i]}, `;
  }
  message.channel.send(msg);

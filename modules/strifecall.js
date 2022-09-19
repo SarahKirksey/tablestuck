@@ -741,8 +741,9 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
   stamMax = client.underlings[type].stm;
   let stamMult = 1;
   if(client.underlings[type].scales && list[init[turn][0]][PROFILE.SPECIAL]){
-    if(list[init[turn][0]][PROFILE.SPECIAL].stmMult && list[init[turn][0]][PROFILE.SPECIAL].stmMult > 0){
-      stamMult = list[init[turn][0]][PROFILE.SPECIAL].stmMult;
+    if(list[init[turn][0]][PROFILE.SPECIAL].stmMult){
+      let tempStamMult = parseInt(list[init[turn][0]][PROFILE.SPECIAL].stmMult, 10);
+      stamMult = tempStamMult || 1;
     }
   }
 
@@ -1172,9 +1173,10 @@ else {
   grist = list[init[turn][0]][2];
 
   if(client.underlings[underling].scales){
-    dmg *= list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
-    bdroll[0] *= list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
-    bdroll[1] *= list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
+    let dmgMult = parseInt(list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"],10);
+    dmg *= dmgMult;
+    bdroll[0] *= dmgMult;
+    bdroll[1] *= dmgMult;
   }
 }
 
@@ -1202,9 +1204,11 @@ else {
     av = client.underlings[underling].av;
     brroll = client.underlings[underling].bd;
     if(client.underlings[underling].scales){
-      av += list[init[turn][0]][PROFILE.SPECIAL]["avBoost"];
-      brroll[0] *= list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
-      brroll[1] *= list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
+      let dmgMult = parseInt(targUnit[PROFILE.SPECIAL]["dmgMult"],10);
+      let avBoost = parseInt(targUnit[PROFILE.SPECIAL]["avBoost"],10);
+      av += avBoost || 0;
+      brroll[0] *= dmgMult || 1;
+      brroll[1] *= dmgMult || 1;
     }
   }
   let effective = "HIT!"
@@ -2409,7 +2413,7 @@ exports.spawn = function(client,message,underling,pregrist = false){
 
     let undername = ``;
     let prototype = [];
-    let protoCount = Math.floor(Math.random()*4);
+    let protoCount = pregrist=="royal" ? 0 : Math.floor(Math.random()*4);
     if(sessionProto.length<protoCount){
       prototype = sessionProto;
     }
@@ -2511,7 +2515,7 @@ function npcTurn(client, message, charid, local){
   if(!list[init[turn][0]][0]&&list[init[turn][0]][3]>0){
   let type = client.charcall.charData(client,list[init[turn][0]][1],"type");
     if(client.underlings[type].ai && client.underlings[type].ai == "royal"){
-      royalNpcTurn(client, message, charid, local, list, turn, init, strifelocal);
+      royalNpcTurn(client, message, charid, local, list, turn, init, strifeLocal);
       return;
     }
 
@@ -2655,7 +2659,7 @@ function npcTurn(client, message, charid, local){
 
 }
 
-function royalNpcTurn(client, message, charid, local, list, turn, init, strifelocal) {
+function royalNpcTurn(client, message, charid, local, list, turn, init, strifeLocal) {
   let active = client.strifeMap.get(strifeLocal,"active")
   let type = client.charcall.charData(client,list[init[turn][0]][1],"type");
   let faction = client.charcall.charData(client,list[init[turn][0]][1],"faction");
@@ -2697,7 +2701,7 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
 
   let actionSet = [];
   let tempAct;
-  let royalPower = (strifeList[strifePos][PROFILE.SPECIAL] && strifeList[strifePos][PROFILE.SPECIAL]["royal"] == true);
+  let royalPower = (list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL]["royal"] == true);
 
   let encoreMove = list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL].encoreMove;
 
@@ -2750,7 +2754,7 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
   while(!turnTaken&&actionSet.length>0&&targetList.length>0){
     if(actionSet.includes(prefMove)){
       let prefAction=prefMove;
-      let prefActionCost = client.actionList[action].cst;
+      let prefActionCost = client.actionList[prefAction].cst;
 
       let weightDiscount = client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1] ? 1 : 0;
       let normalDiscount = (list[init[turn][0]][7].includes("DISCOUNT") ? 1 : 0) + (client.traitcall.traitCheck(client,charid,"MIND")[1] ? 1 : 0);
@@ -2763,13 +2767,13 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
       }
 
       for(let i=0; i<actionSet.indexOf(prefMove); i++){
-        let lcost = client.actionList[action].cst;
+        let lcost = client.actionList[prefAction].cst;
         lcost = lcost > 3 ? lcost - weightDiscount : lcost;
         lcost = Math.max(lcost - normalDiscount, 1);
         prefActionCost += lcost;
         if(prefActionCost > list[init[turn][0]][5]){
           turnTaken = true;
-          setTimeout(act,1000,client,charid,message,local,action,target);
+          setTimeout(act,1000,client,charid,message,local,prefAction,target);
           setTimeout(npcTurn,2000,client,message,charid,local);
           break;
         }
@@ -2834,8 +2838,6 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
       if(targetList.length<1){
         targetList.push(init[turn][0]);
       }
-
-      target = targetList[Math.floor((Math.random() * targetList.length))];
     }
     // Prioritize grappling people who aren't already grappled
     else if(client.actionList[action].add.includes("GRAPPLE") && ungrappledTargetList.length > 0){
