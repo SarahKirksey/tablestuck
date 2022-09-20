@@ -104,6 +104,8 @@ function getItemFromCharData(client, userID, charID, dataType, index, removeFrom
 		}
 		client.charcall.setAnyData(client,userid,charid,inv,dataType)
 	}
+	
+	return retVal;
 }
 
 function removeItemFromInventory(inv, index, modus){
