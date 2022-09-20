@@ -67,7 +67,7 @@ exports.run = (client, message, args) => {
       .addFields(
         {name:`**ITEM INFORMATION**`,value:msg},
         {name:`**ITEM TRAITS**`,value:msg1},
-        {name:`**PROTECTION**`,value:`**AV -** ${tierAv[armor[0][2]]} **BR -** ${tierBD[armor[0][2]][0]}d${tierBD[armor[0][2]][1]}`}
+        {name:`**PROTECTION**`,value:`**AV -** ${tierAv[armor[0][2]]} **BR -** ${tierBD[armor[0][2]][0]}d${tierBD[armor[0][2]][1]/tierBD[armor[0][2]][0]}`}
       );
     }
     client.tutorcall.progressCheck(client,message,24,["embed",inspectItem]);
@@ -112,7 +112,8 @@ exports.run = (client, message, args) => {
 
 //if first argument is equip, equip selected armor
 
-  } else if(args[0]=="equip"){
+  }
+  else if(args[0]=="equip"){
 
     if(client.charcall.charData(client,charid,"strife")){
       message.channel.send("You can't do that in Strife! You need to either win the Strife or leave Strife using Abscond!");
@@ -167,7 +168,8 @@ exports.run = (client, message, args) => {
       message.channel.send(`Successfully EQUIPPED the ${equipItem[0]}!`);
       client.funcall.tick(client,message);
 
-  } else if(args[0]=="unequip"){
+  }
+  else if(args[0]=="unequip"){
 
     if(client.charcall.charData(client,charid,"strife")){
       message.channel.send("You can't do that in Strife! You need to either win the Strife or leave Strife using Abscond!");

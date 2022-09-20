@@ -66,7 +66,9 @@ exports.rollBonusWithKnownConfig = function(config, tier, bns = null){
 }
 
 function rollBonusWithKnownConfig(config, tier, bns = null){
-	config = parseInt(config, 10);
+	if(config != "NONE"){
+		config = parseInt(config, 10);
+	}
 	switch(config){
 		case 0: return rollBonusUsingDice(tier, bns);
 		case 1: return rollBonusUsingOldLabels(tier, bns);

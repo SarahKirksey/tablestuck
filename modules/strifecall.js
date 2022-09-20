@@ -2348,7 +2348,7 @@ function getBonusFromTrinket(client, message, trinket){
         return [0, "none"];
     }
     let tier = trinket[2];
-    let kind = getTrueCodeFromItem(trinket[1])[0];
+    let kind = client.invcall.getTrueCodeFromItem(trinket)[0];
     let bonus = Math.floor(Math.sqrt(tier));
     if(trinketSetting == 1 || trinketSetting == "1"){
         return [bonus, "accuracy"];
@@ -2358,9 +2358,12 @@ function getBonusFromTrinket(client, message, trinket){
             case "t":   return [bonus, "initiative"];
             case "u":   return [bonus, "avChance"];
             case "v":   return [bonus, "accuracy"];
-            default:    return [0, "none"];
+            default:
+                console.log(`Unrecognized trinket kind "${kind}. Returning no bonus."`);
+                return [0, "none"];
         }
     }
+    console.log(`getBonusFromTrinket unabled to get bonus from trinket "${trinket}. Returning no bonus."`);
     return [0, "none"];
 }
 
@@ -2372,7 +2375,7 @@ function getBonusFromUnderling(client, message, type){
     let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
     if(trinketSetting !== 0 && trinketSetting !== "0" && trinketSetting != "NONE"){
-		let jsonResult = client.underlings[type].naturalbonus;
+        let jsonResult = client.underlings[type].naturalbonus;
         return {"accuracy": jsonResult["accuracy"], "avChance": jsonResult["avChance"], "initiative": jsonResult["initiative"]};
     }
 
