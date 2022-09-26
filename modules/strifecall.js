@@ -1023,7 +1023,7 @@ exports.underRally = function(client, message, local) {
         initBonus = trinketBonus[0];
       }
       if(!isNaN(initBonus) && initBonus > 0){
-        initRoll += initBonus;
+        initRoll[1] += initBonus;
       }
 
       if(client.underlings[type].scales){
