@@ -318,6 +318,7 @@ switch(client.charcall.charData(client,list[target][1],"faction")){
         console.log(`Something went wrong! repgrist is ${repgrist}, but the index is ${repGristIndex}!`);
       }
 
+      if(amount > 0){
       if(!godtier&&grist[repGristIndex]+Math.ceil(amount*4)>rungGrist[rung]){
         grist[repGristIndex]=rungGrist[rung];
       } else {
@@ -349,6 +350,7 @@ switch(client.charcall.charData(client,list[target][1],"faction")){
       }
       rewardMsg+=`**${client.emojis.cache.get(client.grist[repgrist].emoji)} ${Math.ceil(amount*4)}, ${client.emojis.cache.get(client.grist[primaryType].emoji)} ${Math.ceil(amount*2)}, ${client.emojis.cache.get(client.grist[secondType].emoji)} ${Math.ceil(amount)}** and `;
       client.charcall.setAnyData(client,userid,charid,grist,"grist");
+      }
 
     if(!godtier&&client.charcall.allData(client,userid,charid,"xp")!="NONE"){
       client.funcall.chanMsg(client,charid,`${rewardMsg}**${xp} XP**`);
