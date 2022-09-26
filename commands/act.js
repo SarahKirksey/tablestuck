@@ -274,12 +274,12 @@ for(i=0;i<action.length;i++){
     actionListName = "innate" + i;
   }
 
-  if(!client.actionList[action[i]].add.includes("REUSE") && list[pos][6].includes(""+i+equip)){
+  if(!client.actionList[action[i]].add.includes("REUSE") && list[pos][6].includes(actionListName)){
     tempcolor= `#6D6D6D`;
     tempbg = `#cccccc`;
   }
 
-  if(list[pos][8] && list[pos][8].encoreMove && list[pos][8].encoreMove !== (""+i+equip)){
+  if(list[pos][8] && list[pos][8].encoreMove && list[pos][8].encoreMove !== actionListName){
     tempcolor= `#6D6D6D`;
     tempbg = `#cccccc`;
   }
