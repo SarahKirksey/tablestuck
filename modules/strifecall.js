@@ -1283,11 +1283,11 @@ else {
 
     let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client,attUnit[1],"trinket")[0]);
     let underBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,attUnit[1],"type"))["accuracy"];
-    if(trinketBonus[1] !== "accuracy" || trinketBonus[0] < underBonus){
-      console.log(`Changing accuracy bonus from ${trinketBonus[0]} to ${underBonus}`);
-      trinketBonus[0] = underBonus;
+    if(trinketBonus[1] === "accuracy" && trinketBonus[0] > underBonus){
+      console.log(`Changing accuracy bonus from ${underBonus} to ${trinketBonus[0]}`);
+      underBonus = trinketBonus[0];
     }
-    strikeBonus += trinketBonus[0];
+    strikeBonus += underBonus;
 
     let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
     let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
@@ -1434,10 +1434,10 @@ else {
           break;
 
         case "ROLLOUT0":
-          if(attUnit[STATUS].includes("ROLLOUT0")){
+          let rollout0Index = attUnit[STATUS].indexOf("ROLLOUT0");
+          if(rollout0Index >= 0){
+            attUnit[STATUS][rollout0Index] = "ROLLOUT1";
             dmgLvl=1;
-            removed = attUnit[STATUS].splice(attUnit[STATUS].indexOf("ROLLOUT0"),1);
-            attUnit[STATUS].push("ROLLOUT1");
             break;
           }
           else if(!attUnit[STATUS].includes("ROLLOUT1") && !attUnit[STATUS].includes("ROLLOUT2")){
@@ -2692,11 +2692,11 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifeLo
     for(let i=0;i<active.length;i++){
       if(client.charcall.allData(client,"-",list[active[i]][1],`${faction}Rep`)<0){
         targetList.push(active[i]);
-        if(list[init[turn][0]][PROFILE.STATUS].contains("GRAPPLE")){
+        if(list[active[i]][PROFILE.STATUS].indexOf("GRAPPLE") >= 0){
           grappledTargetList.push(active[i]);
         }
-        // Don't include any DEGRAP people in the list.
-        else if (!list[init[turn][0]][PROFILE.STATUS].contains("DEGRAP")){
+        // Don't include any DEGRAP people in this list.
+        else if (!list[active[i]][PROFILE.STATUS].indexOf("DEGRAP") >= 0){
           ungrappledTargetList.push(active[i]);
         }
       }
@@ -2769,6 +2769,8 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifeLo
         // Pass the turn.
         break;
       }
+	  
+	  let firstCost = prefActionCost;
 
       for(let i=0; i<actionSet.indexOf(prefMove); i++){
         let lcost = client.actionList[prefAction].cst;
@@ -2777,7 +2779,10 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifeLo
         prefActionCost += lcost;
         if(prefActionCost > list[init[turn][0]][5]){
           turnTaken = true;
-          setTimeout(act,1000,client,charid,message,local,prefAction,target);
+          list[init[turn][0]][5]-=firstCost;
+          list[init[turn][0]][6].push(prefAction);
+          client.strifeMap.set(strifeLocal,list,"list");
+          setTimeout(act,1000,client,charid,message,local,prefAction,targetList[Math.floor((Math.random() * targetList.length))]);
           setTimeout(npcTurn,2000,client,message,charid,local);
           break;
         }
@@ -2856,7 +2861,7 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifeLo
     let target = targetList[Math.floor((Math.random() * targetList.length))];
 
     turnTaken = true;
-    setTimeout(act,1000,client,charid,message,local,action,target);
+    setTimeout(act,1200,client,charid,message,local,action,target);
   }
 
   if(turnTaken){
