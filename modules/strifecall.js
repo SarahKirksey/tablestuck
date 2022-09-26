@@ -462,7 +462,8 @@ if(init[turn][0] == pos){
   setTimeout(passTurn,1500,client,charid,message,local);
 }
 return;
-} else {
+}
+else {
   players=[];
   for(let i=0;i<active.length;i++){
     if(client.charcall.controlCheck(client,list[active[i]][1])){
@@ -2455,11 +2456,45 @@ exports.spawn = function(client,message,underling,pregrist = false){
     for(i=0;i<prototype.length;i++){
       undername += prototype[i][0]+` `;
     }
+
+    let prospitRep = 0;
+    let derseRep = 0;
+    let bio = `A ${grist} ${underling}`;
+
     if(grist.toUpperCase() != "ROYAL"){
-      undername = `${grist.toUpperCase()} ${undername}${underling.toUpperCase()}`
+      undername = `${grist.toUpperCase()} ${undername}${underling.toUpperCase()}`;
     }
     else{
-      undername = `${undername}${underling.toUpperCase()}`
+      undername = `${undername}${underling.toUpperCase()}`;
+
+      // King and Queen
+      if(undername == "KING" || undername == "QUEEN") {
+        switch(local[4]){
+          case "pc":
+          case "p":
+          case "pm":
+          case "pmd":
+          case "pmd1":
+          case "pmd2":
+            undername = `WHITE ${undername}`;
+            bio = `The ${undername}`;
+            prospitRep = 100;
+            derseRep = -100;
+            break;
+          default:
+            undername = `BLACK ${undername}`;
+            bio = `The ${undername}`;
+            prospitRep = -100;
+            derseRep = 100;
+            break;
+        }
+      }
+      // Dersite agents
+      else{
+        derseRep = 100;
+        prospitRep = -100;
+        bio = `The ${undername}`;
+      }
     }
 
     let npcSet = {
@@ -2486,16 +2521,16 @@ exports.spawn = function(client,message,underling,pregrist = false){
       modus:"STACK",
       cards:4,
       prototype:prototype,
-      prospitRep:0,
-      derseRep:0,
       underlingRep:100,
       playerRep:-1,
       consortRep:-1,
+      prospitRep:prospitRep,
+      derseRep:derseRep,
       prefTarg:[],
       xp:0,
       rung:0,
       b:0,
-      bio:`A ${grist} ${underling}`,
+      bio:bio,
       img:client.underlings[underling].img,
       questData:[]
     }
