@@ -86,7 +86,7 @@ exports.run = (client, message, args) => {
   if (sdex[selectDex][3] == 1) {
     equipItem = sdex.splice(selectDex,1)[0];
   } else {
-    equipItem = sdex.slice(selectDex,1)[0];
+    equipItem = sdex[selectDex].slice();
 	equipItem[3] = 1;
     sdex[selectDex][3]--;
   }
