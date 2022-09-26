@@ -447,7 +447,13 @@ function leaveStrife(client,message,local,pos,leavemsg = true){
 
 //if it's an npc without a controller leaving, it will be deleted from the room.
 if((userid=="NONE"||userid.length<1)&&!list[pos][0]){
-let removed = [active.splice(active.indexOf(pos),1),sec[local[1]][local[2]][2][local[3]][4].splice(sec[local[1]][local[2]][2][local[3]][4].findIndex(occpos => occpos[1] === list[pos][1]),1)];
+  let occList = sec[local[1]][local[2]][2][local[3]][4];
+  let removed = active.splice(active.indexOf(pos),1);
+  let charIndex = occList.findIndex(occpos => occpos[1] === list[pos][1]);
+  if(charIndex >= 0){
+    removed = occList.splice(charIndex,1);
+  }
+
 client.strifeMap.set(strifeLocal,active,"active");
 client.landMap.set(local[4],sec,local[0]);
 if(init[turn][0] == pos){
@@ -1284,7 +1290,6 @@ else {
     let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client,attUnit[1],"trinket")[0]);
     let underBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,attUnit[1],"type"))["accuracy"];
     if(trinketBonus[1] === "accuracy" && trinketBonus[0] > underBonus){
-      console.log(`Changing accuracy bonus from ${underBonus} to ${trinketBonus[0]}`);
       underBonus = trinketBonus[0];
     }
     strikeBonus += underBonus;
@@ -1363,19 +1368,38 @@ else {
         case "BOMB": {
           let npcCount = client.landMap.get(message.guild.id+"medium","npcCount");
           let newBomb = underSpawn(client, local, "bomb", message.guild.id, npcCount, "royal");
-          let bombProfile = [newBomb[0], newBomb[1], "royal", client.underlings["bomb"].vit, 0, 1, [], []];
+          let scaleFactor = client.landMap.get(message.guild.id+"medium","playerList").length;
+          let bombProfile = [
+            newBomb[0],
+            newBomb[1],
+            "royal",
+            client.underlings["bomb"].vit << scaleFactor,
+            0,
+            1,
+            [],
+            [],
+            {
+              "royal": true,
+              "avBoost": scaleFactor,
+              "dmgMult": scaleFactor + 1,
+              "stmMult": scaleFactor + 1
+            }
+          ];
+          let bombPos = list.length;
           init.push([list.length,1]);
           active.push(list.length);
           list.push(bombProfile);
 
+          client.landMap.set(message.guild.id+"medium", npcCount+1, "npcCount");
           client.strifeMap.set(strifeLocal,list,"list");
           client.strifeMap.set(strifeLocal,init,"init");
           client.strifeMap.set(strifeLocal,active,"active");
+          client.charcall.setAnyData(client, "-", newBomb[1], bombPos, "pos");
           break;
         }
 
         case "AMASS": {
-          let scaleFactor = attUnit[PROFILE.SPECIAL]["scaleFactor"]
+          let scaleFactor = attUnit[PROFILE.SPECIAL]["scaleFactor"];
           let faction = client.charcall.charData(client, attUnit[PROFILE.CHARID],"faction");
           for(let unit = 0; unit<list.length; unit++){
             if(client.charcall.charData(client, list[unit][PROFILE.CHARID],"faction") != faction){
@@ -2769,8 +2793,8 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifeLo
         // Pass the turn.
         break;
       }
-	  
-	  let firstCost = prefActionCost;
+
+      let firstCost = prefActionCost;
 
       for(let i=0; i<actionSet.indexOf(prefMove); i++){
         let lcost = client.actionList[prefAction].cst;
