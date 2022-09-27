@@ -1039,7 +1039,8 @@ exports.underRally = function(client, message, local) {
         let special = {};
         special["dmgMult"] = scaleFactor + 1;
         special["stmMult"] = scaleFactor + 1;
-        special["avBoost"] = scaleFactor;
+        special["avBoost"] = 0;
+        special["accBoost"] = scaleFactor;
         profile.push(special);
       }
 
@@ -1178,6 +1179,10 @@ else {
 
   if(client.underlings[underling].scales){
     let dmgMult = list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
+    let accBoost = parseInt(`${list[init[turn][0]][PROFILE.SPECIAL]["accBoost"]}`, 10);
+	if(!isNaN(accBoost)){
+      strikeBonus += accBoost;
+	}
     if(dmgMult){
       dmg *= dmgMult;
       bdroll[0] *= dmgMult;
@@ -1383,7 +1388,8 @@ else {
             [],
             {
               "royal": true,
-              "avBoost": scaleFactor,
+              "avBoost": 0,
+              "accBoost": scaleFactor,
               "dmgMult": scaleFactor + 1,
               "stmMult": scaleFactor + 1
             }
