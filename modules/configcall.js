@@ -87,7 +87,7 @@ exports.set = function(client, message, datatype, value){
 	let options;
 	let settings;
 	
-	if(!client.configMap.has(guildID) || (client.configMap.has(guildID).settings == undefined)){
+	if(!client.configMap.has(guildID) || (client.configMap.get(guildID).settings == undefined)){
 		settings = generateSettings(client, guildID);
 		options = client.configMap.get(guildID).options;
 	}

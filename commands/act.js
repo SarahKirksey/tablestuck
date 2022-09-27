@@ -22,7 +22,7 @@ exports.run = (client, message, args) => {
   let pos = client.charcall.charData(client,charid,"pos");
   let type = client.charcall.charData(client,charid,"type");
   let spec = client.charcall.charData(client,charid,"spec");
-  let trinkets = client.charcall.charData(client,charid,"trinket")[0];
+  let trinket = client.charcall.charData(client,charid,"trinket")[0];
   let equip = client.charcall.charData(client,charid,"equip");
   let damage = client.underlings[client.charcall.charData(client,charid,"type")].d;
   //gets all strife data
@@ -63,7 +63,7 @@ let action = [];
   }
   // If not yet possessing Royal Power, but still having the Queen's Ring equipped.
   else{
-    if(trinket && trinket[1] == "UNKNOWN" && trinket[0].substring(0,13) == "RING OF ORBS " && trinket[6] && trinket[6]["trueCode"] == "vℚ𝕟𝕤®𝚒𝚗𝚐"){
+    if(client.invcall.isItemQueenRing(trinket)){
       action.push("amalgamate");
     }
   }
@@ -74,11 +74,14 @@ let action = [];
   //checks if the character has a prototyping, or several, attached.
   if(client.charcall.hasData(client,charid,"prototype")){
     let prototype = client.charcall.charData(client,charid,"prototype");
+    if(list[pos][8] && list[pos][8]["prototypes"]){
+      prototype = list[pos][8]["prototypes"];
+    }
+
     //adds every action given by prototypes
     for(let j =0;j<prototype.length;j++){
       for(let i=0;i<4;i++){
         action.push(client.action[client.codeCypher[i+4][client.captchaCode.indexOf(prototype[j][1].charAt(i+4))]]);
-
       }
     }
   }
@@ -263,12 +266,20 @@ for(i=0;i<action.length;i++){
     tempbg=`#ffb3cc`;
   }
 
-  if(!client.actionList[action[i]].add.includes("REUSE") && list[pos][6].includes(""+i+equip)){
+  // Note: this special case assumes that the player ALWAYS has a weapon equipped.
+  // This really isn't a valid assumption because the player might be unarmed or might be possessing something with innate actions.
+  // TODO: Fix that?
+  let actionListName = ""+i+equip;
+  if(i >= 4){
+    actionListName = "innate" + i;
+  }
+
+  if(!client.actionList[action[i]].add.includes("REUSE") && list[pos][6].includes(actionListName)){
     tempcolor= `#6D6D6D`;
     tempbg = `#cccccc`;
   }
 
-  if(list[pos][8] && list[pos][8].encoreMove && list[pos][8].encoreMove !== (""+i+equip)){
+  if(list[pos][8] && list[pos][8].encoreMove && list[pos][8].encoreMove !== actionListName){
     tempcolor= `#6D6D6D`;
     tempbg = `#cccccc`;
   }
@@ -350,14 +361,20 @@ return;
     }
   }
 
-//Check to see if action has reuse, and if not check if action has been used this turn
+  //Check to see if action has reuse, and if not check if action has been used this turn
 
-  if(!client.actionList[action[select]].add.includes("REUSE") && list[pos][6].includes(""+select+equip)){
+  // The action isn't based on the weapon, so swapping weapons shouldn't cause the system to consider it a "different" action.
+  let actionListName = ""+select+equip;
+  if(select >= 4){
+    actionListName = "innate" + select;
+  }
+
+  if(!client.actionList[action[select]].add.includes("REUSE") && list[pos][6].includes(actionListName)){
     message.channel.send("You can't use that ACTION more than once per turn!");
     return;
   };
   
-  if(action[select] !== "abscond" && list[pos][8] && list[pos][8].encoreMove && list[pos][8].encoreMove !== (""+select+equip)){
+  if(action[select] !== "abscond" && list[pos][8] && list[pos][8].encoreMove && list[pos][8].encoreMove !== (actionListName)){
     message.channel.send("You have been AMENed, and cannot use that ACTION this turn!");
     return;
   }
@@ -410,12 +427,14 @@ return;
   if(action[select] == "abscond"){
     client.strifecall.leaveStrife(client,message,local,pos);
     message.channel.send("Absconding!");
-  } else {
+  }
+  else {
   list[pos][5] -= cost;
   if(list[pos][5]<0){
     list[pos][5]=0;
   }
-  list[pos][6].push(""+select+equip);
+
+  list[pos][6].push(actionListName);
   client.strifeMap.set(strifeLocal,list,"list")
   client.strifecall.act(client,charid,message,local,action[select],active[target]);
   client.tutorcall.progressCheck(client,message,35);

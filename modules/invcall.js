@@ -32,11 +32,16 @@ function getTrueCodeFromItem(item){
 	return extra.trueCode;
 }
 
+exports.getTrueCodeFromItem = function(item){
+	return getTrueCodeFromItem(item);
+}
+
 function listAsNoMoreThanOne(listFrom, listTo, overflowList){
 	if(listFrom.length>0){
 		if(listTo.length==0){
 			listTo[0] = listFrom[0];
-		} else {
+		}
+		else {
 			overflowList.push(listFrom.pop());
 			return 1;
 		}
@@ -44,6 +49,10 @@ function listAsNoMoreThanOne(listFrom, listTo, overflowList){
 	return 0;
 }
 
+
+exports.isItemQueenRing = function(item){
+	return (item && item[1] == "UNKNOWN" && item[0].slice(0,13) == "RING OF ORBS " && getTrueCodeFromItem(item) == "vℚ𝕟𝕤®𝚒𝚗𝚐")
+}
 
 
 
@@ -95,6 +104,8 @@ function getItemFromCharData(client, userID, charID, dataType, index, removeFrom
 		}
 		client.charcall.setAnyData(client,userid,charid,inv,dataType)
 	}
+	
+	return retVal;
 }
 
 function removeItemFromInventory(inv, index, modus){

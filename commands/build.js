@@ -5,12 +5,18 @@ exports.type = "sburb";
 exports.desc = "Build your client's house up";
 exports.use = `">build" tells you how much grist has been expended on your client's house, and how much it takes to reach the next gate.
 ">build [number]" expends the given number of build grist from the client to build up their house.`;
+
+//define variables to determine required grist to reach each gate
+const gateReq = [100,200,400,800,1600,3200,6400,12800];
+const MAX_HEIGHT_INDEX = 7;
+
+const ROOM_NAMES = ["FINAL ROOFTOP"];
+const ROOMS_BEFORE = 7;
+const GATES_PER_ROOM = 8;
+
 exports.run = (client, message, args) => {
 
-  //define variables to determine required grist to reach each gate
 
-  const gateReq = [100,200,400,800,1600,3200,6400,12800];
-  const MAX_HEIGHT_INDEX = 7;
 
   //retrieve player location
 
@@ -38,6 +44,7 @@ exports.run = (client, message, args) => {
     message.channel.send("You aren't connected to a client!");
     return;
   }
+
   //retrieve clients charid
   let targsburb = client.charcall.allData(client,userid,charid,"client");
   //checks if amount spent is greater than amount of grist player has
@@ -58,6 +65,11 @@ exports.run = (client, message, args) => {
     {
       messText2 += ` so far, and need to expend ${gateReq[curGate]-buildSpent} more to reach the ${(curGate < MAX_HEIGHT_INDEX) ? `next gate` : `build limit!`}!`;
     }
+
+    if(curGate >= GATES_PER_ROOM){
+      addRoomsToHouse(client, message, targsburb, curGate, client.landMap.get(targsburb,"h"));
+    }
+
     messText += messText2;
     client.tutorcall.progressCheck(client,message,21,["text", messText]);
     return;
@@ -91,6 +103,10 @@ exports.run = (client, message, args) => {
 
   if(value < 1)
   {
+    if(curGate >= GATES_PER_ROOM){
+      addRoomsToHouse(client, message, targsburb, curGate, client.landMap.get(targsburb,"h"));
+    }
+
     message.channel.send("The Client has already reached the build limit! Their house can't go any higher!");
     if(curGate <= MAX_HEIGHT_INDEX)
     {
@@ -119,16 +135,53 @@ exports.run = (client, message, args) => {
   client.sburbMap.set(targsburb,grist,"grist");
   client.landMap.set(targsburb,buildSpent,"spent");
 
+
   //if player can now reach next gate, send message
 
   client.funcall.tick(client,message);
 
   if(gate>curGate){
+    if(curGate >= GATES_PER_ROOM){
+      addRoomsToHouse(client, message, targsburb, curGate, client.landMap.get(targsburb,"h"));
+    }
 
-  client.landMap.set(targsburb,gate,"gate");
-  message.channel.send(`Expended ${value} BUILD GRIST to build house. The CLIENT PLAYER'S house now reaches ${gate <= MAX_HEIGHT_INDEX ? `GATE ${gate}.` : `the build limit!`}`);
-} else {
-  message.channel.send(`Expended ${value} BUILD GRIST to build house.`);
+    client.landMap.set(targsburb,gate,"gate");
+    message.channel.send(`Expended ${value} BUILD GRIST to build house. The CLIENT PLAYER'S house now reaches ${gate <= MAX_HEIGHT_INDEX ? `GATE ${gate}.` : `the build limit!`}`);
+    }
+    else {
+      message.channel.send(`Expended ${value} BUILD GRIST to build house.`);
+  }
+
 }
 
+function addRoomsToHouse(client, message, targsburb, currGate, houseMap){
+  let house = houseMap[0][0];
+  let currentRooms = house[1];
+  let desiredRooms = Math.floor(currGate / GATES_PER_ROOM) + ROOMS_BEFORE;
+  console.log(`Rooms before: ${currentRooms}/${desiredRooms}`);
+  let did = false;
+  for(let i=currentRooms; i<desiredRooms; i++){
+    house = addRoomToHouse(client, message, house, i);
+	did = true;
+  }
+
+  houseMap[0][0] = house;
+
+  if(did){
+    client.landMap.set(targsburb,houseMap,"h");
+  }
+
+  return houseMap;
+}
+
+function addRoomToHouse(client, message, house, index){
+  if(house[1] != index){
+    console.log(`House has ${house[1]} rooms; addRoomToHouse told to push room to index ${index}!`);
+  }
+
+  let room = [[],{"onSomeoneEnterRoom": ["populateNewHouseRoomLoot"]},ROOM_NAMES[index - ROOMS_BEFORE],false,[],[]];
+  house[2].push(room);
+  house[1] = house[1] + 1;
+
+  return house;
 }

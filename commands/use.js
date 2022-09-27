@@ -199,7 +199,18 @@ exports.run = (client, message, args) => {
             message.channel.send("You can only place CARVED TOTEMS on the ALCHEMITER");
           }
 
-      } else if(room[5][selectRoom][0] == "PUNCH DESIGNIX"){
+      }
+      else if(room[5][selectRoom][0] == "PUNCH DESIGNIX"){
+        if(selectCode.length != 8){
+          if(selectCode == "UNKNOWN") {
+              message.channel.send("You can't read the code on this card!");
+          }
+          else {
+              message.channel.send("The PUNCH DESIGNIX only accepts eight-character codes!");
+          }
+          return;
+        }
+
         if(room[5][selectRoom][4].length==0){
           if(selectCode == "11111111"){
             client.tutorcall.progressCheck(client,message,43,["text",`Inserted the ${sdex[selectDex][0]} into the CARD SLOT on the PUNCH DESIGNIX`]);
@@ -212,7 +223,8 @@ exports.run = (client, message, args) => {
           } else {
             message.channel.send("Before you can use the PUNCH DESIGNIX, you must first load a CAPTCHALOGUE CARD into it!")
           }
-        } else {
+        }
+        else {
           if(room[5][selectRoom][4][0][4].length<2){
             client.tutorcall.progressCheck(client,message,44,["text",`Punched the code for the ${sdex[selectDex][0]} onto the PUNCHED CARD`]);
             let targetItem = sdex[selectDex];
@@ -239,7 +251,8 @@ exports.run = (client, message, args) => {
             return;
           }
         }
-      } else if(room[5][selectRoom][0] == "GRISTWIDGET 9000"){
+      }
+      else if(room[5][selectRoom][0] == "GRISTWIDGET 9000"){
         if((sdex[selectDex][4].length > 0) || (selectCode.charAt(0) == "/" && (sdex[selectDex][0] == "SBURB DISC"))){
           message.channel.send("Don't put that in the widget, ya idgit!");
           return;
@@ -316,8 +329,9 @@ exports.run = (client, message, args) => {
       }
       return;
     }
-    //if only 1 argument
-  } else {
+  }
+  //if only 1 argument
+  else {
     if(sdex[selectDex][0]=="CAPTCHALOGUE CARD" && sdex[selectDex][1]=="11111111"){
       client.tutorcall.progressCheck(client,message,14,["text",`Added ${sdex[selectDex][3]} CAPTCHALOGUE CARDS to your SYLLADEX`]);
 

@@ -38,31 +38,31 @@
 
   "HOT":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757595413282816/HOT.png",
-  "trait":"1d12 chance to inflict BURN condition",
+  "trait":"1d12 chance to inflict BURN",
 
   "set":"Add additional damage equal to BD against burned creatures"},
 
   "COLD":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757546441506836/COLD.png",
-  "trait":"1d12 chance to inflict FROSTBITE condition",
+  "trait":"1d12 chance to inflict FROSTBITE",
 
   "set":"When a frostbite roll succeeds, target is also DAZED for one round."},
 
   "ELECTRIC":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757571825565696/ELECTRIC.png",
-  "trait":"1d12 chance to inflict STUN condition",
+  "trait":"1d12 chance to inflict STUN",
 
-  "set":"Immunity to the STUN condition"},
+  "set":"Immunity to STUN"},
 
   "SHARP":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757632147521556/SHARP.png",
-  "trait":"1d12 chance to inflict BLEED condition",
+  "trait":"1d12 chance to inflict BLEED",
 
   "set":"BONUS DAMAGE rolls are FAVORABLE."},
 
   "BLUNT":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757527902683206/BLUNT.png",
-  "trait":"1d12 chance to inflict DAZE condition",
+  "trait":"1d12 chance to inflict DAZE",
 
   "set":"1d12 DAZE chance reduced to 1d6"},
 
@@ -70,7 +70,7 @@
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757635855024188/SHITTY.png",
   "trait":"Grist type is ARTIFACT, weapon is always tier 1",
 
-  "set":"1d12 to apply the CORRUPT condition"},
+  "set":"1d12 chance to inflict CORRUPT"},
 
   "CUTE":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808757556888600606/CUTE.png",
@@ -218,7 +218,7 @@
 
   "THORNS":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808782820075634698/THORNS.png",
-  "trait":"1d12 chance to inflict attacker with the BLEED condition",
+  "trait":"1d12 chance to inflict BLEED on attackers",
 
   "set":"Whenever someone attacks you, they take BR in damage"},
 
@@ -230,13 +230,13 @@
 
   "GAMBLING":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808804392882536448/GAMBLING.png",
-  "trait":"Roll 1d4 on boon pickup - 1. Half 2. Normal 3. Normal 4. Double",
+  "trait":"Roll 1d4 on boon pickup - On 1, half. On 4, double",
 
   "set":"Always get double boonbucks whenever boonbucks are earned"},
 
   "IRRADIATED":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808840185940803665/IRRADIATED.png",
-  "trait":"1d12 chance to inflict BURN condition",
+  "trait":"1d12 chance to inflict BURN",
 
   "set":"Burn all enemies on a crit"},
 
@@ -260,7 +260,7 @@
 
   "GRIMDARK":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808848869289885716/GRIMDARK.png",
-  "trait":"1d12 chance to inflict HAUNT condition",
+  "trait":"1d12 chance to inflict HAUNT",
 
   "set":"Use AP as stamina"},
 
@@ -290,7 +290,7 @@
 
   "LIFE":{
   "img":"https://cdn.discordapp.com/attachments/808757312520585227/808870350762541056/LIFE.png",
-  "trait":"Unused STAMINA at the end of turn is converted to healing (4% Max HP per point)",
+  "trait":"Convert each unused STAMINA to 4% max gel",
 
   "set":"Heal for BR at the start of each turn"},
 

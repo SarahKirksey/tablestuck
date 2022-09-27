@@ -318,6 +318,7 @@ switch(client.charcall.charData(client,list[target][1],"faction")){
         console.log(`Something went wrong! repgrist is ${repgrist}, but the index is ${repGristIndex}!`);
       }
 
+      if(amount > 0){
       if(!godtier&&grist[repGristIndex]+Math.ceil(amount*4)>rungGrist[rung]){
         grist[repGristIndex]=rungGrist[rung];
       } else {
@@ -349,6 +350,7 @@ switch(client.charcall.charData(client,list[target][1],"faction")){
       }
       rewardMsg+=`**${client.emojis.cache.get(client.grist[repgrist].emoji)} ${Math.ceil(amount*4)}, ${client.emojis.cache.get(client.grist[primaryType].emoji)} ${Math.ceil(amount*2)}, ${client.emojis.cache.get(client.grist[secondType].emoji)} ${Math.ceil(amount)}** and `;
       client.charcall.setAnyData(client,userid,charid,grist,"grist");
+      }
 
     if(!godtier&&client.charcall.allData(client,userid,charid,"xp")!="NONE"){
       client.funcall.chanMsg(client,charid,`${rewardMsg}**${xp} XP**`);
@@ -444,16 +446,24 @@ function leaveStrife(client,message,local,pos,leavemsg = true){
   let active = client.strifeMap.get(strifeLocal,"active");
   let sec = client.landMap.get(local[4],local[0]);
 
+
 //if it's an npc without a controller leaving, it will be deleted from the room.
 if((userid=="NONE"||userid.length<1)&&!list[pos][0]){
-let removed = [active.splice(active.indexOf(pos),1),sec[local[1]][local[2]][2][local[3]][4].splice(sec[local[1]][local[2]][2][local[3]][4].findIndex(occpos => occpos[1] === list[pos][1]),1)];
+  let occList = sec[local[1]][local[2]][2][local[3]][4];
+  let removed = active.splice(active.indexOf(pos),1);
+  let charIndex = occList.findIndex(occpos => occpos[1] === list[pos][1]);
+  if(charIndex >= 0){
+    removed = occList.splice(charIndex,1);
+  }
+
 client.strifeMap.set(strifeLocal,active,"active");
 client.landMap.set(local[4],sec,local[0]);
 if(init[turn][0] == pos){
   setTimeout(passTurn,1500,client,charid,message,local);
 }
 return;
-} else {
+}
+else {
   players=[];
   for(let i=0;i<active.length;i++){
     if(client.charcall.controlCheck(client,list[active[i]][1])){
@@ -465,21 +475,25 @@ return;
       client.charcall.setAnyData(client,userid[0],list[active[i]][1],false,"strife");
     }
     client.strifeMap.delete(strifeLocal);
-    let vit = Math.max(list[pos][3] - getCharHealth(client,userid[0],charid)[2], 1);
-    client.charcall.setAnyData(client,userid[0],charid,vit,"vit");
-
-  }else{
+  }
+  else{
     //remove player from list of active characters
     let removed = [active.splice(active.indexOf(pos),1)];
     client.strifeMap.set(strifeLocal,active,"active");
     client.landMap.set(local[4],sec,local[0]);
     client.charcall.setAnyData(client,userid[0],charid,false,"strife");
-    let vit = Math.max(list[pos][3] - getCharHealth(client,userid[0],charid)[2], 1);
-    client.charcall.setAnyData(client,userid[0],charid,vit,"vit");
     if(init[turn][0] == pos){
       setTimeout(passTurn,1500,client,charid,message,local);
     }
   }
+  let vit = list[pos][3];
+  if(vit > 0){
+    vit = Math.max(vit - getCharHealth(client,userid[0],charid)[2], 1);
+    if(list[pos][PROFILE.SPECIAL] && list[pos][PROFILE.SPECIAL]["royal"] == true && list[pos][PROFILE.SPECIAL]["scaleFactor"] > 0){
+      vit = Math.max(vit >> list[pos][PROFILE.SPECIAL]["scaleFactor"], 1);
+    }
+  }
+  client.charcall.setAnyData(client,userid[0],charid,vit,"vit");
 }
 
 
@@ -623,7 +637,7 @@ function startTurn(client, message, local) {
   list[init[turn][0]][6]=[];
 
   let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "trinket")[0]);
-  let innateBonus = getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type")["avChance"] || 0;
+  let innateBonus = getBonusFromUnderling(client, message, client.charcall.charData(client, list[init[turn][0]][PROFILE.CHARID], "type"))["avChance"];
   if(trinketBonus[1] === "avChance" && trinketBonus[0] > innateBonus){
     innateBonus = trinketBonus[0];
   }
@@ -704,8 +718,6 @@ function startTurn(client, message, local) {
       break;
     }
   }
-//roll player stamina
-  stamMax = client.underlings[type].stm;
 
 if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"CHARLATAN")[0]){
 
@@ -731,6 +743,16 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
   stamfav++;
 }
 
+  //roll stamina
+  stamMax = client.underlings[type].stm;
+  let stamMult = 1;
+  if(client.underlings[type].scales && list[init[turn][0]][PROFILE.SPECIAL]){
+    if(list[init[turn][0]][PROFILE.SPECIAL].stmMult){
+      let tempStamMult = parseInt(list[init[turn][0]][PROFILE.SPECIAL].stmMult, 10);
+      stamMult = tempStamMult || 1;
+    }
+  }
+
     let endurance = client.traitcall.traitCheck(client,list[init[turn][0]][1],"ENDURING");
 
     let denom = 1;
@@ -741,7 +763,7 @@ if(client.traitcall.traitCheck(client,list[init[turn][0]][1],"TIME")[1]){
       denom = 2;
     }
 
-    stamroll = [ client.randcall.rollXdY(denom, stamMax/denom), client.randcall.rollXdY(denom, stamMax/denom) ];
+    stamroll = [ client.randcall.rollXdY(denom * stamMult, stamMax/denom), client.randcall.rollXdY(denom * stamMult, stamMax/denom) ];
 
     if(stamfav==0){
       stamina=stamroll[0];
@@ -987,27 +1009,40 @@ exports.underRally = function(client, message, local) {
   let strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`
 
   let i;
+  let scaleFactor = client.landMap.get(`${message.guild.id}medium`,"playerList").length;
 
   for(i=0;i<occList.length;i++){
 
     if(occList[i][0]==false&&client.charcall.charData(client,occList[i][1],"control").length===0&&client.charcall.charData(client,occList[i][1],"alive")){
-
-      let profile = [false,occList[i][1],client.charcall.charData(client,occList[i][1],"gristtype"),client.charcall.charData(client,occList[i][1],"vit"),0,0,[],[]]
+      let type = client.charcall.charData(client,occList[i][1],"type");
+      let profile = [false,occList[i][1],client.charcall.charData(client,occList[i][1],"gristtype"),getCharHealth(client,"-",occList[i][1])[1],0,0,[],[]];
       client.charcall.setAnyData(client,'-',occList[i][1],true,"strife");
       let list = client.strifeMap.get(strifeLocal,"list");
       let init = client.strifeMap.get(strifeLocal,"init");
       let active = client.strifeMap.get(strifeLocal,"active");
       let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client, occList[i][1],"trinket")[0]);
-      let initBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,occList[i][1],"type"))["initiative"]) || 0;
+      let initBonus = getBonusFromUnderling(client, message, type)["initiative"];
 
       var pos = list.length;
       client.charcall.setAnyData(client,'-',occList[i][1],pos,"pos");
 
       let initRoll = [pos, Math.floor((Math.random() * 20) + 1)];
       if(trinketBonus[1] === "initiative" && trinketBonus[0] > initBonus){
+        console.log(`Changing initBonus for ${type} from ${initBonus} to ${trinketBonus[0]}`);
         initBonus = trinketBonus[0];
       }
-      initRoll += initBonus;
+      if(!isNaN(initBonus) && initBonus > 0){
+        initRoll[1] += initBonus;
+      }
+
+      if(client.underlings[type].scales){
+        let special = {};
+        special["dmgMult"] = scaleFactor + 1;
+        special["stmMult"] = scaleFactor + 1;
+        special["avBoost"] = 0;
+        special["accBoost"] = scaleFactor;
+        profile.push(special);
+      }
 
       list.push(profile);
       active.push(pos);
@@ -1044,6 +1079,9 @@ function act(client,charid,message,local,action,target){
     const HEALTH = 3;
     const STAMIN = 5;
     const STATUS = 7;
+
+    const TRAIT_BONUS_MINIMUM = 1;
+    const SET_BONUS_MINIMUM = 3;
 
     let strifeLocal = `${local[0]}/${local[1]}/${local[2]}/${local[3]}/${local[4]}`;
     //if strife database does not exist, cancel code
@@ -1139,6 +1177,18 @@ else {
   bdroll = client.underlings[underling].bd;
   grist = list[init[turn][0]][2];
 
+  if(client.underlings[underling].scales){
+    let dmgMult = list[init[turn][0]][PROFILE.SPECIAL]["dmgMult"];
+    let accBoost = parseInt(`${list[init[turn][0]][PROFILE.SPECIAL]["accBoost"]}`, 10);
+	if(!isNaN(accBoost)){
+      strikeBonus += accBoost;
+	}
+    if(dmgMult){
+      dmg *= dmgMult;
+      bdroll[0] *= dmgMult;
+      bdroll[1] *= dmgMult;
+    }
+  }
 }
 
   let attUnit = list[init[turn][0]];
@@ -1147,21 +1197,37 @@ else {
   attName = client.charcall.charData(client,attUnit[1],"name");
   targName = client.charcall.charData(client,targUnit[1],"name");
 
+  let attTraits = client.traitcall.getTraitSet(client, attUnit[1]);
+  let targTraits = client.traitcall.getTraitSet(client, targUnit[1]);
+
   let brroll;
   let brTier;
   let av = 0;
 
   let armor = client.charcall.charData(client,targUnit[1],"armor");
 
-    if(armor.length>0){
-      av = tierAv[armor[0][2]];
-      brroll = tierBD[armor[0][2]];
-      brTier = armor[0][2];
-    } else {
-      av = client.underlings[client.charcall.charData(client,targUnit[1],"type")].av;
-      brroll = client.underlings[client.charcall.charData(client,targUnit[1],"type")].bd;
+  if(armor.length>0){
+    av = tierAv[armor[0][2]];
+    brroll = tierBD[armor[0][2]];
+    brTier = armor[0][2];
+  } else {
+    let underling = client.charcall.charData(client,targUnit[1],"type");
+    av = client.underlings[underling].av;
+    brroll = client.underlings[underling].bd;
+    if(client.underlings[underling].scales){
+      let dmgMult = targUnit[PROFILE.SPECIAL]["dmgMult"];
+      let avBoost = targUnit[PROFILE.SPECIAL]["avBoost"];
+      if(avBoost){
+        av += avBoost;
+      }
+
+      if(dmgMult){
+        brroll[0] *= dmgMult;
+        brroll[1] *= dmgMult;
+      }
     }
-    let effective = "HIT!"
+  }
+  let effective = "HIT!"
 
   try{
     let attackEfficacy = 0;
@@ -1230,11 +1296,11 @@ else {
 }
 
     let trinketBonus = getBonusFromTrinket(client, message, client.charcall.charData(client,attUnit[1],"trinket")[0]);
-    let underBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,attUnit[1],"type"))["accuracy"] || 0;
+    let underBonus = getBonusFromUnderling(client, message, client.charcall.charData(client,attUnit[1],"type"))["accuracy"];
     if(trinketBonus[1] === "accuracy" && trinketBonus[0] > underBonus){
       underBonus = trinketBonus[0];
     }
-    strikeBonus += trinketBonus[0];
+    strikeBonus += underBonus;
 
     let targUnitGel = getCharHealth(client, "-", targUnit[1])[1];
     let attUnitGel = getCharHealth(client, "-", attUnit[1])[1];
@@ -1310,35 +1376,56 @@ else {
         case "BOMB": {
           let npcCount = client.landMap.get(message.guild.id+"medium","npcCount");
           let newBomb = underSpawn(client, local, "bomb", message.guild.id, npcCount, "royal");
-          let bombProfile = [newBomb[0], newBomb[1], "royal", client.underlings["bomb"].vit, 0, 1, [], []];
+          let scaleFactor = client.landMap.get(message.guild.id+"medium","playerList").length;
+          let bombProfile = [
+            newBomb[0],
+            newBomb[1],
+            "royal",
+            client.underlings["bomb"].vit << scaleFactor,
+            0,
+            1,
+            [],
+            [],
+            {
+              "royal": true,
+              "avBoost": 0,
+              "accBoost": scaleFactor,
+              "dmgMult": scaleFactor + 1,
+              "stmMult": scaleFactor + 1
+            }
+          ];
+          let bombPos = list.length;
           init.push([list.length,1]);
           active.push(list.length);
           list.push(bombProfile);
 
+          client.landMap.set(message.guild.id+"medium", npcCount+1, "npcCount");
           client.strifeMap.set(strifeLocal,list,"list");
           client.strifeMap.set(strifeLocal,init,"init");
           client.strifeMap.set(strifeLocal,active,"active");
+          client.charcall.setAnyData(client, "-", newBomb[1], bombPos, "pos");
           break;
         }
 
         case "AMASS": {
-          let scaleFactor = attUnit[PROFILE.SPECIAL]["scaleFactor"]
-          let faction = client.charcall.charData(attUnit[PROFILE.CHARID],"faction");
+          let scaleFactor = attUnit[PROFILE.SPECIAL]["scaleFactor"];
+          let faction = client.charcall.charData(client, attUnit[PROFILE.CHARID],"faction");
           for(let unit = 0; unit<list.length; unit++){
-            if(client.charcall.charData(list[unit][PROFILE.CHARID],"faction") != faction){
+            if(client.charcall.charData(client, list[unit][PROFILE.CHARID],"faction") != faction){
               continue;
             }
-        
+
             if(!list[unit][PROFILE.SPECIAL]){
               list[unit][PROFILE.SPECIAL] = {};
             }
-        
+
             if(!list[unit][PROFILE.SPECIAL]["royal"]){
               list[unit][PROFILE.SPECIAL]["royal"] = true;
               list[unit][PROFILE.SPECIAL]["scaleFactor"] = scaleFactor;
               list[unit][PROFILE.HEALTH] = list[unit][PROFILE.HEALTH] << scaleFactor;
             }
           }
+          alert+=`All ${faction.toUpperCase()}S have gained royal power!\n`
           break;
         }
 
@@ -1346,14 +1433,19 @@ else {
           if(!attUnit[PROFILE.SPECIAL]){
             attUnit[PROFILE.SPECIAL] = {};
           }
-        
-          // Save the character's original prototype set, and replace it with the complete prototype set for the entire session
-          attUnit[PROFILE.SPECIAL]["oldProto"] = client.charcall.charData(client, attUnit[PROFILE.CHARID], "prototype");
-          client.charcall.setAnyData(client, message.author.id, attUnit[PROFILE.CHARID], client.landMap.get(sessionID+"medium","prototype"), "prototype");
+
+          // Create a temporary prototype list to give the user access to the session's prototyped actions and traits.
+          let sessionProto = client.landMap.get(message.guild.id+"medium",`prototype`);
+          attUnit[PROFILE.SPECIAL]["prototypes"] = sessionProto;
+
           // Activate Royal Power
-          let scaleFactor = client.landMap.get(message.guild.id+"medium","playerList").length;
-          attUnit[PROFILE.SPECIAL]["royal"] = true;
-          attUnit[PROFILE.SPECIAL]["scaleFactor"] = scaleFactor;
+		  if(attUnit[PROFILE.SPECIAL]["royal"] !== true){
+            let scaleFactor = client.landMap.get(message.guild.id+"medium","playerList").length;
+            attUnit[PROFILE.SPECIAL]["royal"] = true;
+            attUnit[PROFILE.SPECIAL]["scaleFactor"] = scaleFactor;
+            attUnit[PROFILE.HEALTH] = attUnit[PROFILE.HEALTH] << scaleFactor;
+            alert+=`${attName} has donned the ring and gained royal power! They now have ${attUnit[PROFILE.HEALTH]} vitality!\n`;
+		  }
           break;
         }
 
@@ -1377,10 +1469,10 @@ else {
           break;
 
         case "ROLLOUT0":
-          if(attUnit[STATUS].includes("ROLLOUT0")){
+          let rollout0Index = attUnit[STATUS].indexOf("ROLLOUT0");
+          if(rollout0Index >= 0){
+            attUnit[STATUS][rollout0Index] = "ROLLOUT1";
             dmgLvl=1;
-            removed = attUnit[STATUS].splice(attUnit[STATUS].indexOf("ROLLOUT0"),1);
-            attUnit[STATUS].push("ROLLOUT1");
             break;
           }
           else if(!attUnit[STATUS].includes("ROLLOUT1") && !attUnit[STATUS].includes("ROLLOUT2")){
@@ -1603,11 +1695,11 @@ if(strikeBonus<0){
     // Target is being hit with AMENAGE
     if(strifeEjected && aa.includes("TELEPORT")){
       setTimeout(leaveStrife,1000,client,message,local,target,false);
-	  let targLocal = local.slice();
-	  targLocal[1] = client.randcall.randLessThan(11);
-	  targLocal[2] = client.randcall.randLessThan(11);
+      let targLocal = local.slice();
+      targLocal[1] = client.randcall.randLessThan(11);
+      targLocal[2] = client.randcall.randLessThan(11);
       setTimeout(client.funcall.move,1500,client,message,targUnit[PROFILE.CHARID],local,targLocal,true,"","suddenly in");
-	  // Don't return early because AMENAGE still deals damage.
+      // Don't return early because AMENAGE still deals damage.
     }
 
     if(aa.includes("AUTOCRIT")){
@@ -2135,7 +2227,7 @@ if(aa.includes("RANDSTATUS")){
         if(alert.length==0){
           alert=`NONE`;
         }
-        
+
         let embedTitle = `${attName.toUpperCase()} `;
         if(client.actionList[action].trans){
           embedTitle += `${client.actionList[action].trans} ${targName.toUpperCase()}!`;
@@ -2287,23 +2379,26 @@ if(list[active[ik]][3] < 1){
 function getBonusFromTrinket(client, message, trinket){
     let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
-    if(trinketSetting == 0 || trinketSetting == "NONE" || trinket == undefined || trinket[1] == undefined){
+    if(trinketSetting == 0 || trinketSetting == "0" || trinketSetting == "NONE" || trinket == undefined || trinket[1] == undefined){
         return [0, "none"];
     }
     let tier = trinket[2];
-    let kind = trinket[1][0];
+    let kind = client.invcall.getTrueCodeFromItem(trinket)[0];
     let bonus = Math.floor(Math.sqrt(tier));
-    if(trinketSetting == 1){
+    if(trinketSetting == 1 || trinketSetting == "1"){
         return [bonus, "accuracy"];
     }
-    else if(trinketSetting == 2){
+    else if(trinketSetting == 2 || trinketSetting == "2"){
         switch(kind){
             case "t":   return [bonus, "initiative"];
             case "u":   return [bonus, "avChance"];
             case "v":   return [bonus, "accuracy"];
-            default:    return [0, "none"];
+            default:
+                console.log(`Unrecognized trinket kind "${kind}. Returning no bonus."`);
+                return [0, "none"];
         }
     }
+    console.log(`getBonusFromTrinket unabled to get bonus from trinket "${trinket}. Returning no bonus."`);
     return [0, "none"];
 }
 
@@ -2314,8 +2409,9 @@ exports.getBonusFromTrinket = function(client, message, trinket){
 function getBonusFromUnderling(client, message, type){
     let trinketSetting = client.configcall.get(client, message, "TRINKETS");
 
-    if(trinketSetting !== 0 && trinketSetting != "NONE"){
-        return client.underlings[type].naturalbonus;
+    if(trinketSetting !== 0 && trinketSetting !== "0" && trinketSetting != "NONE"){
+        let jsonResult = client.underlings[type].naturalbonus;
+        return {"accuracy": jsonResult["accuracy"], "avChance": jsonResult["avChance"], "initiative": jsonResult["initiative"]};
     }
 
     return {"accuracy":0, "avChance":0, "initiative":0};
@@ -2356,10 +2452,11 @@ exports.spawn = function(client,message,underling,pregrist = false){
 
     let undername = ``;
     let prototype = [];
-    let protoCount = Math.floor(Math.random()*4);
+    let protoCount = pregrist=="royal" ? 0 : Math.floor(Math.random()*4);
     if(sessionProto.length<protoCount){
       prototype = sessionProto;
-    } else {
+    }
+    else {
       for(i=0;i<protoCount;i++){
         prototype.push(sessionProto[protoCheck.splice(Math.floor(Math.random()*protoCheck.length),1)]);
       }
@@ -2367,9 +2464,47 @@ exports.spawn = function(client,message,underling,pregrist = false){
     for(i=0;i<prototype.length;i++){
       undername += prototype[i][0]+` `;
     }
-	if(grist.toUpperCase() != "ROYAL"){
-	  undername = `${grist.toUpperCase()} ${undername}${underling.toUpperCase()}`
-	}
+
+    let prospitRep = 0;
+    let derseRep = 0;
+    let bio = `A ${grist} ${underling}`;
+
+    if(grist.toUpperCase() != "ROYAL"){
+      undername = `${grist.toUpperCase()} ${undername}${underling.toUpperCase()}`;
+    }
+    else{
+      undername = `${undername}${underling.toUpperCase()}`;
+
+      // King and Queen
+      if(undername == "KING" || undername == "QUEEN") {
+        switch(local[4]){
+          case "pc":
+          case "p":
+          case "pm":
+          case "pmd":
+          case "pmd1":
+          case "pmd2":
+            undername = `WHITE ${undername}`;
+            bio = `The ${undername}`;
+            prospitRep = 100;
+            derseRep = -100;
+            break;
+          default:
+            undername = `BLACK ${undername}`;
+            bio = `The ${undername}`;
+            prospitRep = -100;
+            derseRep = 100;
+            break;
+        }
+      }
+      // Dersite agents
+      else{
+        derseRep = 100;
+        prospitRep = -100;
+        bio = `The ${undername}`;
+      }
+    }
+
     let npcSet = {
       name: undername,
       control:[],
@@ -2394,16 +2529,16 @@ exports.spawn = function(client,message,underling,pregrist = false){
       modus:"STACK",
       cards:4,
       prototype:prototype,
-      prospitRep:0,
-      derseRep:0,
       underlingRep:100,
       playerRep:-1,
       consortRep:-1,
+      prospitRep:prospitRep,
+      derseRep:derseRep,
       prefTarg:[],
       xp:0,
       rung:0,
       b:0,
-      bio:`A ${grist} ${underling}`,
+      bio:bio,
       img:client.underlings[underling].img,
       questData:[]
     }
@@ -2451,17 +2586,21 @@ function npcTurn(client, message, charid, local){
   let init = client.strifeMap.get(strifeLocal,"init")
 
   if(!list[init[turn][0]][0]&&list[init[turn][0]][3]>0){
+  let type = client.charcall.charData(client,list[init[turn][0]][1],"type");
     if(client.underlings[type].ai && client.underlings[type].ai == "royal"){
-      royalNpcTurn(client, message, charid, local, list, turn, init, strifelocal);
+      royalNpcTurn(client, message, charid, local, list, turn, init, strifeLocal);
       return;
     }
 
   let faction = client.charcall.charData(client,list[init[turn][0]][1],"faction");
   let spec = client.charcall.charData(client,list[init[turn][0]][1],"spec");
   let equip = client.charcall.charData(client,list[init[turn][0]][1],"equip");
-  let type = client.charcall.charData(client,list[init[turn][0]][1],"type");
   let prototype = client.charcall.charData(client,list[init[turn][0]][1],"prototype");
   let prefTarg = client.charcall.charData(client,list[init[turn][0]][1],"prefTarg");
+
+  if(list[init[turn][0]][8] && list[init[turn][0]][8]["prototypes"]){
+    prototype = list[init[turn][0]][8]["prototypes"];
+  }
 
   let prefMove = client.underlings[type].prefMove;
 
@@ -2569,9 +2708,9 @@ function npcTurn(client, message, charid, local){
 
         target = targetList[Math.floor((Math.random() * targetList.length))];
       }
-	  else if(client.actionList[action].att == false){
-		target = active[0];
-	  }
+      else if(client.actionList[action].att == false){
+        target = active[0];
+      }
       turnTaken = true;
       setTimeout(act,1000,client,charid,message,local,action,target)
 
@@ -2593,7 +2732,7 @@ function npcTurn(client, message, charid, local){
 
 }
 
-function royalNpcTurn(client, message, charid, local, list, turn, init, strifelocal) {
+function royalNpcTurn(client, message, charid, local, list, turn, init, strifeLocal) {
   let active = client.strifeMap.get(strifeLocal,"active")
   let type = client.charcall.charData(client,list[init[turn][0]][1],"type");
   let faction = client.charcall.charData(client,list[init[turn][0]][1],"faction");
@@ -2601,16 +2740,20 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
   let equip = client.charcall.charData(client,list[init[turn][0]][1],"equip");
   let prototype = client.charcall.charData(client,list[init[turn][0]][1],"prototype");
   let prefTarg = client.charcall.charData(client,list[init[turn][0]][1],"prefTarg");
-  
+
+  if(list[init[turn][0]][8] && list[init[turn][0]][8]["prototypes"]){
+    prototype = list[init[turn][0]][8]["prototypes"];
+  }
+
   let prefMove = client.underlings[type].prefMove;
-  
+
   let targetList = [];
   let grappledTargetList = [];
   let degrappledTargetList = [];
   let ungrappledTargetList = [];
-  
+
   //create a list of targets based on faction reputation.
-  
+
   if(prefTarg.length>0&&active.includes(prefTarg[0])){
     targetList=prefTarg;
   }
@@ -2618,11 +2761,11 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
     for(let i=0;i<active.length;i++){
       if(client.charcall.allData(client,"-",list[active[i]][1],`${faction}Rep`)<0){
         targetList.push(active[i]);
-        if(list[init[turn][0]][PROFILE.STATUS].contains("GRAPPLE")){
+        if(list[active[i]][PROFILE.STATUS].indexOf("GRAPPLE") >= 0){
           grappledTargetList.push(active[i]);
         }
-        // Don't include any DEGRAP people in the list.
-        else if (!list[init[turn][0]][PROFILE.STATUS].contains("DEGRAP")){
+        // Don't include any DEGRAP people in this list.
+        else if (!list[active[i]][PROFILE.STATUS].indexOf("DEGRAP") >= 0){
           ungrappledTargetList.push(active[i]);
         }
       }
@@ -2631,7 +2774,7 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
 
   let actionSet = [];
   let tempAct;
-  let royalPower = (strifeList[strifePos][PROFILE.SPECIAL] && strifeList[strifePos][PROFILE.SPECIAL]["royal"] == true);
+  let royalPower = (list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL]["royal"] == true);
 
   let encoreMove = list[init[turn][0]][PROFILE.SPECIAL] && list[init[turn][0]][PROFILE.SPECIAL].encoreMove;
 
@@ -2684,39 +2827,44 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
   while(!turnTaken&&actionSet.length>0&&targetList.length>0){
     if(actionSet.includes(prefMove)){
       let prefAction=prefMove;
-      let prefActionCost = client.actionList[action].cst;
-      
+      let prefActionCost = client.actionList[prefAction].cst;
+
       let weightDiscount = client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1] ? 1 : 0;
       let normalDiscount = (list[init[turn][0]][7].includes("DISCOUNT") ? 1 : 0) + (client.traitcall.traitCheck(client,charid,"MIND")[1] ? 1 : 0);
-      
+
       prefActionCost = prefActionCost > 3 ? prefActionCost - weightDiscount : prefActionCost;
       prefActionCost = Math.max(prefActionCost - normalDiscount, 1);
       if(prefActionCost > list[init[turn][0]][5]){
         // Pass the turn.
         break;
       }
-      
+
+      let firstCost = prefActionCost;
+
       for(let i=0; i<actionSet.indexOf(prefMove); i++){
-        let lcost = client.actionList[action].cst;
+        let lcost = client.actionList[prefAction].cst;
         lcost = lcost > 3 ? lcost - weightDiscount : lcost;
         lcost = Math.max(lcost - normalDiscount, 1);
         prefActionCost += lcost;
         if(prefActionCost > list[init[turn][0]][5]){
           turnTaken = true;
-          setTimeout(act,1000,client,charid,message,local,action,target);
+          list[init[turn][0]][5]-=firstCost;
+          list[init[turn][0]][6].push(prefAction);
+          client.strifeMap.set(strifeLocal,list,"list");
+          setTimeout(act,1000,client,charid,message,local,prefAction,targetList[Math.floor((Math.random() * targetList.length))]);
           setTimeout(npcTurn,2000,client,message,charid,local);
           break;
         }
       }
-      
+
       if(turnTaken){
         break;
       }
       // If we reach this point, that means the royal has enough stamina to perform all the actions up to their preferred move, in order.
       // Thus, we simply allow the rest of the function to run as normal.
     }
-  
-    let canUseFirst = list[init[turn][0]][6].length==0 && !(list[turn][6].length == 1 && list[turn][6][0].substring(0,3) === "HAT");
+
+    let canUseFirst = list[init[turn][0]][6].length==0 || (list[init[turn][0]][6].length == 1 && list[init[turn][0]][6][0].substring(0,3) == "HAT");
 
     let action = actionSet[0];
 
@@ -2739,21 +2887,21 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
         }
       }
     }
-  
+
     let lcost = client.actionList[action].cst;
     if(lcost > 3 && client.traitcall.traitCheck(client,charid,"LIGHTWEIGHT")[1]) { lcost--; }
     if(lcost > 1 && list[init[turn][0]][7].includes("DISCOUNT")) { lcost--; }
     if(lcost > 1 && client.traitcall.traitCheck(client,charid,"MIND")[1]) { lcost--; }
-  
+
     if(lcost > list[init[turn][0]][5]){
       actionSet.splice(actionSet.indexOf(action), 1);
       continue;
     }
-  
+
     list[init[turn][0]][5]-=lcost;
     list[init[turn][0]][6].push(action);
     client.strifeMap.set(strifeLocal,list,"list");
-  
+
     // Change the target list for actions that are beneficial to teammates.
     if(action=="arf" || action=="amuse" || action=="ameliorate" || action=="amend" || action=="adumbrate"){
       targetList=[];
@@ -2768,8 +2916,6 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
       if(targetList.length<1){
         targetList.push(init[turn][0]);
       }
-    
-      target = targetList[Math.floor((Math.random() * targetList.length))];
     }
     // Prioritize grappling people who aren't already grappled
     else if(client.actionList[action].add.includes("GRAPPLE") && ungrappledTargetList.length > 0){
@@ -2784,9 +2930,9 @@ function royalNpcTurn(client, message, charid, local, list, turn, init, strifelo
     let target = targetList[Math.floor((Math.random() * targetList.length))];
 
     turnTaken = true;
-    setTimeout(act,1000,client,charid,message,local,action,target);
+    setTimeout(act,1200,client,charid,message,local,action,target);
   }
-  
+
   if(turnTaken){
     setTimeout(npcTurn,2000,client,message,charid,local);
   }
@@ -2885,6 +3031,8 @@ function getCharHealth(client, userid, charid){
           break;
         }
       }
+
+      // We ensure the creature doesn't innately scale, so that they don't scale their health twice.
       if(!isNaN(strifePos) && !(client.underlings[client.charcall.charData(client,charid,"type")].scales==true)){
         if(strifeList[strifePos][PROFILE.SPECIAL] && strifeList[strifePos][PROFILE.SPECIAL]["royal"] == true){
           let scaleFactor = strifeList[strifePos][PROFILE.SPECIAL]["scaleFactor"];
