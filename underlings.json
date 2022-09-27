@@ -315,7 +315,7 @@
     "stats":[0,0,0,0,0,0],
     "xp":10230,
     "drop":0,
-    "naturalbonus":{"accuracy":6, "avChance":5, "initiative":10},
+    "naturalbonus":{"accuracy":6, "avChance":5, "initiative":0},
     "ai":"royal",
     "scales":true
   },
